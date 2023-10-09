@@ -1,6 +1,9 @@
 import requests
 import csv
 import json
+import time
+
+# Function to extract GitHub repository URLs ending with ".git"
 
 
 def extract_github_repos(json_data):
@@ -18,50 +21,79 @@ def extract_github_repos(json_data):
 
     return repositories
 
-
-def request_pages(page_num, page_size=20):
-    json_data = {
-        "filters": [
-            {
-                "criteria": [
-                    {
-                        "filterType": 8,
-                        "value": "Microsoft.VisualStudio.Code"
-                    },
-                    {
-                        "filterType": 10,
-                        "value": "target:\"Microsoft.VisualStudio.Code\""
-                    },
-                    {
-                        "filterType": 12,
-                        "value": "37888"
-                    }
-                ],
-                "direction": 2,
-                "pageSize": page_size,
-                "pageNumber": page_num,
-                "sortBy": 4,
-                "sortOrder": 0,
-                "pagingToken": None
-            }
-        ],
-        "flags": 870,
-    }
-
-    response = requests.post(
-        "https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery",
-        json=json_data,
-    )
-
-    return response.json()
+# Function to request extension pages with retries
 
 
-def fetch_first_100_extensions():
+def request_pages(page_num, page_size=20, max_retries=3, retry_delay=5):
+    retries = 0
+    while retries < max_retries:
+        json_data = {
+            "filters": [
+                {
+                    "criteria": [
+                        {
+                            "filterType": 8,
+                            "value": "Microsoft.VisualStudio.Code"
+                        },
+                        {
+                            "filterType": 10,
+                            "value": "target:\"Microsoft.VisualStudio.Code\""
+                        },
+                        {
+                            "filterType": 12,
+                            "value": "37888"
+                        }
+                    ],
+                    "direction": 2,
+                    "pageSize": page_size,
+                    "pageNumber": page_num,
+                    "sortBy": 4,
+                    "sortOrder": 0,
+                    "pagingToken": None
+                }
+            ],
+            "flags": 870,
+        }
+
+        try:
+            response = requests.post(
+                "https://marketplace.visualstudio.com/_apis/public/gallery/extensionquery",
+                json=json_data,
+            )
+
+            response.raise_for_status()  # Raise an exception for bad requests
+            return response.json()
+        except requests.exceptions.HTTPError as errh:
+            print("HTTP Error:", errh)
+        except requests.exceptions.ConnectionError as errc:
+            print("Error Connecting:", errc)
+        except requests.exceptions.Timeout as errt:
+            print("Timeout Error:", errt)
+        except requests.exceptions.RequestException as err:
+            print("Something went wrong:", err)
+
+        retries += 1
+        if retries < max_retries:
+            print(f"Retrying in {retry_delay} seconds...")
+            time.sleep(retry_delay)
+        else:
+            print(f"Max retries ({max_retries}) reached. Cannot continue.")
+            return None
+
+# Function to fetch all extensions
+
+
+def fetch_all_extensions():
     extensions_data = []
     total_extensions = 0
+    page_num = 1
 
-    for page_num in range(1, 6):
+    while True:
         response = request_pages(page_num)
+
+        if response is None:
+            break
+
         page_extensions = response.get("results", [])[0].get("extensions", [])
 
         if not page_extensions:
@@ -72,41 +104,44 @@ def fetch_first_100_extensions():
                 "publisher", {}).get("displayName", "N/A")
             display_name = extension.get("displayName", "N/A")
             repository = "N/A"
-            stats = extension.get("statistics", [])[0].get("value", "N/A")
+            statistics = extension.get("statistics", [])
+            downloads = statistics[0]["value"] if statistics and statistics[0] else "N/A"
 
             repository_data = extract_github_repos(json.dumps(extension))
             if repository_data:
                 repository = repository_data[0]["GitHub Repository"]
+                # Only append if a GitHub repository link is found
+                extensions_data.append({
+                    "Extension Number": total_extensions + 1,
+                    "Name": display_name,
+                    "Publisher": publisher,
+                    "Extension ID": extension.get("extensionId", "N/A"),
+                    "Source Code": repository,
+                    "Downloads": downloads
+                })
 
-            extensions_data.append({
-                "Extension Number": total_extensions + 1,
-                "Name": display_name,
-                "Publisher": publisher,
-                "Extension ID": extension.get("extensionId", "N/A"),
-                # "Downloads": stats,
-                "Source Code": repository,
-            })
+                total_extensions += 1
 
-            total_extensions += 1
-
-            if total_extensions >= 100:
-                break
+        page_num += 1
 
     return extensions_data
 
 
-csv_file_path = "extensions.csv"
+# Specify the CSV file path
+csv_file_path = 'extensions.csv'
 
-extensions_data = fetch_first_100_extensions()
+# Fetch all extensions
+extensions_data = fetch_all_extensions()
 
+# Write the data to CSV
 with open(csv_file_path, mode='w', newline='') as file:
     fieldnames = ["Extension Number", "Name",
-                  "Publisher", "Extension ID", "Source Code"]
+                  "Publisher", "Extension ID", "Source Code", "Downloads"]
     writer = csv.DictWriter(file, fieldnames=fieldnames)
 
     writer.writeheader()
     for extension in extensions_data:
         writer.writerow(extension)
 
-print(f"Total {len(extensions_data)
-               } extension details written to {csv_file_path}")
+print(f'Total {len(extensions_data)
+               } extension details written to {csv_file_path}')
