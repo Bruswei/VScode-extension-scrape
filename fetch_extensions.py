@@ -1,8 +1,25 @@
 import requests
 import csv
+import json
 
 
-def request_pages(page_num, page_size=300):
+def extract_github_repos(json_data):
+    repositories = []
+    data_dict = json.loads(json_data)
+    versions = data_dict.get("versions", [])
+
+    for version in versions:
+        properties = version.get("properties", [])
+        for prop in properties:
+            if prop.get("key") == "Microsoft.VisualStudio.Services.Links.Getstarted":
+                source = prop.get("value", "")
+                if source.endswith(".git"):
+                    repositories.append({"GitHub Repository": source})
+
+    return repositories
+
+
+def request_pages(page_num, page_size=20):
     json_data = {
         "filters": [
             {
@@ -39,38 +56,57 @@ def request_pages(page_num, page_size=300):
     return response.json()
 
 
-def fetch_all_extensions():
-    page_num = 1
+def fetch_first_100_extensions():
     extensions_data = []
+    total_extensions = 0
 
-    while True:
+    for page_num in range(1, 6):
         response = request_pages(page_num)
-        page_extensions = response["results"][0]["extensions"]
+        page_extensions = response.get("results", [])[0].get("extensions", [])
 
         if not page_extensions:
             break
 
-        extensions_data.extend(page_extensions)
-        page_num += 1
+        for extension in page_extensions:
+            publisher = extension.get(
+                "publisher", {}).get("displayName", "N/A")
+            display_name = extension.get("displayName", "N/A")
+            repository = "N/A"
+            stats = extension.get("statistics", [])[0].get("value", "N/A")
+
+            repository_data = extract_github_repos(json.dumps(extension))
+            if repository_data:
+                repository = repository_data[0]["GitHub Repository"]
+
+            extensions_data.append({
+                "Extension Number": total_extensions + 1,
+                "Name": display_name,
+                "Publisher": publisher,
+                "Extension ID": extension.get("extensionId", "N/A"),
+                # "Downloads": stats,
+                "Source Code": repository,
+            })
+
+            total_extensions += 1
+
+            if total_extensions >= 100:
+                break
 
     return extensions_data
 
 
 csv_file_path = "extensions.csv"
 
-extensions_data = fetch_all_extensions()
+extensions_data = fetch_first_100_extensions()
 
 with open(csv_file_path, mode='w', newline='') as file:
-    writer = csv.writer(file)
-    writer.writerow(["Extension Number", "Name", "Publisher", "Extension ID"])
+    fieldnames = ["Extension Number", "Name",
+                  "Publisher", "Extension ID", "Source Code"]
+    writer = csv.DictWriter(file, fieldnames=fieldnames)
 
-    for i, extension in enumerate(extensions_data, start=1):
-        writer.writerow([
-            i,
-            extension.get("displayName"),
-            extension.get("publisher").get("displayName"),
-            extension.get("extensionId"),
-        ])
+    writer.writeheader()
+    for extension in extensions_data:
+        writer.writerow(extension)
 
 print(f"Total {len(extensions_data)
                } extension details written to {csv_file_path}")
