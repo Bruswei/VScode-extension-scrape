@@ -3,10 +3,10 @@ import csv
 import json
 import time
 
-# Function to extract GitHub repository URLs ending with ".git"
+# Function to extract GitHub and GitLab repository URLs ending with ".git"
 
 
-def extract_github_repos(json_data):
+def extract_repository(json_data):
     repositories = []
     data_dict = json.loads(json_data)
     versions = data_dict.get("versions", [])
@@ -17,7 +17,7 @@ def extract_github_repos(json_data):
             if prop.get("key") == "Microsoft.VisualStudio.Services.Links.Getstarted":
                 source = prop.get("value", "")
                 if source.endswith(".git"):
-                    repositories.append({"GitHub Repository": source})
+                    repositories.append({"Repository": source})
 
     return repositories
 
@@ -80,10 +80,10 @@ def request_pages(page_num, page_size=20, max_retries=3, retry_delay=5):
             print(f"Max retries ({max_retries}) reached. Cannot continue.")
             return None
 
-# Function to fetch all extensions
+# Function to fetch extensions from GitHub or GitLab
 
 
-def fetch_all_extensions():
+def fetch_extensions():
     extensions_data = []
     total_extensions = 0
     page_num = 1
@@ -103,24 +103,24 @@ def fetch_all_extensions():
             publisher = extension.get(
                 "publisher", {}).get("displayName", "N/A")
             display_name = extension.get("displayName", "N/A")
-            repository = "N/A"
-            statistics = extension.get("statistics", [])
-            downloads = statistics[0]["value"] if statistics and statistics[0] else "N/A"
+            repository_data = extract_repository(json.dumps(extension))
 
-            repository_data = extract_github_repos(json.dumps(extension))
             if repository_data:
-                repository = repository_data[0]["GitHub Repository"]
-                # Only append if a GitHub repository link is found
-                extensions_data.append({
-                    "Extension Number": total_extensions + 1,
-                    "Name": display_name,
-                    "Publisher": publisher,
-                    "Extension ID": extension.get("extensionId", "N/A"),
-                    "Source Code": repository,
-                    "Downloads": downloads
-                })
+                repository = repository_data[0]["Repository"]
+                statistics = extension.get("statistics", [])
+                downloads = statistics[0]["value"] if statistics and statistics[0] else 0
 
-                total_extensions += 1
+                if (repository.endswith(".git") and "github" in repository) or (repository.endswith(".git") and "gitlab" in repository):
+                    if downloads >= 50:
+                        extensions_data.append({
+                            "Extension Number": total_extensions + 1,
+                            "Name": display_name,
+                            "Publisher": publisher,
+                            "Extension ID": extension.get("extensionId", "N/A"),
+                            "Source Code": repository,
+                            "Downloads": downloads
+                        })
+                        total_extensions += 1
 
         page_num += 1
 
@@ -128,17 +128,16 @@ def fetch_all_extensions():
 
 
 # Specify the CSV file path
-csv_file_path = 'extensions.csv'
+csv_file_path = 'extensions-filtered.csv'
 
-# Fetch all extensions
-extensions_data = fetch_all_extensions()
+# Fetch extensions from GitHub or GitLab with over 50 downloads
+extensions_data = fetch_extensions()
 
 # Write the data to CSV
 with open(csv_file_path, mode='w', newline='') as file:
-    fieldnames = ["Extension Number", "Name",
-                  "Publisher", "Extension ID", "Source Code", "Downloads"]
+    fieldnames = ["Extension Number", "Name", "Publisher",
+                  "Extension ID", "Source Code", "Downloads"]
     writer = csv.DictWriter(file, fieldnames=fieldnames)
-
     writer.writeheader()
     for extension in extensions_data:
         writer.writerow(extension)
