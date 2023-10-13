@@ -1,0 +1,1624 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-GOT-2932019",
+      "title": "Open Redirect",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<11.8.5",
+          ">=12.0.0 <12.1.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "11.8.5",
+        "12.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.4,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "got",
+      "references": [
+        {
+          "url": "https://github.com/sindresorhus/got/compare/v12.0.3...v12.1.0",
+          "title": "GitHub Diff"
+        },
+        {
+          "url": "https://github.com/sindresorhus/got/pull/2047",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-06-29T01:11:26.531842Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-11-19T20:57:05.871669Z"
+        }
+      ],
+      "description": "## Overview\n\nAffected versions of this package are vulnerable to Open Redirect due to missing verification of requested URLs. It allowed a victim to be redirected to a UNIX socket.\n## Remediation\nUpgrade `got` to version 11.8.5, 12.1.0 or higher.\n## References\n- [GitHub Diff](https://github.com/sindresorhus/got/compare/v12.0.3...v12.1.0)\n- [GitHub PR](https://github.com/sindresorhus/got/pull/2047)\n",
+      "epssDetails": {
+        "percentile": "0.22655",
+        "probability": "0.00058",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-33987"
+        ],
+        "CWE": [
+          "CWE-601"
+        ]
+      },
+      "packageName": "got",
+      "proprietary": false,
+      "creationTime": "2022-06-19T09:23:24.210132Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-06-19T08:33:16Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-06-19T15:33:44.269688Z",
+      "modificationTime": "2022-11-19T20:57:05.871669Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "xml@DotJoshJohnson/vscode-xml#95702e6355fb35d77d2fea7da5af3f505df398a0",
+        "xqlint@0.4.1",
+        "update-notifier@2.5.0",
+        "latest-version@3.1.0",
+        "package-json@4.0.1",
+        "got@6.7.1"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "update-notifier@6.0.0",
+        "latest-version@6.0.0",
+        "package-json@7.0.0",
+        "got@11.8.5"
+      ],
+      "version": "6.7.1",
+      "name": "got",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-LODASH-1018905",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Liyuan Chen"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.17.21"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.17.21"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "lodash",
+      "references": [
+        {
+          "url": "https://github.com/lodash/lodash/commit/c4847ebe7d14540bb28a8b932a9ce1b9ecbfee1a",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/pull/5065",
+          "title": "GitHub Fix PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2023-03-26T15:05:22.200927Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-09-14T01:10:48.134557Z"
+        }
+      ],
+      "description": "## Overview\n[lodash](https://www.npmjs.com/package/lodash) is a modern JavaScript utility library delivering modularity, performance, & extras.\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `toNumber`, `trim` and `trimEnd` functions.\r\n\r\n### POC\r\n```\r\nvar lo = require('lodash');\r\n\r\nfunction build_blank (n) {\r\nvar ret = \"1\"\r\nfor (var i = 0; i < n; i++) {\r\nret += \" \"\r\n}\r\n\r\nreturn ret + \"1\";\r\n}\r\n\r\nvar s = build_blank(50000)\r\nvar time0 = Date.now();\r\nlo.trim(s)\r\nvar time_cost0 = Date.now() - time0;\r\nconsole.log(\"time_cost0: \" + time_cost0)\r\n\r\nvar time1 = Date.now();\r\nlo.toNumber(s)\r\nvar time_cost1 = Date.now() - time1;\r\nconsole.log(\"time_cost1: \" + time_cost1)\r\n\r\nvar time2 = Date.now();\r\nlo.trimEnd(s)\r\nvar time_cost2 = Date.now() - time2;\r\nconsole.log(\"time_cost2: \" + time_cost2)\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `lodash` to version 4.17.21 or higher.\n## References\n- [GitHub Commit](https://github.com/lodash/lodash/commit/c4847ebe7d14540bb28a8b932a9ce1b9ecbfee1a)\n- [GitHub Fix PR](https://github.com/lodash/lodash/pull/5065)\n",
+      "epssDetails": {
+        "percentile": "0.54324",
+        "probability": "0.00182",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-28500"
+        ],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "lodash",
+      "proprietary": true,
+      "creationTime": "2020-10-16T16:48:40.985673Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2020-10-16T16:47:34Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-02-15T11:50:49Z",
+      "modificationTime": "2023-03-26T15:05:22.200927Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "xml@DotJoshJohnson/vscode-xml#95702e6355fb35d77d2fea7da5af3f505df398a0",
+        "xqlint@0.4.1",
+        "lodash@3.10.1"
+      ],
+      "upgradePath": [
+        false,
+        "xqlint@0.5.2",
+        "lodash@4.17.21"
+      ],
+      "version": "3.10.1",
+      "name": "lodash",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-LODASH-1040724",
+      "title": "Command Injection",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H/E:P/RL:U/RC:C",
+      "credit": [
+        "Marc Hassan"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.17.21"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.17.21"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.2,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "lodash",
+      "references": [
+        {
+          "url": "https://github.com/lodash/lodash/commit/3469357cff396a26c363f8c1b5a91dde28ba4b1c",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/blob/ddfd9b11a0126db2302cb70ec9973b66baec0975/lodash.js%23L14851",
+          "title": "Vulnerable Code"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 7.2,
+          "modificationTime": "2023-03-26T15:05:22.240589Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 7.2,
+          "modificationTime": "2022-09-14T01:10:48.257735Z"
+        }
+      ],
+      "description": "## Overview\n[lodash](https://www.npmjs.com/package/lodash) is a modern JavaScript utility library delivering modularity, performance, & extras.\n\nAffected versions of this package are vulnerable to Command Injection via `template`.\r\n\r\n### PoC\r\n```js\r\nvar _ = require('lodash');\r\n\r\n_.template('', { variable: '){console.log(process.env)}; with(obj' })()\r\n```\n## Remediation\nUpgrade `lodash` to version 4.17.21 or higher.\n## References\n- [GitHub Commit](https://github.com/lodash/lodash/commit/3469357cff396a26c363f8c1b5a91dde28ba4b1c)\n- [Vulnerable Code](https://github.com/lodash/lodash/blob/ddfd9b11a0126db2302cb70ec9973b66baec0975/lodash.js#L14851)\n",
+      "epssDetails": {
+        "percentile": "0.75591",
+        "probability": "0.00606",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-23337"
+        ],
+        "CWE": [
+          "CWE-78"
+        ],
+        "GHSA": [
+          "GHSA-35jh-r3h4-6jhm"
+        ]
+      },
+      "packageName": "lodash",
+      "proprietary": true,
+      "creationTime": "2020-11-17T14:07:17.048472Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2020-11-17T13:02:10Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-02-15T11:50:50Z",
+      "modificationTime": "2023-03-26T15:05:22.240589Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "xml@DotJoshJohnson/vscode-xml#95702e6355fb35d77d2fea7da5af3f505df398a0",
+        "xqlint@0.4.1",
+        "lodash@3.10.1"
+      ],
+      "upgradePath": [
+        false,
+        "xqlint@0.5.2",
+        "lodash@4.17.21"
+      ],
+      "version": "3.10.1",
+      "name": "lodash",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-LODASH-450202",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L/E:P/RL:O/RC:C",
+      "credit": [
+        "Snyk Security Team"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.17.12"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.17.12"
+      ],
+      "patches": [
+        {
+          "id": "patch:SNYK-JS-LODASH-450202:0",
+          "urls": [
+            "https://snyk-patches.s3.amazonaws.com/npm/lodash/20190702/lodash_20190702_0_0_1f8ea07746963a535385a5befc19fa687a627d2b.patch"
+          ],
+          "version": "=4.17.11",
+          "comments": [],
+          "modificationTime": "2019-12-03T11:40:45.719849Z"
+        }
+      ],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.3,
+      "functions": [
+        {
+          "version": [
+            ">=4.17.3 <4.17.12"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "className": null,
+            "functionName": "runInContext.customDefaultsMerge"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "lodash",
+      "references": [
+        {
+          "url": "https://github.com/lodash/lodash/issues/4348",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/pull/4336",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/pull/4355",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/sailshq/lodash/pull/1",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/1065",
+          "title": "Node Security Advisory"
+        },
+        {
+          "url": "https://snyk.io/blog/snyk-research-team-discovers-severe-prototype-pollution-security-vulnerabilities-affecting-all-versions-of-lodash/",
+          "title": "Snyk Blog"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H",
+          "cvssV3BaseScore": 9.1,
+          "modificationTime": "2022-01-03T17:53:52.560412Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:H",
+          "cvssV3BaseScore": 9.1,
+          "modificationTime": "2023-03-26T20:29:27.047214Z"
+        }
+      ],
+      "description": "## Overview\n[lodash](https://www.npmjs.com/package/lodash) is a modern JavaScript utility library delivering modularity, performance, & extras.\n\nAffected versions of this package are vulnerable to Prototype Pollution. The function `defaultsDeep` could be tricked into adding or modifying properties of `Object.prototype` using a `constructor` payload.\r\n\r\n## PoC by Snyk\r\n```\r\nconst mergeFn = require('lodash').defaultsDeep;\r\nconst payload = '{\"constructor\": {\"prototype\": {\"a0\": true}}}'\r\n\r\nfunction check() {\r\n    mergeFn({}, JSON.parse(payload));\r\n    if (({})[`a0`] === true) {\r\n        console.log(`Vulnerable to Prototype Pollution via ${payload}`);\r\n    }\r\n  }\r\n\r\ncheck();\r\n```\r\n\r\nFor more information, check out our [blog post](https://snyk.io/blog/snyk-research-team-discovers-severe-prototype-pollution-security-vulnerabilities-affecting-all-versions-of-lodash/)\n\n## Details\n\nPrototype Pollution is a vulnerability affecting JavaScript. Prototype Pollution refers to the ability to inject properties into existing JavaScript language construct prototypes, such as objects. JavaScript allows all Object attributes to be altered, including their magical attributes such as `__proto__`, `constructor` and `prototype`. An attacker manipulates these attributes to overwrite, or pollute, a JavaScript application object prototype of the base object by injecting other values.  Properties on the `Object.prototype` are then inherited by all the JavaScript objects through the prototype chain. When that happens, this leads to either denial of service by triggering JavaScript exceptions, or it tampers with the application source code to force the code path that the attacker injects, thereby leading to remote code execution.\n\nThere are two main ways in which the pollution of prototypes occurs:\n\n-   Unsafe `Object` recursive merge\n    \n-   Property definition by path\n    \n\n### Unsafe Object recursive merge\n\nThe logic of a vulnerable recursive merge function follows the following high-level model:\n```\nmerge (target, source)\n\n  foreach property of source\n\n    if property exists and is an object on both the target and the source\n\n      merge(target[property], source[property])\n\n    else\n\n      target[property] = source[property]\n```\n<br>  \n\nWhen the source object contains a property named `__proto__` defined with `Object.defineProperty()` , the condition that checks if the property exists and is an object on both the target and the source passes and the merge recurses with the target, being the prototype of `Object` and the source of `Object` as defined by the attacker. Properties are then copied on the `Object` prototype.\n\nClone operations are a special sub-class of unsafe recursive merges, which occur when a recursive merge is conducted on an empty object: `merge({},source)`.\n\n`lodash` and `Hoek` are examples of libraries susceptible to recursive merge attacks.\n\n### Property definition by path\n\nThere are a few JavaScript libraries that use an API to define property values on an object based on a given path. The function that is generally affected contains this signature: `theFunction(object, path, value)`\n\nIf the attacker can control the value of “path”, they can set this value to `__proto__.myValue`. `myValue` is then assigned to the prototype of the class of the object.\n\n## Types of attacks\n\nThere are a few methods by which Prototype Pollution can be manipulated:\n\n| Type |Origin  |Short description |\n|--|--|--|\n| **Denial of service (DoS)**|Client  |This is the most likely attack. <br>DoS occurs when `Object` holds generic functions that are implicitly called for various operations (for example, `toString` and `valueOf`). <br> The attacker pollutes `Object.prototype.someattr` and alters its state to an unexpected value such as `Int` or `Object`. In this case, the code fails and is likely to cause a denial of service.  <br>**For example:** if an attacker pollutes `Object.prototype.toString` by defining it as an integer, if the codebase at any point was reliant on `someobject.toString()` it would fail. |\n |**Remote Code Execution**|Client|Remote code execution is generally only possible in cases where the codebase evaluates a specific attribute of an object, and then executes that evaluation.<br>**For example:** `eval(someobject.someattr)`. In this case, if the attacker pollutes `Object.prototype.someattr` they are likely to be able to leverage this in order to execute code.|\n|**Property Injection**|Client|The attacker pollutes properties that the codebase relies on for their informative value, including security properties such as cookies or tokens.<br>  **For example:** if a codebase checks privileges for `someuser.isAdmin`, then when the attacker pollutes `Object.prototype.isAdmin` and sets it to equal `true`, they can then achieve admin privileges.|\n\n## Affected environments\n\nThe following environments are susceptible to a Prototype Pollution attack:\n\n-   Application server\n    \n-   Web server\n\n-   Web browser\n    \n\n## How to prevent\n\n1.  Freeze the prototype— use `Object.freeze (Object.prototype)`.\n    \n2.  Require schema validation of JSON input.\n    \n3.  Avoid using unsafe recursive merge functions.\n    \n4.  Consider using objects without prototypes (for example, `Object.create(null)`), breaking the prototype chain and preventing pollution.\n    \n5.  As a best practice use `Map` instead of `Object`.\n\n### For more information on this vulnerability type:\n\n[Arteau, Oliver. “JavaScript prototype pollution attack in NodeJS application.” GitHub, 26 May 2018](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)\n\n## Remediation\nUpgrade `lodash` to version 4.17.12 or higher.\n## References\n- [GitHub Issue](https://github.com/lodash/lodash/issues/4348)\n- [GitHub PR](https://github.com/lodash/lodash/pull/4336)\n- [GitHub PR](https://github.com/lodash/lodash/pull/4355)\n- [GitHub PR](https://github.com/sailshq/lodash/pull/1)\n- [Node Security Advisory](https://www.npmjs.com/advisories/1065)\n- [Snyk Blog](https://snyk.io/blog/snyk-research-team-discovers-severe-prototype-pollution-security-vulnerabilities-affecting-all-versions-of-lodash/)\n",
+      "epssDetails": {
+        "percentile": "0.84325",
+        "probability": "0.01362",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2019-10744"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ],
+        "NSP": [
+          "1065"
+        ],
+        "GHSA": [
+          "GHSA-jf85-cpcp-j695"
+        ]
+      },
+      "packageName": "lodash",
+      "proprietary": true,
+      "creationTime": "2019-06-19T12:04:21.040000Z",
+      "functions_new": [
+        {
+          "version": [
+            ">=4.17.3 <4.17.12"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "functionName": "runInContext.customDefaultsMerge"
+          }
+        }
+      ],
+      "alternativeIds": [],
+      "disclosureTime": "2019-06-19T11:45:02Z",
+      "packageManager": "npm",
+      "publicationTime": "2019-07-02T11:45:01Z",
+      "modificationTime": "2023-03-26T20:29:27.047214Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "xml@DotJoshJohnson/vscode-xml#95702e6355fb35d77d2fea7da5af3f505df398a0",
+        "xqlint@0.4.1",
+        "lodash@3.10.1"
+      ],
+      "upgradePath": [
+        false,
+        "xqlint@0.5.1",
+        "lodash@4.17.13"
+      ],
+      "version": "3.10.1",
+      "name": "lodash",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-LODASH-608086",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L/E:P/RL:O/RC:C",
+      "credit": [
+        "awarau"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.17.17"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.17.17"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "lodash",
+      "references": [
+        {
+          "url": "https://hackerone.com/reports/864701",
+          "title": "HackerOne Report"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[lodash](https://www.npmjs.com/package/lodash) is a modern JavaScript utility library delivering modularity, performance, & extras.\n\nAffected versions of this package are vulnerable to Prototype Pollution via the `setWith` and `set` functions.\r\n\r\n## PoC by awarau\r\n* Create a JS file with this contents:\r\n```\r\nlod = require('lodash')\r\nlod.setWith({}, \"__proto__[test]\", \"123\")\r\nlod.set({}, \"__proto__[test2]\", \"456\")\r\nconsole.log(Object.prototype)\r\n```\r\n* Execute it with `node`\r\n* Observe that `test` and `test2` is now in the `Object.prototype`.\n\n## Details\n\nPrototype Pollution is a vulnerability affecting JavaScript. Prototype Pollution refers to the ability to inject properties into existing JavaScript language construct prototypes, such as objects. JavaScript allows all Object attributes to be altered, including their magical attributes such as `__proto__`, `constructor` and `prototype`. An attacker manipulates these attributes to overwrite, or pollute, a JavaScript application object prototype of the base object by injecting other values.  Properties on the `Object.prototype` are then inherited by all the JavaScript objects through the prototype chain. When that happens, this leads to either denial of service by triggering JavaScript exceptions, or it tampers with the application source code to force the code path that the attacker injects, thereby leading to remote code execution.\n\nThere are two main ways in which the pollution of prototypes occurs:\n\n-   Unsafe `Object` recursive merge\n    \n-   Property definition by path\n    \n\n### Unsafe Object recursive merge\n\nThe logic of a vulnerable recursive merge function follows the following high-level model:\n```\nmerge (target, source)\n\n  foreach property of source\n\n    if property exists and is an object on both the target and the source\n\n      merge(target[property], source[property])\n\n    else\n\n      target[property] = source[property]\n```\n<br>  \n\nWhen the source object contains a property named `__proto__` defined with `Object.defineProperty()` , the condition that checks if the property exists and is an object on both the target and the source passes and the merge recurses with the target, being the prototype of `Object` and the source of `Object` as defined by the attacker. Properties are then copied on the `Object` prototype.\n\nClone operations are a special sub-class of unsafe recursive merges, which occur when a recursive merge is conducted on an empty object: `merge({},source)`.\n\n`lodash` and `Hoek` are examples of libraries susceptible to recursive merge attacks.\n\n### Property definition by path\n\nThere are a few JavaScript libraries that use an API to define property values on an object based on a given path. The function that is generally affected contains this signature: `theFunction(object, path, value)`\n\nIf the attacker can control the value of “path”, they can set this value to `__proto__.myValue`. `myValue` is then assigned to the prototype of the class of the object.\n\n## Types of attacks\n\nThere are a few methods by which Prototype Pollution can be manipulated:\n\n| Type |Origin  |Short description |\n|--|--|--|\n| **Denial of service (DoS)**|Client  |This is the most likely attack. <br>DoS occurs when `Object` holds generic functions that are implicitly called for various operations (for example, `toString` and `valueOf`). <br> The attacker pollutes `Object.prototype.someattr` and alters its state to an unexpected value such as `Int` or `Object`. In this case, the code fails and is likely to cause a denial of service.  <br>**For example:** if an attacker pollutes `Object.prototype.toString` by defining it as an integer, if the codebase at any point was reliant on `someobject.toString()` it would fail. |\n |**Remote Code Execution**|Client|Remote code execution is generally only possible in cases where the codebase evaluates a specific attribute of an object, and then executes that evaluation.<br>**For example:** `eval(someobject.someattr)`. In this case, if the attacker pollutes `Object.prototype.someattr` they are likely to be able to leverage this in order to execute code.|\n|**Property Injection**|Client|The attacker pollutes properties that the codebase relies on for their informative value, including security properties such as cookies or tokens.<br>  **For example:** if a codebase checks privileges for `someuser.isAdmin`, then when the attacker pollutes `Object.prototype.isAdmin` and sets it to equal `true`, they can then achieve admin privileges.|\n\n## Affected environments\n\nThe following environments are susceptible to a Prototype Pollution attack:\n\n-   Application server\n    \n-   Web server\n\n-   Web browser\n    \n\n## How to prevent\n\n1.  Freeze the prototype— use `Object.freeze (Object.prototype)`.\n    \n2.  Require schema validation of JSON input.\n    \n3.  Avoid using unsafe recursive merge functions.\n    \n4.  Consider using objects without prototypes (for example, `Object.create(null)`), breaking the prototype chain and preventing pollution.\n    \n5.  As a best practice use `Map` instead of `Object`.\n\n### For more information on this vulnerability type:\n\n[Arteau, Oliver. “JavaScript prototype pollution attack in NodeJS application.” GitHub, 26 May 2018](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)\n\n## Remediation\nUpgrade `lodash` to version 4.17.17 or higher.\n## References\n- [HackerOne Report](https://hackerone.com/reports/864701)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-1321"
+        ]
+      },
+      "packageName": "lodash",
+      "proprietary": false,
+      "creationTime": "2020-08-21T12:52:58.443440Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2020-08-21T10:34:29Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-08-21T12:53:03Z",
+      "modificationTime": "2022-08-25T12:14:41.622393Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "xml@DotJoshJohnson/vscode-xml#95702e6355fb35d77d2fea7da5af3f505df398a0",
+        "xqlint@0.4.1",
+        "lodash@3.10.1"
+      ],
+      "upgradePath": [
+        false,
+        "xqlint@0.5.2",
+        "lodash@4.17.21"
+      ],
+      "version": "3.10.1",
+      "name": "lodash",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-LODASH-73638",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L/E:P",
+      "credit": [
+        "asgerf"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.17.11"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.17.11"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.3,
+      "functions": [
+        {
+          "version": [
+            ">=4.17.5 <4.17.11"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "className": null,
+            "functionName": "safeGet"
+          }
+        },
+        {
+          "version": [
+            ">=4.0.0 <4.17.5"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "className": null,
+            "functionName": "runInContext.baseMerge"
+          }
+        },
+        {
+          "version": [
+            ">=4.0.0 <4.17.5"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "className": null,
+            "functionName": "runInContext.baseMergeDeep"
+          }
+        },
+        {
+          "version": [
+            ">=4.0.0 <4.17.5"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "className": null,
+            "functionName": "runInContext.assignMergeValue"
+          }
+        },
+        {
+          "version": [
+            ">=3.0.0 <4.0.0"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "className": null,
+            "functionName": "runInContext.baseMerge"
+          }
+        },
+        {
+          "version": [
+            ">=3.0.0 <4.0.0"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "className": null,
+            "functionName": "runInContext.baseMergeDeep"
+          }
+        },
+        {
+          "version": [
+            ">=4.0.0 <4.17.3"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "className": null,
+            "functionName": "runInContext.mergeDefaults"
+          }
+        },
+        {
+          "version": [
+            ">=2.0.0 <3.0.0"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "className": null,
+            "functionName": "runInContext.merge"
+          }
+        },
+        {
+          "version": [
+            ">=0.9.0 <1.0.0"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "className": null,
+            "functionName": "merge"
+          }
+        },
+        {
+          "version": [
+            ">=1.0.0 <1.0.3"
+          ],
+          "functionId": {
+            "filePath": "dist/lodash.js",
+            "className": null,
+            "functionName": "merge"
+          }
+        },
+        {
+          "version": [
+            ">=1.1.0 <2.0.0"
+          ],
+          "functionId": {
+            "filePath": "dist/lodash.js",
+            "className": null,
+            "functionName": "runInContext.merge"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "lodash",
+      "references": [
+        {
+          "url": "https://github.com/lodash/lodash/commit/90e6199a161b6445b01454517b40ef65ebecd2ad",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/pull/4337",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/1066",
+          "title": "NPM Security Advisory"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/1068",
+          "title": "NPM Security Advisory"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/1071",
+          "title": "NPM Security Advisory"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/782",
+          "title": "NPM Security Advisory"
+        },
+        {
+          "url": "https://hackerone.com/reports/380873",
+          "title": "POC: HackerOne Report"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L",
+          "cvssV3BaseScore": 5.6,
+          "modificationTime": "2022-01-03T16:22:51.625949Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L",
+          "cvssV3BaseScore": 5.6,
+          "modificationTime": "2023-03-26T14:59:45.926074Z"
+        }
+      ],
+      "description": "## Overview\n[lodash](https://www.npmjs.com/package/lodash) is a modern JavaScript utility library delivering modularity, performance, & extras.\n\nAffected versions of this package are vulnerable to Prototype Pollution. The functions `merge`, `mergeWith`, and `defaultsDeep` could be tricked into adding or modifying properties of `Object.prototype`. This is due to an incomplete fix to `CVE-2018-3721`.\n\n## Details\n\nPrototype Pollution is a vulnerability affecting JavaScript. Prototype Pollution refers to the ability to inject properties into existing JavaScript language construct prototypes, such as objects. JavaScript allows all Object attributes to be altered, including their magical attributes such as `__proto__`, `constructor` and `prototype`. An attacker manipulates these attributes to overwrite, or pollute, a JavaScript application object prototype of the base object by injecting other values.  Properties on the `Object.prototype` are then inherited by all the JavaScript objects through the prototype chain. When that happens, this leads to either denial of service by triggering JavaScript exceptions, or it tampers with the application source code to force the code path that the attacker injects, thereby leading to remote code execution.\n\nThere are two main ways in which the pollution of prototypes occurs:\n\n-   Unsafe `Object` recursive merge\n    \n-   Property definition by path\n    \n\n### Unsafe Object recursive merge\n\nThe logic of a vulnerable recursive merge function follows the following high-level model:\n```\nmerge (target, source)\n\n  foreach property of source\n\n    if property exists and is an object on both the target and the source\n\n      merge(target[property], source[property])\n\n    else\n\n      target[property] = source[property]\n```\n<br>  \n\nWhen the source object contains a property named `__proto__` defined with `Object.defineProperty()` , the condition that checks if the property exists and is an object on both the target and the source passes and the merge recurses with the target, being the prototype of `Object` and the source of `Object` as defined by the attacker. Properties are then copied on the `Object` prototype.\n\nClone operations are a special sub-class of unsafe recursive merges, which occur when a recursive merge is conducted on an empty object: `merge({},source)`.\n\n`lodash` and `Hoek` are examples of libraries susceptible to recursive merge attacks.\n\n### Property definition by path\n\nThere are a few JavaScript libraries that use an API to define property values on an object based on a given path. The function that is generally affected contains this signature: `theFunction(object, path, value)`\n\nIf the attacker can control the value of “path”, they can set this value to `__proto__.myValue`. `myValue` is then assigned to the prototype of the class of the object.\n\n## Types of attacks\n\nThere are a few methods by which Prototype Pollution can be manipulated:\n\n| Type |Origin  |Short description |\n|--|--|--|\n| **Denial of service (DoS)**|Client  |This is the most likely attack. <br>DoS occurs when `Object` holds generic functions that are implicitly called for various operations (for example, `toString` and `valueOf`). <br> The attacker pollutes `Object.prototype.someattr` and alters its state to an unexpected value such as `Int` or `Object`. In this case, the code fails and is likely to cause a denial of service.  <br>**For example:** if an attacker pollutes `Object.prototype.toString` by defining it as an integer, if the codebase at any point was reliant on `someobject.toString()` it would fail. |\n |**Remote Code Execution**|Client|Remote code execution is generally only possible in cases where the codebase evaluates a specific attribute of an object, and then executes that evaluation.<br>**For example:** `eval(someobject.someattr)`. In this case, if the attacker pollutes `Object.prototype.someattr` they are likely to be able to leverage this in order to execute code.|\n|**Property Injection**|Client|The attacker pollutes properties that the codebase relies on for their informative value, including security properties such as cookies or tokens.<br>  **For example:** if a codebase checks privileges for `someuser.isAdmin`, then when the attacker pollutes `Object.prototype.isAdmin` and sets it to equal `true`, they can then achieve admin privileges.|\n\n## Affected environments\n\nThe following environments are susceptible to a Prototype Pollution attack:\n\n-   Application server\n    \n-   Web server\n\n-   Web browser\n    \n\n## How to prevent\n\n1.  Freeze the prototype— use `Object.freeze (Object.prototype)`.\n    \n2.  Require schema validation of JSON input.\n    \n3.  Avoid using unsafe recursive merge functions.\n    \n4.  Consider using objects without prototypes (for example, `Object.create(null)`), breaking the prototype chain and preventing pollution.\n    \n5.  As a best practice use `Map` instead of `Object`.\n\n### For more information on this vulnerability type:\n\n[Arteau, Oliver. “JavaScript prototype pollution attack in NodeJS application.” GitHub, 26 May 2018](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)\n\n## Remediation\nUpgrade `lodash` to version 4.17.11 or higher.\n## References\n- [GitHub Commit](https://github.com/lodash/lodash/commit/90e6199a161b6445b01454517b40ef65ebecd2ad)\n- [GitHub PR](https://github.com/lodash/lodash/pull/4337)\n- [NPM Security Advisory](https://www.npmjs.com/advisories/1066)\n- [NPM Security Advisory](https://www.npmjs.com/advisories/1068)\n- [NPM Security Advisory](https://www.npmjs.com/advisories/1071)\n- [NPM Security Advisory](https://www.npmjs.com/advisories/782)\n- [POC: HackerOne Report](https://hackerone.com/reports/380873)\n",
+      "epssDetails": {
+        "percentile": "0.44507",
+        "probability": "0.00117",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2018-16487"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ],
+        "NSP": [
+          "782",
+          "1066",
+          "1068",
+          "1071"
+        ],
+        "GHSA": [
+          "GHSA-4xc9-xhrj-v574"
+        ]
+      },
+      "packageName": "lodash",
+      "proprietary": true,
+      "creationTime": "2019-02-03T09:06:37.726000Z",
+      "functions_new": [
+        {
+          "version": [
+            ">=4.17.5 <4.17.11"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "functionName": "safeGet"
+          }
+        },
+        {
+          "version": [
+            ">=4.0.0 <4.17.5"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "functionName": "runInContext.baseMerge"
+          }
+        },
+        {
+          "version": [
+            ">=4.0.0 <4.17.5"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "functionName": "runInContext.baseMergeDeep"
+          }
+        },
+        {
+          "version": [
+            ">=4.0.0 <4.17.5"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "functionName": "runInContext.assignMergeValue"
+          }
+        },
+        {
+          "version": [
+            ">=3.0.0 <4.0.0"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "functionName": "runInContext.baseMerge"
+          }
+        },
+        {
+          "version": [
+            ">=3.0.0 <4.0.0"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "functionName": "runInContext.baseMergeDeep"
+          }
+        },
+        {
+          "version": [
+            ">=4.0.0 <4.17.3"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "functionName": "runInContext.mergeDefaults"
+          }
+        },
+        {
+          "version": [
+            ">=2.0.0 <3.0.0"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "functionName": "runInContext.merge"
+          }
+        },
+        {
+          "version": [
+            ">=0.9.0 <1.0.0"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "functionName": "merge"
+          }
+        },
+        {
+          "version": [
+            ">=1.0.0 <1.0.3"
+          ],
+          "functionId": {
+            "filePath": "dist/lodash.js",
+            "functionName": "merge"
+          }
+        },
+        {
+          "version": [
+            ">=1.1.0 <2.0.0"
+          ],
+          "functionId": {
+            "filePath": "dist/lodash.js",
+            "functionName": "runInContext.merge"
+          }
+        }
+      ],
+      "alternativeIds": [],
+      "disclosureTime": "2018-08-31T18:21:00Z",
+      "packageManager": "npm",
+      "publicationTime": "2019-02-01T18:21:00Z",
+      "modificationTime": "2023-03-26T14:59:45.926074Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "xml@DotJoshJohnson/vscode-xml#95702e6355fb35d77d2fea7da5af3f505df398a0",
+        "xqlint@0.4.1",
+        "lodash@3.10.1"
+      ],
+      "upgradePath": [
+        false,
+        "xqlint@0.5.1",
+        "lodash@4.17.13"
+      ],
+      "version": "3.10.1",
+      "name": "lodash",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-LODASH-73639",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:U/C:N/I:N/A:H/E:P",
+      "credit": [
+        "cristianstaicu"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.17.11"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.17.11"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 4.4,
+      "functions": [
+        {
+          "version": [
+            ">=4.15.0 <4.17.11"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "className": null,
+            "functionName": "hasUnicodeWord"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "lodash",
+      "references": [
+        {
+          "url": "https://github.com/lodash/lodash/commit/5c08f18d365b64063bfbfa686cbb97cdd6267347",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/pull/4450",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/issues/3359",
+          "title": "POC: GitHub Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 6.5,
+          "modificationTime": "2022-01-03T17:53:28.079217Z"
+        }
+      ],
+      "description": "## Overview\n[lodash](https://www.npmjs.com/package/lodash) is a modern JavaScript utility library delivering modularity, performance, & extras.\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS). It parses dates using regex strings, which may cause a slowdown of 2 seconds per 50k characters.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `lodash` to version 4.17.11 or higher.\n## References\n- [GitHub Commit](https://github.com/lodash/lodash/commit/5c08f18d365b64063bfbfa686cbb97cdd6267347)\n- [GitHub PR](https://github.com/lodash/lodash/pull/4450)\n- [POC: GitHub Issue](https://github.com/lodash/lodash/issues/3359)\n",
+      "epssDetails": {
+        "percentile": "0.66198",
+        "probability": "0.00317",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2019-1010266"
+        ],
+        "CWE": [
+          "CWE-185"
+        ]
+      },
+      "packageName": "lodash",
+      "proprietary": false,
+      "creationTime": "2019-02-03T09:18:05.060741Z",
+      "functions_new": [
+        {
+          "version": [
+            ">=4.15.0 <4.17.11"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "functionName": "hasUnicodeWord"
+          }
+        }
+      ],
+      "alternativeIds": [],
+      "disclosureTime": "2017-09-05T09:14:29Z",
+      "packageManager": "npm",
+      "publicationTime": "2019-04-05T09:14:22Z",
+      "modificationTime": "2022-04-05T12:27:32.267901Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "xml@DotJoshJohnson/vscode-xml#95702e6355fb35d77d2fea7da5af3f505df398a0",
+        "xqlint@0.4.1",
+        "lodash@3.10.1"
+      ],
+      "upgradePath": [
+        false,
+        "xqlint@0.5.1",
+        "lodash@4.17.13"
+      ],
+      "version": "3.10.1",
+      "name": "lodash",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-XMLDOM-1084960",
+      "title": "XML External Entity (XXE) Injection",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<0.5.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "0.5.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.4,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "xmldom",
+      "references": [
+        {
+          "url": "https://github.com/xmldom/xmldom/commit/d4201b9dfbf760049f457f9f08a3888d48835135",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2210851",
+          "title": "RedHat Bugzilla Bug"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 4.3,
+          "modificationTime": "2022-01-03T16:35:17.615961Z"
+        }
+      ],
+      "description": "## Overview\n[xmldom](https://www.npmjs.org/package/xmldom) is an A pure JavaScript W3C standard-based (XML DOM Level 2 Core) DOMParser and XMLSerializer module.\n\nAffected versions of this package are vulnerable to XML External Entity (XXE) Injection. Does not correctly preserve system identifiers, FPIs or namespaces when repeatedly parsing and serializing maliciously crafted documents.\n\n## Details\nXXE Injection is a type of attack against an application that parses XML input.\nXML is a markup language that defines a set of rules for encoding documents in a format that is both human-readable and machine-readable. By default, many XML processors allow specification of an external entity, a URI that is dereferenced and evaluated during XML processing. When an XML document is being parsed, the parser can make a request and include the content at the specified URI inside of the XML document.\n\nAttacks can include disclosing local files, which may contain sensitive data such as passwords or private user data, using file: schemes or relative paths in the system identifier.\n\nFor example, below is a sample XML document, containing an XML element- username.\n\n```\n<xml>\n<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n   <username>John</username>\n</xml>\n```\n\nAn external XML entity - `xxe`, is defined using a system identifier and present within a DOCTYPE header. These entities can access local or remote content. For example the below code contains an external XML entity that would fetch the content of  `/etc/passwd` and display it to the user rendered by `username`.\n\n```\n<xml>\n<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<!DOCTYPE foo [\n   <!ENTITY xxe SYSTEM \"file:///etc/passwd\" >]>\n   <username>&xxe;</username>\n</xml>\n```\n\nOther XXE Injection attacks can access local resources that may not stop returning data, possibly impacting application availability and leading to Denial of Service.\n\n## Remediation\nUpgrade `xmldom` to version 0.5.0 or higher.\n## References\n- [GitHub Commit](https://github.com/xmldom/xmldom/commit/d4201b9dfbf760049f457f9f08a3888d48835135)\n- [RedHat Bugzilla Bug](https://bugzilla.redhat.com/show_bug.cgi?id=2210851)\n",
+      "epssDetails": {
+        "percentile": "0.51023",
+        "probability": "0.00156",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-21366"
+        ],
+        "CWE": [
+          "CWE-611"
+        ],
+        "GHSA": [
+          "GHSA-h6q6-9hqw-rwfv"
+        ]
+      },
+      "packageName": "xmldom",
+      "proprietary": true,
+      "creationTime": "2021-03-10T15:59:11.081028Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-03-10T15:34:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-03-10T16:31:47Z",
+      "modificationTime": "2023-07-03T07:38:35.619385Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "xml@DotJoshJohnson/vscode-xml#95702e6355fb35d77d2fea7da5af3f505df398a0",
+        "xmldom@0.1.31"
+      ],
+      "upgradePath": [
+        false,
+        "xmldom@0.5.0"
+      ],
+      "version": "0.1.31",
+      "name": "xmldom",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-XMLDOM-1534562",
+      "title": "Improper Input Validation",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "xmldom",
+      "references": [
+        {
+          "url": "https://github.com/xmldom/xmldom/commit/7b4b743917a892d407356e055b296dcd6d107e8b",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/xmldom/xmldom/issues/271",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-04-26T01:10:30.392784Z"
+        }
+      ],
+      "description": "## Overview\n[xmldom](https://www.npmjs.org/package/xmldom) is an A pure JavaScript W3C standard-based (XML DOM Level 2 Core) DOMParser and XMLSerializer module.\n\nAffected versions of this package are vulnerable to Improper Input Validation. It does not correctly escape special characters when serializing elements are removed from their ancestor. This may lead to unexpected syntactic changes during XML processing in some downstream applications.\r\n\r\n**Note:**\r\nCustomers who use \"xmldom\" package, should use \"@xmldom/xmldom\" instead, as \"xmldom\" is no longer maintained.\n## Remediation\nThere is no fixed version for `xmldom`.\n## References\n- [GitHub Commit](https://github.com/xmldom/xmldom/commit/7b4b743917a892d407356e055b296dcd6d107e8b)\n- [GitHub Issue](https://github.com/xmldom/xmldom/issues/271)\n",
+      "epssDetails": {
+        "percentile": "0.28039",
+        "probability": "0.00068",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-32796"
+        ],
+        "CWE": [
+          "CWE-116"
+        ],
+        "GHSA": [
+          "GHSA-5fg8-2547-mr8q"
+        ]
+      },
+      "packageName": "xmldom",
+      "proprietary": false,
+      "creationTime": "2021-07-28T06:33:12.846430Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-07-28T06:31:31Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-28T15:12:14Z",
+      "modificationTime": "2022-05-11T12:48:26.463897Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "xml@DotJoshJohnson/vscode-xml#95702e6355fb35d77d2fea7da5af3f505df398a0",
+        "xmldom@0.1.31"
+      ],
+      "upgradePath": [],
+      "version": "0.1.31",
+      "name": "xmldom",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-XMLDOM-3042242",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:C/C:L/I:H/A:L",
+      "credit": [
+        "@Supraja9726"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">=0.0.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 8.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "xmldom",
+      "references": [
+        {
+          "url": "https://github.com/xmldom/xmldom/commit/b5c1be1a42810f7c7c3becdbaa1a93f69372645d",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/xmldom/xmldom/issues/436",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/xmldom/xmldom/releases/tag/0.8.3",
+          "title": "GitHub Release"
+        },
+        {
+          "url": "https://github.com/xmldom/xmldom/blob/bc36efddf9948aba15618f85dc1addfc2ac9d7b2/lib/dom.js%23L1",
+          "title": "Vulnerable Code"
+        },
+        {
+          "url": "https://github.com/xmldom/xmldom/blob/bc36efddf9948aba15618f85dc1addfc2ac9d7b2/lib/dom.js%23L3",
+          "title": "Vulnerable Code"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-11-09T01:11:13.683103Z"
+        }
+      ],
+      "description": "## Overview\n[xmldom](https://www.npmjs.org/package/xmldom) is an A pure JavaScript W3C standard-based (XML DOM Level 2 Core) DOMParser and XMLSerializer module.\n\nAffected versions of this package are vulnerable to Prototype Pollution through the `copy()` function in `dom.js`. Exploiting this vulnerability is possible via the `p` variable.\r\n\r\n*DISPUTED*\r\nThis vulnerability has been [disputed by the maintainers of the package](https://github.com/xmldom/xmldom/issues/436#issuecomment-1321093759). \r\nCurrently the only viable exploit that has been demonstrated is to pollute the target object (rather then the global object which is generally the case for Prototype Pollution vulnerabilities) and it is yet unclear if this limited attack vector exposes any vulnerability in the context of this package. \r\n\r\nSee the linked [GitHub Issue](https://github.com/xmldom/xmldom/issues/436) for full details on the discussion around the legitimacy and potential revocation of this vulnerability.\n\n## Details\n\nPrototype Pollution is a vulnerability affecting JavaScript. Prototype Pollution refers to the ability to inject properties into existing JavaScript language construct prototypes, such as objects. JavaScript allows all Object attributes to be altered, including their magical attributes such as `__proto__`, `constructor` and `prototype`. An attacker manipulates these attributes to overwrite, or pollute, a JavaScript application object prototype of the base object by injecting other values.  Properties on the `Object.prototype` are then inherited by all the JavaScript objects through the prototype chain. When that happens, this leads to either denial of service by triggering JavaScript exceptions, or it tampers with the application source code to force the code path that the attacker injects, thereby leading to remote code execution.\n\nThere are two main ways in which the pollution of prototypes occurs:\n\n-   Unsafe `Object` recursive merge\n    \n-   Property definition by path\n    \n\n### Unsafe Object recursive merge\n\nThe logic of a vulnerable recursive merge function follows the following high-level model:\n```\nmerge (target, source)\n\n  foreach property of source\n\n    if property exists and is an object on both the target and the source\n\n      merge(target[property], source[property])\n\n    else\n\n      target[property] = source[property]\n```\n<br>  \n\nWhen the source object contains a property named `__proto__` defined with `Object.defineProperty()` , the condition that checks if the property exists and is an object on both the target and the source passes and the merge recurses with the target, being the prototype of `Object` and the source of `Object` as defined by the attacker. Properties are then copied on the `Object` prototype.\n\nClone operations are a special sub-class of unsafe recursive merges, which occur when a recursive merge is conducted on an empty object: `merge({},source)`.\n\n`lodash` and `Hoek` are examples of libraries susceptible to recursive merge attacks.\n\n### Property definition by path\n\nThere are a few JavaScript libraries that use an API to define property values on an object based on a given path. The function that is generally affected contains this signature: `theFunction(object, path, value)`\n\nIf the attacker can control the value of “path”, they can set this value to `__proto__.myValue`. `myValue` is then assigned to the prototype of the class of the object.\n\n## Types of attacks\n\nThere are a few methods by which Prototype Pollution can be manipulated:\n\n| Type |Origin  |Short description |\n|--|--|--|\n| **Denial of service (DoS)**|Client  |This is the most likely attack. <br>DoS occurs when `Object` holds generic functions that are implicitly called for various operations (for example, `toString` and `valueOf`). <br> The attacker pollutes `Object.prototype.someattr` and alters its state to an unexpected value such as `Int` or `Object`. In this case, the code fails and is likely to cause a denial of service.  <br>**For example:** if an attacker pollutes `Object.prototype.toString` by defining it as an integer, if the codebase at any point was reliant on `someobject.toString()` it would fail. |\n |**Remote Code Execution**|Client|Remote code execution is generally only possible in cases where the codebase evaluates a specific attribute of an object, and then executes that evaluation.<br>**For example:** `eval(someobject.someattr)`. In this case, if the attacker pollutes `Object.prototype.someattr` they are likely to be able to leverage this in order to execute code.|\n|**Property Injection**|Client|The attacker pollutes properties that the codebase relies on for their informative value, including security properties such as cookies or tokens.<br>  **For example:** if a codebase checks privileges for `someuser.isAdmin`, then when the attacker pollutes `Object.prototype.isAdmin` and sets it to equal `true`, they can then achieve admin privileges.|\n\n## Affected environments\n\nThe following environments are susceptible to a Prototype Pollution attack:\n\n-   Application server\n    \n-   Web server\n\n-   Web browser\n    \n\n## How to prevent\n\n1.  Freeze the prototype— use `Object.freeze (Object.prototype)`.\n    \n2.  Require schema validation of JSON input.\n    \n3.  Avoid using unsafe recursive merge functions.\n    \n4.  Consider using objects without prototypes (for example, `Object.create(null)`), breaking the prototype chain and preventing pollution.\n    \n5.  As a best practice use `Map` instead of `Object`.\n\n### For more information on this vulnerability type:\n\n[Arteau, Oliver. “JavaScript prototype pollution attack in NodeJS application.” GitHub, 26 May 2018](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)\n\n## Remediation\nThere is no fixed version for `xmldom`.\n## References\n- [GitHub Commit](https://github.com/xmldom/xmldom/commit/b5c1be1a42810f7c7c3becdbaa1a93f69372645d)\n- [GitHub Issue](https://github.com/xmldom/xmldom/issues/436)\n- [GitHub Release](https://github.com/xmldom/xmldom/releases/tag/0.8.3)\n- [Vulnerable Code](https://github.com/xmldom/xmldom/blob/bc36efddf9948aba15618f85dc1addfc2ac9d7b2/lib/dom.js#L1)\n- [Vulnerable Code](https://github.com/xmldom/xmldom/blob/bc36efddf9948aba15618f85dc1addfc2ac9d7b2/lib/dom.js#L3)\n",
+      "epssDetails": {
+        "percentile": "0.44366",
+        "probability": "0.00116",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-37616"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ],
+        "GHSA": [
+          "GHSA-9pgh-qqpf-7wqj"
+        ]
+      },
+      "packageName": "xmldom",
+      "proprietary": false,
+      "creationTime": "2022-10-11T06:43:58.053658Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-10-11T06:34:47Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-10-11T11:36:43Z",
+      "modificationTime": "2022-12-26T16:04:03.177916Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "xml@DotJoshJohnson/vscode-xml#95702e6355fb35d77d2fea7da5af3f505df398a0",
+        "xmldom@0.1.31"
+      ],
+      "upgradePath": [],
+      "version": "0.1.31",
+      "name": "xmldom",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-XMLDOM-3092935",
+      "title": "Improper Input Validation",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P",
+      "credit": [
+        "frumioj",
+        "karfau"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "critical",
+      "cvssScore": 9.8,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "xmldom",
+      "references": [
+        {
+          "url": "https://github.com/xmldom/xmldom/commit/c02f786216bed70825f9a351c65e61500f51e931",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/jindw/xmldom/issues/150",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/xmldom/xmldom/releases/tag/0.7.7",
+          "title": "GitHub Release"
+        },
+        {
+          "url": "https://github.com/xmldom/xmldom/releases/tag/0.8.4",
+          "title": "GitHub Release"
+        },
+        {
+          "url": "https://github.com/xmldom/xmldom/releases/tag/0.9.0-beta.4",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-11-05T01:10:37.555445Z"
+        }
+      ],
+      "description": "## Overview\n[xmldom](https://www.npmjs.org/package/xmldom) is an A pure JavaScript W3C standard-based (XML DOM Level 2 Core) DOMParser and XMLSerializer module.\n\nAffected versions of this package are vulnerable to Improper Input Validation due to parsing XML that is not well-formed, and contains multiple top-level elements. All the root nodes are being added to the `childNodes` collection of the `Document`, without reporting or throwing any error.\r\n\r\n## Workarounds\r\nOne of the following approaches might help, depending on your use case:\r\n\r\n1) Instead of searching for elements in the whole DOM, only search in the `documentElement`.\r\n\r\n2) Reject a document with a document that has more than 1 `childNode`.\n## PoC\n```\r\nvar DOMParser = require('xmldom').DOMParser;\r\nvar xmlData = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\\n' +\r\n'<root>\\n' +\r\n'  <branch girth=\"large\">\\n' +\r\n'    <leaf color=\"green\" />\\n' +\r\n'  </branch>\\n' +\r\n'</root>\\n' +\r\n'<root>\\n' +\r\n'  <branch girth=\"twig\">\\n' +\r\n'    <leaf color=\"gold\" />\\n' +\r\n'  </branch>\\n' +\r\n'</root>\\n';\r\nvar xmlDOM = new DOMParser().parseFromString(xmlData);\r\nconsole.log(xmlDOM.toString());\r\n```\r\n\r\nThis will result with the following output:\r\n```\r\n<?xml version=\"1.0\" encoding=\"UTF-8\"?><root>\r\n  <branch girth=\"large\">\r\n    <leaf color=\"green\"/>\r\n  </branch>\r\n</root>\r\n<root>\r\n  <branch girth=\"twig\">\r\n    <leaf color=\"gold\"/>\r\n  </branch>\r\n</root>\r\n```\n## Remediation\nThere is no fixed version for `xmldom`.\n## References\n- [GitHub Commit](https://github.com/xmldom/xmldom/commit/c02f786216bed70825f9a351c65e61500f51e931)\n- [GitHub Issue](https://github.com/jindw/xmldom/issues/150)\n- [GitHub Release](https://github.com/xmldom/xmldom/releases/tag/0.7.7)\n- [GitHub Release](https://github.com/xmldom/xmldom/releases/tag/0.8.4)\n- [GitHub Release](https://github.com/xmldom/xmldom/releases/tag/0.9.0-beta.4)\n",
+      "epssDetails": {
+        "percentile": "0.23496",
+        "probability": "0.00060",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-39353"
+        ],
+        "CWE": [
+          "CWE-20"
+        ],
+        "GHSA": [
+          "GHSA-crh6-fp67-6883"
+        ]
+      },
+      "packageName": "xmldom",
+      "proprietary": false,
+      "creationTime": "2022-11-02T08:56:15.224765Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-11-01T17:29:11Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-11-02T12:25:35.940676Z",
+      "modificationTime": "2023-03-28T14:18:52.833156Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "critical",
+      "packagePopularityRank": 99,
+      "from": [
+        "xml@DotJoshJohnson/vscode-xml#95702e6355fb35d77d2fea7da5af3f505df398a0",
+        "xmldom@0.1.31"
+      ],
+      "upgradePath": [],
+      "version": "0.1.31",
+      "name": "xmldom",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:lodash:20180130",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L/E:P",
+      "credit": [
+        "Olivier Arteau (HoLyVieR)"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.17.5"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.17.5"
+      ],
+      "patches": [
+        {
+          "id": "patch:npm:lodash:20180130:0",
+          "urls": [
+            "https://snyk-patches.s3.amazonaws.com/npm/lodash/20180130/20180130_0_0_lodash_d8e069cc3410082e44eb18fcf8e7f3d08ebe1d4a.patch"
+          ],
+          "version": "=3.10.1",
+          "comments": [],
+          "modificationTime": "2019-12-03T11:40:45.883000Z"
+        }
+      ],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.3,
+      "functions": [
+        {
+          "version": [
+            ">=4.0.0 <4.17.5"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "className": null,
+            "functionName": "runInContext.baseMerge"
+          }
+        },
+        {
+          "version": [
+            ">=4.0.0 <4.17.5"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "className": null,
+            "functionName": "runInContext.baseMergeDeep"
+          }
+        },
+        {
+          "version": [
+            ">=3.0.0 <4.0.0"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "className": null,
+            "functionName": "runInContext.baseMergeDeep"
+          }
+        },
+        {
+          "version": [
+            ">=2.0.0 <3.0.0"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "className": null,
+            "functionName": "runInContext.merge"
+          }
+        },
+        {
+          "version": [
+            ">=1.1.0 <2.0.0"
+          ],
+          "functionId": {
+            "filePath": "dist/lodash.js",
+            "className": null,
+            "functionName": "runInContext.merge"
+          }
+        },
+        {
+          "version": [
+            ">=0.9.0 <1.0.0"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "className": null,
+            "functionName": "merge"
+          }
+        },
+        {
+          "version": [
+            ">= 1.0.0 <1.0.3"
+          ],
+          "functionId": {
+            "filePath": "dist/lodash.js",
+            "className": null,
+            "functionName": "merge"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "lodash",
+      "references": [
+        {
+          "url": "https://github.com/lodash/lodash/commit/d8e069cc3410082e44eb18fcf8e7f3d08ebe1d4a",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/lodash/lodash/pull/4337",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://hackerone.com/reports/310443",
+          "title": "HackerOne Report"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/1067",
+          "title": "NPM Security Advisory"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/1069",
+          "title": "NPM Security Advisory"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/1070",
+          "title": "NPM Security Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "low",
+          "cvssV3Vector": "CVSS:3.0/AV:L/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 2.9,
+          "modificationTime": "2023-03-26T15:06:44.395574Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:N",
+          "cvssV3BaseScore": 6.5,
+          "modificationTime": "2022-01-03T16:27:45.509249Z"
+        }
+      ],
+      "description": "## Overview\n[lodash](https://www.npmjs.com/package/lodash) is a modern JavaScript utility library delivering modularity, performance, & extras.\n\nAffected versions of this package are vulnerable to Prototype Pollution. The utilities function allow modification of the `Object` prototype. If an attacker can control part of the structure passed to this function, they could add or modify an existing property.  \r\n\r\n## PoC by Olivier Arteau (HoLyVieR)\r\n```js\r\nvar _= require('lodash');\r\nvar malicious_payload = '{\"__proto__\":{\"oops\":\"It works !\"}}';\r\n\r\nvar a = {};\r\nconsole.log(\"Before : \" + a.oops);\r\n_.merge({}, JSON.parse(malicious_payload));\r\nconsole.log(\"After : \" + a.oops);\r\n```\n\n## Details\n\nPrototype Pollution is a vulnerability affecting JavaScript. Prototype Pollution refers to the ability to inject properties into existing JavaScript language construct prototypes, such as objects. JavaScript allows all Object attributes to be altered, including their magical attributes such as `__proto__`, `constructor` and `prototype`. An attacker manipulates these attributes to overwrite, or pollute, a JavaScript application object prototype of the base object by injecting other values.  Properties on the `Object.prototype` are then inherited by all the JavaScript objects through the prototype chain. When that happens, this leads to either denial of service by triggering JavaScript exceptions, or it tampers with the application source code to force the code path that the attacker injects, thereby leading to remote code execution.\n\nThere are two main ways in which the pollution of prototypes occurs:\n\n-   Unsafe `Object` recursive merge\n    \n-   Property definition by path\n    \n\n### Unsafe Object recursive merge\n\nThe logic of a vulnerable recursive merge function follows the following high-level model:\n```\nmerge (target, source)\n\n  foreach property of source\n\n    if property exists and is an object on both the target and the source\n\n      merge(target[property], source[property])\n\n    else\n\n      target[property] = source[property]\n```\n<br>  \n\nWhen the source object contains a property named `__proto__` defined with `Object.defineProperty()` , the condition that checks if the property exists and is an object on both the target and the source passes and the merge recurses with the target, being the prototype of `Object` and the source of `Object` as defined by the attacker. Properties are then copied on the `Object` prototype.\n\nClone operations are a special sub-class of unsafe recursive merges, which occur when a recursive merge is conducted on an empty object: `merge({},source)`.\n\n`lodash` and `Hoek` are examples of libraries susceptible to recursive merge attacks.\n\n### Property definition by path\n\nThere are a few JavaScript libraries that use an API to define property values on an object based on a given path. The function that is generally affected contains this signature: `theFunction(object, path, value)`\n\nIf the attacker can control the value of “path”, they can set this value to `__proto__.myValue`. `myValue` is then assigned to the prototype of the class of the object.\n\n## Types of attacks\n\nThere are a few methods by which Prototype Pollution can be manipulated:\n\n| Type |Origin  |Short description |\n|--|--|--|\n| **Denial of service (DoS)**|Client  |This is the most likely attack. <br>DoS occurs when `Object` holds generic functions that are implicitly called for various operations (for example, `toString` and `valueOf`). <br> The attacker pollutes `Object.prototype.someattr` and alters its state to an unexpected value such as `Int` or `Object`. In this case, the code fails and is likely to cause a denial of service.  <br>**For example:** if an attacker pollutes `Object.prototype.toString` by defining it as an integer, if the codebase at any point was reliant on `someobject.toString()` it would fail. |\n |**Remote Code Execution**|Client|Remote code execution is generally only possible in cases where the codebase evaluates a specific attribute of an object, and then executes that evaluation.<br>**For example:** `eval(someobject.someattr)`. In this case, if the attacker pollutes `Object.prototype.someattr` they are likely to be able to leverage this in order to execute code.|\n|**Property Injection**|Client|The attacker pollutes properties that the codebase relies on for their informative value, including security properties such as cookies or tokens.<br>  **For example:** if a codebase checks privileges for `someuser.isAdmin`, then when the attacker pollutes `Object.prototype.isAdmin` and sets it to equal `true`, they can then achieve admin privileges.|\n\n## Affected environments\n\nThe following environments are susceptible to a Prototype Pollution attack:\n\n-   Application server\n    \n-   Web server\n\n-   Web browser\n    \n\n## How to prevent\n\n1.  Freeze the prototype— use `Object.freeze (Object.prototype)`.\n    \n2.  Require schema validation of JSON input.\n    \n3.  Avoid using unsafe recursive merge functions.\n    \n4.  Consider using objects without prototypes (for example, `Object.create(null)`), breaking the prototype chain and preventing pollution.\n    \n5.  As a best practice use `Map` instead of `Object`.\n\n### For more information on this vulnerability type:\n\n[Arteau, Oliver. “JavaScript prototype pollution attack in NodeJS application.” GitHub, 26 May 2018](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)\n\n## Remediation\nUpgrade `lodash` to version 4.17.5 or higher.\n## References\n- [GitHub Commit](https://github.com/lodash/lodash/commit/d8e069cc3410082e44eb18fcf8e7f3d08ebe1d4a)\n- [GitHub PR](https://github.com/lodash/lodash/pull/4337)\n- [HackerOne Report](https://hackerone.com/reports/310443)\n- [NPM Security Advisory](https://www.npmjs.com/advisories/1067)\n- [NPM Security Advisory](https://www.npmjs.com/advisories/1069)\n- [NPM Security Advisory](https://www.npmjs.com/advisories/1070)\n",
+      "epssDetails": {
+        "percentile": "0.39449",
+        "probability": "0.00097",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2018-3721"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ],
+        "NSP": [
+          "577",
+          "1067",
+          "1069",
+          "1070"
+        ],
+        "GHSA": [
+          "GHSA-fvqr-27wr-82fm",
+          "GHSA-5947-m4fg-xhqg",
+          "GHSA-46fh-8fc5-xcwx",
+          "GHSA-2m96-9w4j-wgv7"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-LODASH-174180"
+        ]
+      },
+      "packageName": "lodash",
+      "proprietary": true,
+      "creationTime": "2018-02-12T22:28:27.654000Z",
+      "functions_new": [
+        {
+          "version": [
+            ">=4.0.0 <4.17.5"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "functionName": "runInContext.baseMerge"
+          }
+        },
+        {
+          "version": [
+            ">=4.0.0 <4.17.5"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "functionName": "runInContext.baseMergeDeep"
+          }
+        },
+        {
+          "version": [
+            ">=3.0.0 <4.0.0"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "functionName": "runInContext.baseMergeDeep"
+          }
+        },
+        {
+          "version": [
+            ">=2.0.0 <3.0.0"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "functionName": "runInContext.merge"
+          }
+        },
+        {
+          "version": [
+            ">=1.1.0 <2.0.0"
+          ],
+          "functionId": {
+            "filePath": "dist/lodash.js",
+            "functionName": "runInContext.merge"
+          }
+        },
+        {
+          "version": [
+            ">=0.9.0 <1.0.0"
+          ],
+          "functionId": {
+            "filePath": "lodash.js",
+            "functionName": "merge"
+          }
+        },
+        {
+          "version": [
+            ">= 1.0.0 <1.0.3"
+          ],
+          "functionId": {
+            "filePath": "dist/lodash.js",
+            "functionName": "merge"
+          }
+        }
+      ],
+      "alternativeIds": [
+        "SNYK-JS-LODASH-174180"
+      ],
+      "disclosureTime": "2018-01-30T22:28:27Z",
+      "packageManager": "npm",
+      "publicationTime": "2018-02-14T13:22:50Z",
+      "modificationTime": "2023-03-26T15:06:44.395574Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "xml@DotJoshJohnson/vscode-xml#95702e6355fb35d77d2fea7da5af3f505df398a0",
+        "xqlint@0.4.1",
+        "lodash@3.10.1"
+      ],
+      "upgradePath": [
+        false,
+        "xqlint@0.5.0",
+        "lodash@4.17.10"
+      ],
+      "version": "3.10.1",
+      "name": "lodash",
+      "isUpgradable": true,
+      "isPatchable": true,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 86,
+  "severityMap": {
+    "critical": 1,
+    "high": 5,
+    "medium": 6,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "12 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 12,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/DotJoshJohnson/vscode-xml.git"
+}
