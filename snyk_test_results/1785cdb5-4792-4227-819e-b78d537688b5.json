@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "connect ECONNREFUSED 127.0.0.1:62958",
+  "path": "https://github.com/mjbvz/vscode-lit-html.git"
+}

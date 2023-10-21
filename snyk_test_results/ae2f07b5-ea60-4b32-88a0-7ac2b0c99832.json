@@ -1,0 +1,217 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-ENGINEIO-1056749",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:P/RL:O/RC:R",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.0.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "engine.io",
+      "references": [
+        {
+          "url": "https://github.com/socketio/engine.io/commit/734f9d1268840722c41219e69eb58318e0b2ac6b",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/bcaller/kill-engine-io",
+          "title": "PoC"
+        },
+        {
+          "url": "https://blog.caller.xyz/socketio-engineio-dos/",
+          "title": "Research Blogpost"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-01-03T18:09:21.542175Z"
+        }
+      ],
+      "description": "## Overview\n[engine.io](https://github.com/socketio/engine.io) is a realtime engine behind Socket.IO. It provides the foundation of a bidirectional connection between client and server\n\nAffected versions of this package are vulnerable to Denial of Service (DoS) via a POST request to the long polling transport.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `engine.io` to version 4.0.0 or higher.\n## References\n- [GitHub Commit](https://github.com/socketio/engine.io/commit/734f9d1268840722c41219e69eb58318e0b2ac6b)\n- [PoC](https://github.com/bcaller/kill-engine-io)\n- [Research Blogpost](https://blog.caller.xyz/socketio-engineio-dos/)\n",
+      "epssDetails": {
+        "percentile": "0.54367",
+        "probability": "0.00182",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-36048"
+        ],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "engine.io",
+      "proprietary": false,
+      "creationTime": "2021-01-08T10:58:56.558133Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-01-08T10:54:39Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-01-08T16:03:18.114498Z",
+      "modificationTime": "2022-01-03T18:09:21.542175Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "openapi-designer@philosowaffle/vs-openapi-designer#f86eed51dc9f8483a6ab0f0ba9aec2073ecb759a",
+        "socket.io@2.5.0",
+        "engine.io@3.6.1"
+      ],
+      "upgradePath": [
+        false,
+        "socket.io@3.0.0",
+        "engine.io@4.0.0"
+      ],
+      "version": "3.6.1",
+      "name": "engine.io",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-SWAGGERUIDIST-2314884",
+      "title": "Server-side Request Forgery (SSRF)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N/E:F",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.1.3"
+        ]
+      },
+      "exploit": "Functional",
+      "fixedIn": [
+        "4.1.3"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.4,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "swagger-ui-dist",
+      "references": [
+        {
+          "url": "https://www.vidocsecurity.com/blog/hacking-swagger-ui-from-xss-to-account-takeovers/",
+          "title": "Blog Post"
+        },
+        {
+          "url": "https://github.com/domaindrivendev/Swashbuckle.AspNetCore/commit/401c7cb81e5efe835ceb8aae23e82057d57c7d29",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/swagger-api/swagger-ui/commit/01a3e55960f864a0acf6a8d06e5ddaf6776a7f76",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/swagger-api/swagger-ui/issues/4872",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://www.exploit-db.com/exploits/51379",
+          "title": "Exploit DB"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N",
+          "cvssV3BaseScore": 4.3,
+          "modificationTime": "2022-06-04T01:11:00.384187Z"
+        }
+      ],
+      "description": "## Overview\n[swagger-ui-dist](https://www.npmjs.com/package/swagger-ui-dist) is a module that exposes Swagger-UI's entire dist folder as a dependency-free npm module. Use swagger-ui instead, if you'd like to have npm install dependencies for you.\n\nAffected versions of this package are vulnerable to Server-side Request Forgery (SSRF) via the `?url` parameter, which was intended to allow displaying remote OpenAPI definitions. This functionality may pose a risk for users who host their own SwaggerUI instances. In particular, including remote OpenAPI definitions opens a vector for phishing attacks by abusing the trusted names/domains of self-hosted instances.\n## Remediation\nUpgrade `swagger-ui-dist` to version 4.1.3 or higher.\n## References\n- [Blog Post](https://www.vidocsecurity.com/blog/hacking-swagger-ui-from-xss-to-account-takeovers/)\n- [GitHub Commit](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/commit/401c7cb81e5efe835ceb8aae23e82057d57c7d29)\n- [GitHub Commit](https://github.com/swagger-api/swagger-ui/commit/01a3e55960f864a0acf6a8d06e5ddaf6776a7f76)\n- [GitHub Issue](https://github.com/swagger-api/swagger-ui/issues/4872)\n- [Exploit DB](https://www.exploit-db.com/exploits/51379)\n",
+      "epssDetails": {
+        "percentile": "0.45954",
+        "probability": "0.00125",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2018-25031",
+          "CVE-2021-46708"
+        ],
+        "CWE": [
+          "CWE-918"
+        ],
+        "GHSA": [
+          "GHSA-qrmm-w75w-3wpx"
+        ]
+      },
+      "packageName": "swagger-ui-dist",
+      "proprietary": false,
+      "creationTime": "2021-12-10T12:47:49.133511Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-09T19:08:38Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-12-10T16:45:52Z",
+      "modificationTime": "2023-04-21T04:00:00.628322Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "openapi-designer@philosowaffle/vs-openapi-designer#f86eed51dc9f8483a6ab0f0ba9aec2073ecb759a",
+        "swagger-ui-dist@3.52.5"
+      ],
+      "upgradePath": [
+        false,
+        "swagger-ui-dist@4.1.3"
+      ],
+      "version": "3.52.5",
+      "name": "swagger-ui-dist",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 106,
+  "severityMap": {
+    "critical": 0,
+    "high": 1,
+    "medium": 1,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "2 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 2,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/philosowaffle/vs-openapi-designer.git"
+}

@@ -1,0 +1,102 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "npm:mysql:20170317",
+      "title": "Uninitialized Memory Exposure",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:H/UI:N/S:U/C:L/I:N/A:N/E:F/RL:O/RC:C",
+      "credit": [
+        "ChALkeR"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<2.14.0"
+        ]
+      },
+      "exploit": "Functional",
+      "fixedIn": [
+        "2.14.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "low",
+      "cvssScore": 2.2,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "mysql",
+      "references": [
+        {
+          "url": "https://github.com/mysqljs/mysql/commit/310c6a7d1b2e14b63b572dbfbfa10128f20c6d52",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\r\n[`mysql`](https://www.npmjs.com/package/mysql) is a node.js driver for mysql.\r\n\r\nAffected versions of the package are vulnerable due to the unsafe use of the `Buffer()` method. Uninitialized memory may be exposed when a value of type `number` is provided to various methods in `mysql` which require allocation of buffers and results in concatenation of uninitialized memory to the buffer collection.\r\n\r\nThis vulnerability is unlikely to be exploited, but may be possible if a server-side `mysql` accepts typed input for passwords from the client even though the user doesn’t control the server-side code (i.e through JSON format).\r\n\r\n## Details\r\nConstructing a `Buffer` class with integer `N` creates a `Buffer` of length `N` with raw (not \"zero-ed\") memory.\r\n\r\nIn the following example, the first call would allocate 100 bytes of memory, while the second example will allocate the memory needed for the string \"100\":\r\n\r\n```js\r\n// uninitialized Buffer of length 100\r\nx = new Buffer(100);\r\n// initialized Buffer with value of '100'\r\nx = new Buffer('100');\r\n```\r\n\r\nYou can read more about the insecure `Buffer` behavior [on our blog](https://snyk.io/blog/exploiting-buffer/).\r\n\r\nSimilar vulnerabilities were discovered in [request](https://snyk.io/vuln/npm:request:20160119), [mongoose](https://snyk.io/vuln/npm:mongoose:20160116), [ws](https://snyk.io/vuln/npm:ws:20160104) and [sequelize](https://snyk.io/vuln/npm:sequelize:20160115).\r\n\r\n## Remediation\r\nUpgrade `mysql` to version 2.14.0 or higher.\r\n**Note** This is vulnerable only for Node <=4\r\n\r\n## References\r\n- [Github Commit](https://github.com/mysqljs/mysql/commit/310c6a7d1b2e14b63b572dbfbfa10128f20c6d52)",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-201"
+        ],
+        "NSP": [
+          "602"
+        ],
+        "GHSA": [
+          "GHSA-5f7m-mmpc-qhh4"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-MYSQL-10747"
+        ]
+      },
+      "packageName": "mysql",
+      "proprietary": false,
+      "creationTime": "2017-08-08T07:34:47.781000Z",
+      "functions_new": [],
+      "alternativeIds": [
+        "SNYK-JS-MYSQL-10747"
+      ],
+      "disclosureTime": "2017-03-16T22:00:00Z",
+      "packageManager": "npm",
+      "publicationTime": "2017-08-08T07:34:47Z",
+      "modificationTime": "2020-12-14T14:41:37.299474Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "mysql-scratchpad@chubtoad-black/mysql-scratchpad#62ff29575841067e6b2c0a54806694244545fffb",
+        "mysql@2.13.0"
+      ],
+      "upgradePath": [
+        false,
+        "mysql@2.14.0"
+      ],
+      "version": "2.13.0",
+      "name": "mysql",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 8,
+  "severityMap": {
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 1
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "1 vulnerable dependency path",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/chubtoad-black/mysql-scratchpad.git"
+}

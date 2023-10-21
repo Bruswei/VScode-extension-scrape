@@ -1,0 +1,93 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-HTMLTOTEXT-571464",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/RL:O/RC:R",
+      "credit": [
+        "valeriansaliou"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<6.0.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "6.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "html-to-text",
+      "references": [
+        {
+          "url": "https://github.com/werk85/node-html-to-text/pull/172",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[html-to-text](https://www.npmjs.com/package/html-to-text) is an Advanced html to plain text converter\n\nAffected versions of this package are vulnerable to Denial of Service (DoS). The application may crash when the parsed HTML is either very deep or has a big amount of DOM elements.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `html-to-text` to version 6.0.0 or higher.\n## References\n- [GitHub PR](https://github.com/werk85/node-html-to-text/pull/172)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "html-to-text",
+      "proprietary": false,
+      "creationTime": "2020-06-05T09:27:01.276149Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2019-04-07T08:32:15Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-06-05T09:28:17Z",
+      "modificationTime": "2020-11-01T11:18:09.054372Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 98,
+      "from": [
+        "azurerm-vscode-tools@Microsoft/vscode-azurearmtools#ca2b35eef928159b20cc1d45115ab24e00ffa2a0",
+        "vscode-azureextensionui@0.36.2",
+        "html-to-text@5.1.1"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "html-to-text@6.0.0"
+      ],
+      "version": "5.1.1",
+      "name": "html-to-text",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 102,
+  "severityMap": {
+    "critical": 0,
+    "high": 1,
+    "medium": 0,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "1 vulnerable dependency path",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/Microsoft/vscode-azurearmtools.git"
+}

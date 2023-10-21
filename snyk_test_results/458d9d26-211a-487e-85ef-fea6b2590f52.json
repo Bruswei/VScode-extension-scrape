@@ -1,0 +1,456 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-DECOMPRESSTAR-559095",
+      "title": "Arbitrary File Write via Archive Extraction (Zip Slip)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:N/A:N/E:P/RL:U/RC:C",
+      "credit": [
+        "Oscar Arnflo"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.3,
+      "functions": [
+        {
+          "version": [
+            "*"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "className": null,
+            "functionName": "module.exports"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "decompress-tar",
+      "references": [
+        {
+          "url": "https://github.com/kevva/decompress/pull/73",
+          "title": "GitHub Fix PR"
+        },
+        {
+          "url": "https://github.com/kevva/decompress/issues/71",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/kevva/decompress-tar/pull/12",
+          "title": "GitHub PR decompress-tar"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/1217",
+          "title": "NPM Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-01-03T18:04:12.459024Z"
+        }
+      ],
+      "description": "## Overview\n[decompress-tar](https://github.com/kevva/decompress-tar) is a tar plugin for decompress.\n\nAffected versions of this package are vulnerable to Arbitrary File Write via Archive Extraction (Zip Slip). It is possible to bypass the security measures provided by decompress  and conduct ZIP path traversal through symlinks.\r\n\r\n### PoC\r\n\r\n```\r\nconst decompress = require('decompress');\r\n\r\ndecompress('slip.tar.gz', 'dist').then(files => {\r\n\tconsole.log('done!');\r\n});\r\n```\n\n## Details\n\nIt is exploited using a specially crafted zip archive, that holds path traversal filenames. When exploited, a filename in a malicious archive is concatenated to the target extraction directory, which results in the final path ending up outside of the target folder. For instance, a zip may hold a file with a \"../../file.exe\" location and thus break out of the target folder. If an executable or a configuration file is overwritten with a file containing malicious code, the problem can turn into an arbitrary code execution issue quite easily.\n\nThe following is an example of a zip archive with one benign file and one malicious file. Extracting the malicous file will result in traversing out of the target folder, ending up in `/root/.ssh/` overwriting the `authorized_keys` file:\n\n```\n\n+2018-04-15 22:04:29 ..... 19 19 good.txt\n\n+2018-04-15 22:04:42 ..... 20 20 ../../../../../../root/.ssh/authorized_keys\n\n```\n\n## Remediation\nThere is no fixed version for `decompress-tar`.\n## References\n- [GitHub Fix PR](https://github.com/kevva/decompress/pull/73)\n- [GitHub Issue](https://github.com/kevva/decompress/issues/71)\n- [GitHub PR decompress-tar](https://github.com/kevva/decompress-tar/pull/12)\n- [NPM Advisory](https://www.npmjs.com/advisories/1217)\n",
+      "epssDetails": {
+        "percentile": "0.75874",
+        "probability": "0.00619",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-12265"
+        ],
+        "CWE": [
+          "CWE-29"
+        ],
+        "NSP": [
+          "1217"
+        ],
+        "GHSA": [
+          "GHSA-qgfr-5hqp-vrw9"
+        ]
+      },
+      "packageName": "decompress-tar",
+      "proprietary": false,
+      "creationTime": "2020-03-02T11:17:35.161853Z",
+      "functions_new": [
+        {
+          "version": [
+            "*"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "functionName": "module.exports"
+          }
+        }
+      ],
+      "alternativeIds": [],
+      "disclosureTime": "2019-10-15T20:29:24Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-02-27T13:28:41Z",
+      "modificationTime": "2022-01-03T18:04:12.459024Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-motoko@dfinity/vscode-motoko#1b07b612e8b001220cb9a190dac1e1dc1cf77d6f",
+        "ic-mops@0.26.3",
+        "decompress@4.2.1",
+        "decompress-tar@4.1.1"
+      ],
+      "upgradePath": [],
+      "version": "4.1.1",
+      "name": "decompress-tar",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-DECOMPRESSTAR-559095",
+      "title": "Arbitrary File Write via Archive Extraction (Zip Slip)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:N/A:N/E:P/RL:U/RC:C",
+      "credit": [
+        "Oscar Arnflo"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.3,
+      "functions": [
+        {
+          "version": [
+            "*"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "className": null,
+            "functionName": "module.exports"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "decompress-tar",
+      "references": [
+        {
+          "url": "https://github.com/kevva/decompress/pull/73",
+          "title": "GitHub Fix PR"
+        },
+        {
+          "url": "https://github.com/kevva/decompress/issues/71",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/kevva/decompress-tar/pull/12",
+          "title": "GitHub PR decompress-tar"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/1217",
+          "title": "NPM Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-01-03T18:04:12.459024Z"
+        }
+      ],
+      "description": "## Overview\n[decompress-tar](https://github.com/kevva/decompress-tar) is a tar plugin for decompress.\n\nAffected versions of this package are vulnerable to Arbitrary File Write via Archive Extraction (Zip Slip). It is possible to bypass the security measures provided by decompress  and conduct ZIP path traversal through symlinks.\r\n\r\n### PoC\r\n\r\n```\r\nconst decompress = require('decompress');\r\n\r\ndecompress('slip.tar.gz', 'dist').then(files => {\r\n\tconsole.log('done!');\r\n});\r\n```\n\n## Details\n\nIt is exploited using a specially crafted zip archive, that holds path traversal filenames. When exploited, a filename in a malicious archive is concatenated to the target extraction directory, which results in the final path ending up outside of the target folder. For instance, a zip may hold a file with a \"../../file.exe\" location and thus break out of the target folder. If an executable or a configuration file is overwritten with a file containing malicious code, the problem can turn into an arbitrary code execution issue quite easily.\n\nThe following is an example of a zip archive with one benign file and one malicious file. Extracting the malicous file will result in traversing out of the target folder, ending up in `/root/.ssh/` overwriting the `authorized_keys` file:\n\n```\n\n+2018-04-15 22:04:29 ..... 19 19 good.txt\n\n+2018-04-15 22:04:42 ..... 20 20 ../../../../../../root/.ssh/authorized_keys\n\n```\n\n## Remediation\nThere is no fixed version for `decompress-tar`.\n## References\n- [GitHub Fix PR](https://github.com/kevva/decompress/pull/73)\n- [GitHub Issue](https://github.com/kevva/decompress/issues/71)\n- [GitHub PR decompress-tar](https://github.com/kevva/decompress-tar/pull/12)\n- [NPM Advisory](https://www.npmjs.com/advisories/1217)\n",
+      "epssDetails": {
+        "percentile": "0.75874",
+        "probability": "0.00619",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-12265"
+        ],
+        "CWE": [
+          "CWE-29"
+        ],
+        "NSP": [
+          "1217"
+        ],
+        "GHSA": [
+          "GHSA-qgfr-5hqp-vrw9"
+        ]
+      },
+      "packageName": "decompress-tar",
+      "proprietary": false,
+      "creationTime": "2020-03-02T11:17:35.161853Z",
+      "functions_new": [
+        {
+          "version": [
+            "*"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "functionName": "module.exports"
+          }
+        }
+      ],
+      "alternativeIds": [],
+      "disclosureTime": "2019-10-15T20:29:24Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-02-27T13:28:41Z",
+      "modificationTime": "2022-01-03T18:04:12.459024Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-motoko@dfinity/vscode-motoko#1b07b612e8b001220cb9a190dac1e1dc1cf77d6f",
+        "ic-mops@0.26.3",
+        "decompress@4.2.1",
+        "decompress-tarbz2@4.1.1",
+        "decompress-tar@4.1.1"
+      ],
+      "upgradePath": [],
+      "version": "4.1.1",
+      "name": "decompress-tar",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-DECOMPRESSTAR-559095",
+      "title": "Arbitrary File Write via Archive Extraction (Zip Slip)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:N/A:N/E:P/RL:U/RC:C",
+      "credit": [
+        "Oscar Arnflo"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.3,
+      "functions": [
+        {
+          "version": [
+            "*"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "className": null,
+            "functionName": "module.exports"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "decompress-tar",
+      "references": [
+        {
+          "url": "https://github.com/kevva/decompress/pull/73",
+          "title": "GitHub Fix PR"
+        },
+        {
+          "url": "https://github.com/kevva/decompress/issues/71",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/kevva/decompress-tar/pull/12",
+          "title": "GitHub PR decompress-tar"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/1217",
+          "title": "NPM Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-01-03T18:04:12.459024Z"
+        }
+      ],
+      "description": "## Overview\n[decompress-tar](https://github.com/kevva/decompress-tar) is a tar plugin for decompress.\n\nAffected versions of this package are vulnerable to Arbitrary File Write via Archive Extraction (Zip Slip). It is possible to bypass the security measures provided by decompress  and conduct ZIP path traversal through symlinks.\r\n\r\n### PoC\r\n\r\n```\r\nconst decompress = require('decompress');\r\n\r\ndecompress('slip.tar.gz', 'dist').then(files => {\r\n\tconsole.log('done!');\r\n});\r\n```\n\n## Details\n\nIt is exploited using a specially crafted zip archive, that holds path traversal filenames. When exploited, a filename in a malicious archive is concatenated to the target extraction directory, which results in the final path ending up outside of the target folder. For instance, a zip may hold a file with a \"../../file.exe\" location and thus break out of the target folder. If an executable or a configuration file is overwritten with a file containing malicious code, the problem can turn into an arbitrary code execution issue quite easily.\n\nThe following is an example of a zip archive with one benign file and one malicious file. Extracting the malicous file will result in traversing out of the target folder, ending up in `/root/.ssh/` overwriting the `authorized_keys` file:\n\n```\n\n+2018-04-15 22:04:29 ..... 19 19 good.txt\n\n+2018-04-15 22:04:42 ..... 20 20 ../../../../../../root/.ssh/authorized_keys\n\n```\n\n## Remediation\nThere is no fixed version for `decompress-tar`.\n## References\n- [GitHub Fix PR](https://github.com/kevva/decompress/pull/73)\n- [GitHub Issue](https://github.com/kevva/decompress/issues/71)\n- [GitHub PR decompress-tar](https://github.com/kevva/decompress-tar/pull/12)\n- [NPM Advisory](https://www.npmjs.com/advisories/1217)\n",
+      "epssDetails": {
+        "percentile": "0.75874",
+        "probability": "0.00619",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-12265"
+        ],
+        "CWE": [
+          "CWE-29"
+        ],
+        "NSP": [
+          "1217"
+        ],
+        "GHSA": [
+          "GHSA-qgfr-5hqp-vrw9"
+        ]
+      },
+      "packageName": "decompress-tar",
+      "proprietary": false,
+      "creationTime": "2020-03-02T11:17:35.161853Z",
+      "functions_new": [
+        {
+          "version": [
+            "*"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "functionName": "module.exports"
+          }
+        }
+      ],
+      "alternativeIds": [],
+      "disclosureTime": "2019-10-15T20:29:24Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-02-27T13:28:41Z",
+      "modificationTime": "2022-01-03T18:04:12.459024Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-motoko@dfinity/vscode-motoko#1b07b612e8b001220cb9a190dac1e1dc1cf77d6f",
+        "ic-mops@0.26.3",
+        "decompress@4.2.1",
+        "decompress-targz@4.1.1",
+        "decompress-tar@4.1.1"
+      ],
+      "upgradePath": [],
+      "version": "4.1.1",
+      "name": "decompress-tar",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-URLRELATIVE-173691",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H",
+      "credit": [
+        "Sebastian Vollnhals"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.9,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "url-relative",
+      "references": [
+        {
+          "url": "https://github.com/junosuarez/url-relative/commit/5d622c3292bb626272551a110751b2a93a0e0abe",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/junosuarez/url-relative/issues/3",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/783",
+          "title": "NPM Security Advisory"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[url-relative](https://www.npmjs.com/package/url-relative) is a calculates RFC 1808 relative URLs.\n\nAffected versions of this package are vulnerable to Denial of Service (DoS). If the values `to` and `from` are equal, the function hangs and never returns.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nA fix was pushed into the `master` branch but not yet published.\n## References\n- [GitHub Commit](https://github.com/junosuarez/url-relative/commit/5d622c3292bb626272551a110751b2a93a0e0abe)\n- [GitHub Issue](https://github.com/junosuarez/url-relative/issues/3)\n- [NPM Security Advisory](https://www.npmjs.com/advisories/783)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ],
+        "NSP": [
+          "783"
+        ],
+        "GHSA": [
+          "GHSA-86p3-4gfq-38f2"
+        ]
+      },
+      "packageName": "url-relative",
+      "proprietary": false,
+      "creationTime": "2019-02-14T15:18:06.464800Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2019-02-14T01:42:19Z",
+      "packageManager": "npm",
+      "publicationTime": "2019-02-14T01:42:19Z",
+      "modificationTime": "2020-12-14T14:41:35.476539Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 62,
+      "from": [
+        "vscode-motoko@dfinity/vscode-motoko#1b07b612e8b001220cb9a190dac1e1dc1cf77d6f",
+        "url-relative@1.0.0"
+      ],
+      "upgradePath": [],
+      "version": "1.0.0",
+      "name": "url-relative",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 383,
+  "severityMap": {
+    "critical": 0,
+    "high": 0,
+    "medium": 4,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "4 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 2,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/dfinity/vscode-motoko.git"
+}

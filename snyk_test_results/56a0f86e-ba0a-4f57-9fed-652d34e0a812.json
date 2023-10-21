@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Couldn't find the requested package or version",
+  "path": "https://github.com/localizely/flutter-intl-vscode.git"
+}

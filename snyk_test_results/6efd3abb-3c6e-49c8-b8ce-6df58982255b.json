@@ -1,0 +1,247 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-SYSTEMINFORMATION-1078290",
+      "title": "Server-side Request Forgery (SSRF)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N/E:P",
+      "credit": [
+        "huntr-helper"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<5.3.4"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "5.3.4"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "systeminformation",
+      "references": [
+        {
+          "url": "https://github.com/sebhildebrandt/systeminformation/commit/881dde4734988e16c57c1d571651b7461fb0d88e",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/sebhildebrandt/systeminformation/pull/496",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[systeminformation](https://www.npmjs.com/package/systeminformation) is a simple system and OS information library.\n\nAffected versions of this package are vulnerable to Server-side Request Forgery (SSRF) via the `sanitizeShellString` function due to not sanitising `@` properly.\r\n\r\n## PoC\r\n```\r\nconst si = require('systeminformation');\r\nsi.inetChecksite(\"https://effectrenan.com@google.com\").then(a => { console.log(a) });\r\n```\n## Remediation\nUpgrade `systeminformation` to version 5.3.4 or higher.\n## References\n- [GitHub Commit](https://github.com/sebhildebrandt/systeminformation/commit/881dde4734988e16c57c1d571651b7461fb0d88e)\n- [GitHub PR](https://github.com/sebhildebrandt/systeminformation/pull/496)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-918"
+        ]
+      },
+      "packageName": "systeminformation",
+      "proprietary": false,
+      "creationTime": "2021-02-22T09:56:34.431553Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-22T09:51:15Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-03-04T12:26:14.766756Z",
+      "modificationTime": "2021-03-04T12:26:14.769043Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 98,
+      "from": [
+        "resourcemonitor@Njanderson/resmon#872028123458e3f1cedf0ae0aadd72842f60a1c6",
+        "systeminformation@4.34.23"
+      ],
+      "upgradePath": [
+        false,
+        "systeminformation@5.3.4"
+      ],
+      "version": "4.34.23",
+      "name": "systeminformation",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-SYSTEMINFORMATION-1243748",
+      "title": "Arbitrary Command Injection",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<5.6.4"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "5.6.4"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.6,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "systeminformation",
+      "references": [],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-01-03T16:35:18.316315Z"
+        }
+      ],
+      "description": "## Overview\n[systeminformation](https://www.npmjs.com/package/systeminformation) is a simple system and OS information library.\n\nAffected versions of this package are vulnerable to Arbitrary Command Injection. Service parameters passed to `si.inetLatency()`, `si.inetChecksite()`, `si.services()`, and `si.processLoad()` are not sanitized properly.\n## Remediation\nUpgrade `systeminformation` to version 5.6.4 or higher.\n",
+      "epssDetails": {
+        "percentile": "0.69675",
+        "probability": "0.00393",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-21388"
+        ],
+        "CWE": [
+          "CWE-77"
+        ],
+        "GHSA": [
+          "GHSA-jff2-qjw8-5476"
+        ]
+      },
+      "packageName": "systeminformation",
+      "proprietary": false,
+      "creationTime": "2021-04-07T10:53:57.565641Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-04-06T17:30:14Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-04-07T14:48:16.557663Z",
+      "modificationTime": "2022-01-03T16:35:18.316315Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 98,
+      "from": [
+        "resourcemonitor@Njanderson/resmon#872028123458e3f1cedf0ae0aadd72842f60a1c6",
+        "systeminformation@4.34.23"
+      ],
+      "upgradePath": [
+        false,
+        "systeminformation@5.6.4"
+      ],
+      "version": "4.34.23",
+      "name": "systeminformation",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-SYSTEMINFORMATION-1244526",
+      "title": "Improper Input Validation",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N/E:P/RL:O/RC:R",
+      "credit": [
+        "Renan Rocha (EffectRenan)"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<5.6.11"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "5.6.11"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "systeminformation",
+      "references": [
+        {
+          "url": "https://github.com/sebhildebrandt/systeminformation/commit/45c08f139eeed339e98bc1deb3a855ccc33b504b",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/sebhildebrandt/systeminformation/pull/518",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[systeminformation](https://www.npmjs.com/package/systeminformation) is a simple system and OS information library.\n\nAffected versions of this package are vulnerable to Improper Input Validation. The function versions doesn't check the input of the user, which is expected a string.\r\n\r\n```\r\nconst si = require('systeminformation');\r\nsi.versions({toString : () => { console.log(\"This is a PoC\") }});\r\n```\n## Remediation\nUpgrade `systeminformation` to version 5.6.11 or higher.\n## References\n- [GitHub Commit](https://github.com/sebhildebrandt/systeminformation/commit/45c08f139eeed339e98bc1deb3a855ccc33b504b)\n- [GitHub PR](https://github.com/sebhildebrandt/systeminformation/pull/518)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-20"
+        ]
+      },
+      "packageName": "systeminformation",
+      "proprietary": false,
+      "creationTime": "2021-04-09T11:49:09.023397Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-04-09T11:47:14Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-04-09T13:11:10.464489Z",
+      "modificationTime": "2021-04-09T13:11:10.466500Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 98,
+      "from": [
+        "resourcemonitor@Njanderson/resmon#872028123458e3f1cedf0ae0aadd72842f60a1c6",
+        "systeminformation@4.34.23"
+      ],
+      "upgradePath": [
+        false,
+        "systeminformation@5.6.11"
+      ],
+      "version": "4.34.23",
+      "name": "systeminformation",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 1,
+  "severityMap": {
+    "critical": 0,
+    "high": 0,
+    "medium": 2,
+    "low": 1
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "3 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 3,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/Njanderson/resmon.git"
+}

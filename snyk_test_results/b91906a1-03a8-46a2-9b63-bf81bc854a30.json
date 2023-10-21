@@ -1,0 +1,2542 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-PYTHON-GRADIO-5904279",
+      "title": "Unrestricted Upload of File with Dangerous Type",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[0,]"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "gradio",
+      "references": [
+        {
+          "url": "https://gist.github.com/impose1/590472eb0544ef1ec36c8a5a40122adb",
+          "title": "GitHub Gist"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N",
+          "cvssV3BaseScore": 4.8,
+          "modificationTime": "2023-09-20T01:10:48.659027Z"
+        }
+      ],
+      "description": "## Overview\n[gradio](https://pypi.org/project/gradio) is a Python library for easily interacting with trained machine learning models\n\nAffected versions of this package are vulnerable to Unrestricted Upload of File with Dangerous Type via the `/tmp' directory. An attacker can upload arbitrary files, potentially leading to unauthorized access or execution of malicious code.\n## Remediation\nThere is no fixed version for `gradio`.\n## References\n- [GitHub Gist](https://gist.github.com/impose1/590472eb0544ef1ec36c8a5a40122adb)\n",
+      "epssDetails": {
+        "percentile": "0.07203",
+        "probability": "0.00043",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-41626"
+        ],
+        "CWE": [
+          "CWE-434"
+        ]
+      },
+      "packageName": "gradio",
+      "proprietary": false,
+      "creationTime": "2023-09-18T11:18:31.777085Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-09-15T23:48:59Z",
+      "packageManager": "pip",
+      "publicationTime": "2023-09-18T12:07:04.246548Z",
+      "modificationTime": "2023-09-20T01:10:48.659027Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 96,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "gradio@3.34.0"
+      ],
+      "upgradePath": [],
+      "version": "3.34.0",
+      "name": "gradio",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321964",
+      "title": "NULL Pointer Dereference",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[0,1.22.2)"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "1.22.2"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/issues/19038",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/pull/20960",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/releases/tag/v1.22.2",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-07-29T01:10:50.699694Z"
+        },
+        {
+          "assigner": "SUSE",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-09-13T16:16:01.299514Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T23:39:56.989040Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to NULL Pointer Dereference due to missing return-value validation in the `PyArray_DescrNew` function, which may allow attackers to conduct Denial of Service attacks by repetitively creating and sort arrays.\r\n\r\n**Note:** This may likely only happen if application memory is already exhausted, as it requires the `newdescr` object of the `PyArray_DescrNew` to evaluate to `NULL`.\n## Remediation\nUpgrade `numpy` to version 1.22.2 or higher.\n## References\n- [GitHub Issue](https://github.com/numpy/numpy/issues/19038)\n- [GitHub PR](https://github.com/numpy/numpy/pull/20960)\n- [GitHub Release](https://github.com/numpy/numpy/releases/tag/v1.22.2)\n",
+      "epssDetails": {
+        "percentile": "0.19458",
+        "probability": "0.00054",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-41495"
+        ],
+        "CWE": [
+          "CWE-476"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T10:23:33.311250Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T10:02:22Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:24Z",
+      "modificationTime": "2022-10-25T23:39:56.989040Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "accelerate@0.20.3",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        "accelerate@0.23.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321964",
+      "title": "NULL Pointer Dereference",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[0,1.22.2)"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "1.22.2"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/issues/19038",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/pull/20960",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/releases/tag/v1.22.2",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-07-29T01:10:50.699694Z"
+        },
+        {
+          "assigner": "SUSE",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-09-13T16:16:01.299514Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T23:39:56.989040Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to NULL Pointer Dereference due to missing return-value validation in the `PyArray_DescrNew` function, which may allow attackers to conduct Denial of Service attacks by repetitively creating and sort arrays.\r\n\r\n**Note:** This may likely only happen if application memory is already exhausted, as it requires the `newdescr` object of the `PyArray_DescrNew` to evaluate to `NULL`.\n## Remediation\nUpgrade `numpy` to version 1.22.2 or higher.\n## References\n- [GitHub Issue](https://github.com/numpy/numpy/issues/19038)\n- [GitHub PR](https://github.com/numpy/numpy/pull/20960)\n- [GitHub Release](https://github.com/numpy/numpy/releases/tag/v1.22.2)\n",
+      "epssDetails": {
+        "percentile": "0.19458",
+        "probability": "0.00054",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-41495"
+        ],
+        "CWE": [
+          "CWE-476"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T10:23:33.311250Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T10:02:22Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:24Z",
+      "modificationTime": "2022-10-25T23:39:56.989040Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "gradio@3.34.0",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        "gradio@3.37.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321964",
+      "title": "NULL Pointer Dereference",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[0,1.22.2)"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "1.22.2"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/issues/19038",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/pull/20960",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/releases/tag/v1.22.2",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-07-29T01:10:50.699694Z"
+        },
+        {
+          "assigner": "SUSE",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-09-13T16:16:01.299514Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T23:39:56.989040Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to NULL Pointer Dereference due to missing return-value validation in the `PyArray_DescrNew` function, which may allow attackers to conduct Denial of Service attacks by repetitively creating and sort arrays.\r\n\r\n**Note:** This may likely only happen if application memory is already exhausted, as it requires the `newdescr` object of the `PyArray_DescrNew` to evaluate to `NULL`.\n## Remediation\nUpgrade `numpy` to version 1.22.2 or higher.\n## References\n- [GitHub Issue](https://github.com/numpy/numpy/issues/19038)\n- [GitHub PR](https://github.com/numpy/numpy/pull/20960)\n- [GitHub Release](https://github.com/numpy/numpy/releases/tag/v1.22.2)\n",
+      "epssDetails": {
+        "percentile": "0.19458",
+        "probability": "0.00054",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-41495"
+        ],
+        "CWE": [
+          "CWE-476"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T10:23:33.311250Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T10:02:22Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:24Z",
+      "modificationTime": "2022-10-25T23:39:56.989040Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "transformers@4.30.2",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        "transformers@4.34.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321964",
+      "title": "NULL Pointer Dereference",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[0,1.22.2)"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "1.22.2"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/issues/19038",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/pull/20960",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/releases/tag/v1.22.2",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-07-29T01:10:50.699694Z"
+        },
+        {
+          "assigner": "SUSE",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-09-13T16:16:01.299514Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T23:39:56.989040Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to NULL Pointer Dereference due to missing return-value validation in the `PyArray_DescrNew` function, which may allow attackers to conduct Denial of Service attacks by repetitively creating and sort arrays.\r\n\r\n**Note:** This may likely only happen if application memory is already exhausted, as it requires the `newdescr` object of the `PyArray_DescrNew` to evaluate to `NULL`.\n## Remediation\nUpgrade `numpy` to version 1.22.2 or higher.\n## References\n- [GitHub Issue](https://github.com/numpy/numpy/issues/19038)\n- [GitHub PR](https://github.com/numpy/numpy/pull/20960)\n- [GitHub Release](https://github.com/numpy/numpy/releases/tag/v1.22.2)\n",
+      "epssDetails": {
+        "percentile": "0.19458",
+        "probability": "0.00054",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-41495"
+        ],
+        "CWE": [
+          "CWE-476"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T10:23:33.311250Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T10:02:22Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:24Z",
+      "modificationTime": "2022-10-25T23:39:56.989040Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "gradio@3.34.0",
+        "pandas@1.3.5",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        "gradio@3.37.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321964",
+      "title": "NULL Pointer Dereference",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[0,1.22.2)"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "1.22.2"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/issues/19038",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/pull/20960",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/releases/tag/v1.22.2",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-07-29T01:10:50.699694Z"
+        },
+        {
+          "assigner": "SUSE",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-09-13T16:16:01.299514Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T23:39:56.989040Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to NULL Pointer Dereference due to missing return-value validation in the `PyArray_DescrNew` function, which may allow attackers to conduct Denial of Service attacks by repetitively creating and sort arrays.\r\n\r\n**Note:** This may likely only happen if application memory is already exhausted, as it requires the `newdescr` object of the `PyArray_DescrNew` to evaluate to `NULL`.\n## Remediation\nUpgrade `numpy` to version 1.22.2 or higher.\n## References\n- [GitHub Issue](https://github.com/numpy/numpy/issues/19038)\n- [GitHub PR](https://github.com/numpy/numpy/pull/20960)\n- [GitHub Release](https://github.com/numpy/numpy/releases/tag/v1.22.2)\n",
+      "epssDetails": {
+        "percentile": "0.19458",
+        "probability": "0.00054",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-41495"
+        ],
+        "CWE": [
+          "CWE-476"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T10:23:33.311250Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T10:02:22Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:24Z",
+      "modificationTime": "2022-10-25T23:39:56.989040Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "gradio@3.34.0",
+        "altair@5.0.1",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "numpy@1.22.2"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321964",
+      "title": "NULL Pointer Dereference",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[0,1.22.2)"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "1.22.2"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/issues/19038",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/pull/20960",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/releases/tag/v1.22.2",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-07-29T01:10:50.699694Z"
+        },
+        {
+          "assigner": "SUSE",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-09-13T16:16:01.299514Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T23:39:56.989040Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to NULL Pointer Dereference due to missing return-value validation in the `PyArray_DescrNew` function, which may allow attackers to conduct Denial of Service attacks by repetitively creating and sort arrays.\r\n\r\n**Note:** This may likely only happen if application memory is already exhausted, as it requires the `newdescr` object of the `PyArray_DescrNew` to evaluate to `NULL`.\n## Remediation\nUpgrade `numpy` to version 1.22.2 or higher.\n## References\n- [GitHub Issue](https://github.com/numpy/numpy/issues/19038)\n- [GitHub PR](https://github.com/numpy/numpy/pull/20960)\n- [GitHub Release](https://github.com/numpy/numpy/releases/tag/v1.22.2)\n",
+      "epssDetails": {
+        "percentile": "0.19458",
+        "probability": "0.00054",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-41495"
+        ],
+        "CWE": [
+          "CWE-476"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T10:23:33.311250Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T10:02:22Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:24Z",
+      "modificationTime": "2022-10-25T23:39:56.989040Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "gradio@3.34.0",
+        "matplotlib@3.5.3",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        "gradio@3.37.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321964",
+      "title": "NULL Pointer Dereference",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[0,1.22.2)"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "1.22.2"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/issues/19038",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/pull/20960",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/releases/tag/v1.22.2",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-07-29T01:10:50.699694Z"
+        },
+        {
+          "assigner": "SUSE",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-09-13T16:16:01.299514Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T23:39:56.989040Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to NULL Pointer Dereference due to missing return-value validation in the `PyArray_DescrNew` function, which may allow attackers to conduct Denial of Service attacks by repetitively creating and sort arrays.\r\n\r\n**Note:** This may likely only happen if application memory is already exhausted, as it requires the `newdescr` object of the `PyArray_DescrNew` to evaluate to `NULL`.\n## Remediation\nUpgrade `numpy` to version 1.22.2 or higher.\n## References\n- [GitHub Issue](https://github.com/numpy/numpy/issues/19038)\n- [GitHub PR](https://github.com/numpy/numpy/pull/20960)\n- [GitHub Release](https://github.com/numpy/numpy/releases/tag/v1.22.2)\n",
+      "epssDetails": {
+        "percentile": "0.19458",
+        "probability": "0.00054",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-41495"
+        ],
+        "CWE": [
+          "CWE-476"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T10:23:33.311250Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T10:02:22Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:24Z",
+      "modificationTime": "2022-10-25T23:39:56.989040Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "gradio@3.34.0",
+        "altair@5.0.1",
+        "pandas@1.3.5",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        "gradio@3.34.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321966",
+      "title": "Buffer Overflow",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[,1.22.0)"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.22.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/commit/271010f1037150e95017f803f4214b8861e528f2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/issues/19000",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-07-26T01:11:25.951115Z"
+        },
+        {
+          "assigner": "SUSE",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-10-18T11:22:40.403128Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T23:42:34.035105Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to Buffer Overflow due to missing boundary checks in the `array_from_pyobj` function of `fortranobject.c`. This may allow an attacker to conduct Denial of Service by carefully constructing an array with negative values.\n## Remediation\nUpgrade `numpy` to version 1.22.0 or higher.\n## References\n- [GitHub Commit](https://github.com/numpy/numpy/commit/271010f1037150e95017f803f4214b8861e528f2)\n- [GitHub Issue](https://github.com/numpy/numpy/issues/19000)\n",
+      "epssDetails": {
+        "percentile": "0.07034",
+        "probability": "0.00043",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-41496"
+        ],
+        "CWE": [
+          "CWE-119",
+          "CWE-120"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T10:52:47.566097Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T10:41:15Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:24Z",
+      "modificationTime": "2022-10-25T23:42:34.035105Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "accelerate@0.20.3",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        "accelerate@0.23.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321966",
+      "title": "Buffer Overflow",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[,1.22.0)"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.22.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/commit/271010f1037150e95017f803f4214b8861e528f2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/issues/19000",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-07-26T01:11:25.951115Z"
+        },
+        {
+          "assigner": "SUSE",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-10-18T11:22:40.403128Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T23:42:34.035105Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to Buffer Overflow due to missing boundary checks in the `array_from_pyobj` function of `fortranobject.c`. This may allow an attacker to conduct Denial of Service by carefully constructing an array with negative values.\n## Remediation\nUpgrade `numpy` to version 1.22.0 or higher.\n## References\n- [GitHub Commit](https://github.com/numpy/numpy/commit/271010f1037150e95017f803f4214b8861e528f2)\n- [GitHub Issue](https://github.com/numpy/numpy/issues/19000)\n",
+      "epssDetails": {
+        "percentile": "0.07034",
+        "probability": "0.00043",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-41496"
+        ],
+        "CWE": [
+          "CWE-119",
+          "CWE-120"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T10:52:47.566097Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T10:41:15Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:24Z",
+      "modificationTime": "2022-10-25T23:42:34.035105Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "gradio@3.34.0",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        "gradio@3.37.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321966",
+      "title": "Buffer Overflow",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[,1.22.0)"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.22.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/commit/271010f1037150e95017f803f4214b8861e528f2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/issues/19000",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-07-26T01:11:25.951115Z"
+        },
+        {
+          "assigner": "SUSE",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-10-18T11:22:40.403128Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T23:42:34.035105Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to Buffer Overflow due to missing boundary checks in the `array_from_pyobj` function of `fortranobject.c`. This may allow an attacker to conduct Denial of Service by carefully constructing an array with negative values.\n## Remediation\nUpgrade `numpy` to version 1.22.0 or higher.\n## References\n- [GitHub Commit](https://github.com/numpy/numpy/commit/271010f1037150e95017f803f4214b8861e528f2)\n- [GitHub Issue](https://github.com/numpy/numpy/issues/19000)\n",
+      "epssDetails": {
+        "percentile": "0.07034",
+        "probability": "0.00043",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-41496"
+        ],
+        "CWE": [
+          "CWE-119",
+          "CWE-120"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T10:52:47.566097Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T10:41:15Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:24Z",
+      "modificationTime": "2022-10-25T23:42:34.035105Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "transformers@4.30.2",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        "transformers@4.34.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321966",
+      "title": "Buffer Overflow",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[,1.22.0)"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.22.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/commit/271010f1037150e95017f803f4214b8861e528f2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/issues/19000",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-07-26T01:11:25.951115Z"
+        },
+        {
+          "assigner": "SUSE",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-10-18T11:22:40.403128Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T23:42:34.035105Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to Buffer Overflow due to missing boundary checks in the `array_from_pyobj` function of `fortranobject.c`. This may allow an attacker to conduct Denial of Service by carefully constructing an array with negative values.\n## Remediation\nUpgrade `numpy` to version 1.22.0 or higher.\n## References\n- [GitHub Commit](https://github.com/numpy/numpy/commit/271010f1037150e95017f803f4214b8861e528f2)\n- [GitHub Issue](https://github.com/numpy/numpy/issues/19000)\n",
+      "epssDetails": {
+        "percentile": "0.07034",
+        "probability": "0.00043",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-41496"
+        ],
+        "CWE": [
+          "CWE-119",
+          "CWE-120"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T10:52:47.566097Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T10:41:15Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:24Z",
+      "modificationTime": "2022-10-25T23:42:34.035105Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "gradio@3.34.0",
+        "pandas@1.3.5",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        "gradio@3.37.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321966",
+      "title": "Buffer Overflow",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[,1.22.0)"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.22.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/commit/271010f1037150e95017f803f4214b8861e528f2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/issues/19000",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-07-26T01:11:25.951115Z"
+        },
+        {
+          "assigner": "SUSE",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-10-18T11:22:40.403128Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T23:42:34.035105Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to Buffer Overflow due to missing boundary checks in the `array_from_pyobj` function of `fortranobject.c`. This may allow an attacker to conduct Denial of Service by carefully constructing an array with negative values.\n## Remediation\nUpgrade `numpy` to version 1.22.0 or higher.\n## References\n- [GitHub Commit](https://github.com/numpy/numpy/commit/271010f1037150e95017f803f4214b8861e528f2)\n- [GitHub Issue](https://github.com/numpy/numpy/issues/19000)\n",
+      "epssDetails": {
+        "percentile": "0.07034",
+        "probability": "0.00043",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-41496"
+        ],
+        "CWE": [
+          "CWE-119",
+          "CWE-120"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T10:52:47.566097Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T10:41:15Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:24Z",
+      "modificationTime": "2022-10-25T23:42:34.035105Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "gradio@3.34.0",
+        "altair@5.0.1",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "numpy@1.22.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321966",
+      "title": "Buffer Overflow",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[,1.22.0)"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.22.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/commit/271010f1037150e95017f803f4214b8861e528f2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/issues/19000",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-07-26T01:11:25.951115Z"
+        },
+        {
+          "assigner": "SUSE",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-10-18T11:22:40.403128Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T23:42:34.035105Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to Buffer Overflow due to missing boundary checks in the `array_from_pyobj` function of `fortranobject.c`. This may allow an attacker to conduct Denial of Service by carefully constructing an array with negative values.\n## Remediation\nUpgrade `numpy` to version 1.22.0 or higher.\n## References\n- [GitHub Commit](https://github.com/numpy/numpy/commit/271010f1037150e95017f803f4214b8861e528f2)\n- [GitHub Issue](https://github.com/numpy/numpy/issues/19000)\n",
+      "epssDetails": {
+        "percentile": "0.07034",
+        "probability": "0.00043",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-41496"
+        ],
+        "CWE": [
+          "CWE-119",
+          "CWE-120"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T10:52:47.566097Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T10:41:15Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:24Z",
+      "modificationTime": "2022-10-25T23:42:34.035105Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "gradio@3.34.0",
+        "matplotlib@3.5.3",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        "gradio@3.37.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321966",
+      "title": "Buffer Overflow",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[,1.22.0)"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.22.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/commit/271010f1037150e95017f803f4214b8861e528f2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/issues/19000",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-07-26T01:11:25.951115Z"
+        },
+        {
+          "assigner": "SUSE",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-10-18T11:22:40.403128Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T23:42:34.035105Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to Buffer Overflow due to missing boundary checks in the `array_from_pyobj` function of `fortranobject.c`. This may allow an attacker to conduct Denial of Service by carefully constructing an array with negative values.\n## Remediation\nUpgrade `numpy` to version 1.22.0 or higher.\n## References\n- [GitHub Commit](https://github.com/numpy/numpy/commit/271010f1037150e95017f803f4214b8861e528f2)\n- [GitHub Issue](https://github.com/numpy/numpy/issues/19000)\n",
+      "epssDetails": {
+        "percentile": "0.07034",
+        "probability": "0.00043",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-41496"
+        ],
+        "CWE": [
+          "CWE-119",
+          "CWE-120"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T10:52:47.566097Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T10:41:15Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:24Z",
+      "modificationTime": "2022-10-25T23:42:34.035105Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "gradio@3.34.0",
+        "altair@5.0.1",
+        "pandas@1.3.5",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        "gradio@3.34.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321970",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[,1.22.0rc1)"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "1.22.0rc1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/commit/eeef9d4646103c3b1afd3085f1393f2b3f9575b2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/issues/18993",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/pull/19539",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-10-27T00:10:26.564534Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-07-26T01:11:26.260447Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to Denial of Service (DoS) due to an incomplete string comparison in the `numpy.core` component, which may allow attackers to fail the APIs via constructing specific string objects.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `numpy` to version 1.22.0rc1 or higher.\n## References\n- [GitHub Commit](https://github.com/numpy/numpy/commit/eeef9d4646103c3b1afd3085f1393f2b3f9575b2)\n- [GitHub Issue](https://github.com/numpy/numpy/issues/18993)\n- [GitHub PR](https://github.com/numpy/numpy/pull/19539)\n",
+      "epssDetails": {
+        "percentile": "0.39776",
+        "probability": "0.00098",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-34141"
+        ],
+        "CWE": [
+          "CWE-400",
+          "CWE-1023"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T11:15:21.052159Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T11:06:43Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:23.793333Z",
+      "modificationTime": "2022-10-27T00:10:26.564534Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "accelerate@0.20.3",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        "accelerate@0.23.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321970",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[,1.22.0rc1)"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "1.22.0rc1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/commit/eeef9d4646103c3b1afd3085f1393f2b3f9575b2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/issues/18993",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/pull/19539",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-10-27T00:10:26.564534Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-07-26T01:11:26.260447Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to Denial of Service (DoS) due to an incomplete string comparison in the `numpy.core` component, which may allow attackers to fail the APIs via constructing specific string objects.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `numpy` to version 1.22.0rc1 or higher.\n## References\n- [GitHub Commit](https://github.com/numpy/numpy/commit/eeef9d4646103c3b1afd3085f1393f2b3f9575b2)\n- [GitHub Issue](https://github.com/numpy/numpy/issues/18993)\n- [GitHub PR](https://github.com/numpy/numpy/pull/19539)\n",
+      "epssDetails": {
+        "percentile": "0.39776",
+        "probability": "0.00098",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-34141"
+        ],
+        "CWE": [
+          "CWE-400",
+          "CWE-1023"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T11:15:21.052159Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T11:06:43Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:23.793333Z",
+      "modificationTime": "2022-10-27T00:10:26.564534Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "gradio@3.34.0",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        "gradio@3.37.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321970",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[,1.22.0rc1)"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "1.22.0rc1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/commit/eeef9d4646103c3b1afd3085f1393f2b3f9575b2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/issues/18993",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/pull/19539",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-10-27T00:10:26.564534Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-07-26T01:11:26.260447Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to Denial of Service (DoS) due to an incomplete string comparison in the `numpy.core` component, which may allow attackers to fail the APIs via constructing specific string objects.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `numpy` to version 1.22.0rc1 or higher.\n## References\n- [GitHub Commit](https://github.com/numpy/numpy/commit/eeef9d4646103c3b1afd3085f1393f2b3f9575b2)\n- [GitHub Issue](https://github.com/numpy/numpy/issues/18993)\n- [GitHub PR](https://github.com/numpy/numpy/pull/19539)\n",
+      "epssDetails": {
+        "percentile": "0.39776",
+        "probability": "0.00098",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-34141"
+        ],
+        "CWE": [
+          "CWE-400",
+          "CWE-1023"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T11:15:21.052159Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T11:06:43Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:23.793333Z",
+      "modificationTime": "2022-10-27T00:10:26.564534Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "transformers@4.30.2",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        "transformers@4.34.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321970",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[,1.22.0rc1)"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "1.22.0rc1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/commit/eeef9d4646103c3b1afd3085f1393f2b3f9575b2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/issues/18993",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/pull/19539",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-10-27T00:10:26.564534Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-07-26T01:11:26.260447Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to Denial of Service (DoS) due to an incomplete string comparison in the `numpy.core` component, which may allow attackers to fail the APIs via constructing specific string objects.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `numpy` to version 1.22.0rc1 or higher.\n## References\n- [GitHub Commit](https://github.com/numpy/numpy/commit/eeef9d4646103c3b1afd3085f1393f2b3f9575b2)\n- [GitHub Issue](https://github.com/numpy/numpy/issues/18993)\n- [GitHub PR](https://github.com/numpy/numpy/pull/19539)\n",
+      "epssDetails": {
+        "percentile": "0.39776",
+        "probability": "0.00098",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-34141"
+        ],
+        "CWE": [
+          "CWE-400",
+          "CWE-1023"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T11:15:21.052159Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T11:06:43Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:23.793333Z",
+      "modificationTime": "2022-10-27T00:10:26.564534Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "gradio@3.34.0",
+        "pandas@1.3.5",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        "gradio@3.37.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321970",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[,1.22.0rc1)"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "1.22.0rc1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/commit/eeef9d4646103c3b1afd3085f1393f2b3f9575b2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/issues/18993",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/pull/19539",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-10-27T00:10:26.564534Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-07-26T01:11:26.260447Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to Denial of Service (DoS) due to an incomplete string comparison in the `numpy.core` component, which may allow attackers to fail the APIs via constructing specific string objects.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `numpy` to version 1.22.0rc1 or higher.\n## References\n- [GitHub Commit](https://github.com/numpy/numpy/commit/eeef9d4646103c3b1afd3085f1393f2b3f9575b2)\n- [GitHub Issue](https://github.com/numpy/numpy/issues/18993)\n- [GitHub PR](https://github.com/numpy/numpy/pull/19539)\n",
+      "epssDetails": {
+        "percentile": "0.39776",
+        "probability": "0.00098",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-34141"
+        ],
+        "CWE": [
+          "CWE-400",
+          "CWE-1023"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T11:15:21.052159Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T11:06:43Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:23.793333Z",
+      "modificationTime": "2022-10-27T00:10:26.564534Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "gradio@3.34.0",
+        "altair@5.0.1",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "numpy@1.22.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321970",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[,1.22.0rc1)"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "1.22.0rc1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/commit/eeef9d4646103c3b1afd3085f1393f2b3f9575b2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/issues/18993",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/pull/19539",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-10-27T00:10:26.564534Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-07-26T01:11:26.260447Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to Denial of Service (DoS) due to an incomplete string comparison in the `numpy.core` component, which may allow attackers to fail the APIs via constructing specific string objects.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `numpy` to version 1.22.0rc1 or higher.\n## References\n- [GitHub Commit](https://github.com/numpy/numpy/commit/eeef9d4646103c3b1afd3085f1393f2b3f9575b2)\n- [GitHub Issue](https://github.com/numpy/numpy/issues/18993)\n- [GitHub PR](https://github.com/numpy/numpy/pull/19539)\n",
+      "epssDetails": {
+        "percentile": "0.39776",
+        "probability": "0.00098",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-34141"
+        ],
+        "CWE": [
+          "CWE-400",
+          "CWE-1023"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T11:15:21.052159Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T11:06:43Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:23.793333Z",
+      "modificationTime": "2022-10-27T00:10:26.564534Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "gradio@3.34.0",
+        "matplotlib@3.5.3",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        "gradio@3.37.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-NUMPY-2321970",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Daybreak2019"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[,1.22.0rc1)"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "1.22.0rc1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "numpy",
+      "references": [
+        {
+          "url": "https://github.com/numpy/numpy/commit/eeef9d4646103c3b1afd3085f1393f2b3f9575b2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/issues/18993",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/numpy/numpy/pull/19539",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-10-27T00:10:26.564534Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-07-26T01:11:26.260447Z"
+        }
+      ],
+      "description": "## Overview\n[numpy](https://github.com/numpy/numpy) is a fundamental package needed for scientific computing with Python.\n\nAffected versions of this package are vulnerable to Denial of Service (DoS) due to an incomplete string comparison in the `numpy.core` component, which may allow attackers to fail the APIs via constructing specific string objects.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `numpy` to version 1.22.0rc1 or higher.\n## References\n- [GitHub Commit](https://github.com/numpy/numpy/commit/eeef9d4646103c3b1afd3085f1393f2b3f9575b2)\n- [GitHub Issue](https://github.com/numpy/numpy/issues/18993)\n- [GitHub PR](https://github.com/numpy/numpy/pull/19539)\n",
+      "epssDetails": {
+        "percentile": "0.39776",
+        "probability": "0.00098",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-34141"
+        ],
+        "CWE": [
+          "CWE-400",
+          "CWE-1023"
+        ]
+      },
+      "packageName": "numpy",
+      "proprietary": false,
+      "creationTime": "2021-12-19T11:15:21.052159Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-19T11:06:43Z",
+      "packageManager": "pip",
+      "publicationTime": "2021-12-19T15:16:23.793333Z",
+      "modificationTime": "2022-10-27T00:10:26.564534Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "gradio@3.34.0",
+        "altair@5.0.1",
+        "pandas@1.3.5",
+        "numpy@1.21.3"
+      ],
+      "upgradePath": [
+        false,
+        "gradio@3.34.0"
+      ],
+      "version": "1.21.3",
+      "name": "numpy",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-PILLOW-5918878",
+      "title": "Heap-based Buffer Overflow",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H/E:H",
+      "credit": [
+        "Apple SEAR",
+        "The Citizen Lab"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[,10.0.1)"
+        ]
+      },
+      "exploit": "High",
+      "fixedIn": [
+        "10.0.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "critical",
+      "cvssScore": 9.6,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "pillow",
+      "references": [
+        {
+          "url": "https://chromereleases.googleblog.com/2023/09/stable-channel-update-for-desktop_11.html",
+          "title": "Chrome Releases"
+        },
+        {
+          "url": "https://github.com/cefsharp/CefSharp/commit/f2890ba66170afb0bf742839febe4d20449f758c",
+          "title": "Github Commit"
+        },
+        {
+          "url": "https://github.com/electron/electron/pull/39823",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/electron/electron/pull/39824",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/electron/electron/pull/39825",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/electron/electron/pull/39826",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/electron/electron/pull/39827",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://www.mozilla.org/en-US/security/advisories/mfsa2023-40/",
+          "title": "Mozilla Advisory"
+        },
+        {
+          "url": "https://blog.isosceles.com/the-webp-0day/",
+          "title": "PoC"
+        },
+        {
+          "url": "https://chromium.googlesource.com/webm/libwebp/%2B/2af26267cdfcb63a88e5c74a85927a12d6ca1d76",
+          "title": "Security Advisory"
+        },
+        {
+          "url": "https://chromium.googlesource.com/webm/libwebp/%2B/902bc9190331343b2017211debcec8d2ab87e17a",
+          "title": "Security Advisory"
+        },
+        {
+          "url": "https://snyk.io/blog/critical-webp-0-day-cve-2023-4863/",
+          "title": "Snyk Blog"
+        },
+        {
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+          "title": "CISA - Known Exploited Vulnerabilities"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 8.8,
+          "modificationTime": "2023-09-19T01:10:46.640816Z"
+        },
+        {
+          "assigner": "SUSE",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 8.8,
+          "modificationTime": "2023-09-16T11:03:43.057682Z"
+        }
+      ],
+      "description": "## Overview\n[Pillow](https://python-pillow.org/) is a PIL (Python Imaging Library) fork.\n\nAffected versions of this package are vulnerable to Heap-based Buffer Overflow when the `ReadHuffmanCodes()` function is used. An attacker can craft a special `WebP` lossless file that triggers the `ReadHuffmanCodes()` function to allocate the HuffmanCode buffer with a size that comes from an array of precomputed sizes: `kTableSize`. The `color_cache_bits` value defines which size to use. The `kTableSize` array only takes into account sizes for 8-bit first-level table lookups but not second-level table lookups. libwebp allows codes that are up to 15-bit (`MAX_ALLOWED_CODE_LENGTH`). When BuildHuffmanTable() attempts to fill the second-level tables it may write data out-of-bounds. The OOB write to the undersized array happens in ReplicateValue.\r\n\r\n**Notes:**\r\n\r\nThis is only exploitable if the `color_cache_bits` value defines which size to use.\r\n\r\nThis vulnerability was also published on libwebp [CVE-2023-5129](https://security.snyk.io/vuln/SNYK-UNMANAGED-WEBMPROJECTLIBWEBP-5918283)\r\n\r\n**Changelog:**\r\n\r\n2023-09-12: Initial advisory publication\r\n\r\n2023-09-27: Advisory details updated, including CVSS, references\r\n\r\n2023-09-27: CVE-2023-5129 rejected as a duplicate of CVE-2023-4863\r\n\r\n2023-09-28: Research and addition of additional affected libraries\n## Remediation\nUpgrade `Pillow` to version 10.0.1 or higher.\n## References\n- [Chrome Releases](https://chromereleases.googleblog.com/2023/09/stable-channel-update-for-desktop_11.html)\n- [Github Commit](https://github.com/cefsharp/CefSharp/commit/f2890ba66170afb0bf742839febe4d20449f758c)\n- [GitHub PR](https://github.com/electron/electron/pull/39823)\n- [GitHub PR](https://github.com/electron/electron/pull/39824)\n- [GitHub PR](https://github.com/electron/electron/pull/39825)\n- [GitHub PR](https://github.com/electron/electron/pull/39826)\n- [GitHub PR](https://github.com/electron/electron/pull/39827)\n- [Mozilla Advisory](https://www.mozilla.org/en-US/security/advisories/mfsa2023-40/)\n- [PoC](https://blog.isosceles.com/the-webp-0day/)\n- [Security Advisory](https://chromium.googlesource.com/webm/libwebp/+/2af26267cdfcb63a88e5c74a85927a12d6ca1d76)\n- [Security Advisory](https://chromium.googlesource.com/webm/libwebp/+/902bc9190331343b2017211debcec8d2ab87e17a)\n- [Snyk Blog](https://snyk.io/blog/critical-webp-0-day-cve-2023-4863/)\n- [CISA - Known Exploited Vulnerabilities](https://www.cisa.gov/known-exploited-vulnerabilities-catalog)\n",
+      "epssDetails": {
+        "percentile": "0.96858",
+        "probability": "0.41010",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-4863"
+        ],
+        "CWE": [
+          "CWE-122"
+        ]
+      },
+      "packageName": "pillow",
+      "proprietary": false,
+      "creationTime": "2023-09-26T13:35:04.864731Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-09-11T21:00:00Z",
+      "packageManager": "pip",
+      "publicationTime": "2023-09-12T12:27:31.913954Z",
+      "modificationTime": "2023-10-16T07:23:33.324036Z",
+      "socialTrendAlert": true,
+      "severityWithCritical": "critical",
+      "packagePopularityRank": 97,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "gradio@3.34.0",
+        "pillow@9.5.0"
+      ],
+      "upgradePath": [
+        false,
+        "gradio@3.37.0"
+      ],
+      "version": "9.5.0",
+      "name": "pillow",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-PYTHON-PILLOW-5918878",
+      "title": "Heap-based Buffer Overflow",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:H/A:H/E:H",
+      "credit": [
+        "Apple SEAR",
+        "The Citizen Lab"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[,10.0.1)"
+        ]
+      },
+      "exploit": "High",
+      "fixedIn": [
+        "10.0.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "python",
+      "severity": "critical",
+      "cvssScore": 9.6,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "pillow",
+      "references": [
+        {
+          "url": "https://chromereleases.googleblog.com/2023/09/stable-channel-update-for-desktop_11.html",
+          "title": "Chrome Releases"
+        },
+        {
+          "url": "https://github.com/cefsharp/CefSharp/commit/f2890ba66170afb0bf742839febe4d20449f758c",
+          "title": "Github Commit"
+        },
+        {
+          "url": "https://github.com/electron/electron/pull/39823",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/electron/electron/pull/39824",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/electron/electron/pull/39825",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/electron/electron/pull/39826",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/electron/electron/pull/39827",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://www.mozilla.org/en-US/security/advisories/mfsa2023-40/",
+          "title": "Mozilla Advisory"
+        },
+        {
+          "url": "https://blog.isosceles.com/the-webp-0day/",
+          "title": "PoC"
+        },
+        {
+          "url": "https://chromium.googlesource.com/webm/libwebp/%2B/2af26267cdfcb63a88e5c74a85927a12d6ca1d76",
+          "title": "Security Advisory"
+        },
+        {
+          "url": "https://chromium.googlesource.com/webm/libwebp/%2B/902bc9190331343b2017211debcec8d2ab87e17a",
+          "title": "Security Advisory"
+        },
+        {
+          "url": "https://snyk.io/blog/critical-webp-0-day-cve-2023-4863/",
+          "title": "Snyk Blog"
+        },
+        {
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+          "title": "CISA - Known Exploited Vulnerabilities"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 8.8,
+          "modificationTime": "2023-09-19T01:10:46.640816Z"
+        },
+        {
+          "assigner": "SUSE",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 8.8,
+          "modificationTime": "2023-09-16T11:03:43.057682Z"
+        }
+      ],
+      "description": "## Overview\n[Pillow](https://python-pillow.org/) is a PIL (Python Imaging Library) fork.\n\nAffected versions of this package are vulnerable to Heap-based Buffer Overflow when the `ReadHuffmanCodes()` function is used. An attacker can craft a special `WebP` lossless file that triggers the `ReadHuffmanCodes()` function to allocate the HuffmanCode buffer with a size that comes from an array of precomputed sizes: `kTableSize`. The `color_cache_bits` value defines which size to use. The `kTableSize` array only takes into account sizes for 8-bit first-level table lookups but not second-level table lookups. libwebp allows codes that are up to 15-bit (`MAX_ALLOWED_CODE_LENGTH`). When BuildHuffmanTable() attempts to fill the second-level tables it may write data out-of-bounds. The OOB write to the undersized array happens in ReplicateValue.\r\n\r\n**Notes:**\r\n\r\nThis is only exploitable if the `color_cache_bits` value defines which size to use.\r\n\r\nThis vulnerability was also published on libwebp [CVE-2023-5129](https://security.snyk.io/vuln/SNYK-UNMANAGED-WEBMPROJECTLIBWEBP-5918283)\r\n\r\n**Changelog:**\r\n\r\n2023-09-12: Initial advisory publication\r\n\r\n2023-09-27: Advisory details updated, including CVSS, references\r\n\r\n2023-09-27: CVE-2023-5129 rejected as a duplicate of CVE-2023-4863\r\n\r\n2023-09-28: Research and addition of additional affected libraries\n## Remediation\nUpgrade `Pillow` to version 10.0.1 or higher.\n## References\n- [Chrome Releases](https://chromereleases.googleblog.com/2023/09/stable-channel-update-for-desktop_11.html)\n- [Github Commit](https://github.com/cefsharp/CefSharp/commit/f2890ba66170afb0bf742839febe4d20449f758c)\n- [GitHub PR](https://github.com/electron/electron/pull/39823)\n- [GitHub PR](https://github.com/electron/electron/pull/39824)\n- [GitHub PR](https://github.com/electron/electron/pull/39825)\n- [GitHub PR](https://github.com/electron/electron/pull/39826)\n- [GitHub PR](https://github.com/electron/electron/pull/39827)\n- [Mozilla Advisory](https://www.mozilla.org/en-US/security/advisories/mfsa2023-40/)\n- [PoC](https://blog.isosceles.com/the-webp-0day/)\n- [Security Advisory](https://chromium.googlesource.com/webm/libwebp/+/2af26267cdfcb63a88e5c74a85927a12d6ca1d76)\n- [Security Advisory](https://chromium.googlesource.com/webm/libwebp/+/902bc9190331343b2017211debcec8d2ab87e17a)\n- [Snyk Blog](https://snyk.io/blog/critical-webp-0-day-cve-2023-4863/)\n- [CISA - Known Exploited Vulnerabilities](https://www.cisa.gov/known-exploited-vulnerabilities-catalog)\n",
+      "epssDetails": {
+        "percentile": "0.96858",
+        "probability": "0.41010",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-4863"
+        ],
+        "CWE": [
+          "CWE-122"
+        ]
+      },
+      "packageName": "pillow",
+      "proprietary": false,
+      "creationTime": "2023-09-26T13:35:04.864731Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-09-11T21:00:00Z",
+      "packageManager": "pip",
+      "publicationTime": "2023-09-12T12:27:31.913954Z",
+      "modificationTime": "2023-10-16T07:23:33.324036Z",
+      "socialTrendAlert": true,
+      "severityWithCritical": "critical",
+      "packagePopularityRank": 97,
+      "from": [
+        "THUDM/CodeGeeX2@THUDM/CodeGeeX2#448db3560b082b24ecf9a9a0da105afee35886c8",
+        "gradio@3.34.0",
+        "matplotlib@3.5.3",
+        "pillow@9.5.0"
+      ],
+      "upgradePath": [
+        false,
+        "gradio@3.37.0"
+      ],
+      "version": "9.5.0",
+      "name": "pillow",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 77,
+  "severityMap": {
+    "critical": 2,
+    "high": 1,
+    "medium": 0,
+    "low": 21
+  },
+  "org": "bruswei",
+  "packageManager": "pip",
+  "summary": "24 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 5,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/THUDM/CodeGeeX2.git"
+}

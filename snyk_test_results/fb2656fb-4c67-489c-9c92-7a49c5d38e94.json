@@ -1,0 +1,120 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "npm:atob:20180429",
+      "title": "Uninitialized Memory Exposure",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:H/E:F/RL:O/RC:C",
+      "credit": [
+        "ChALkeR"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<2.1.0"
+        ]
+      },
+      "exploit": "Functional",
+      "fixedIn": [
+        "2.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "atob",
+      "references": [
+        {
+          "url": "https://hackerone.com/reports/321686",
+          "title": "HackerOne Report"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:H",
+          "cvssV3BaseScore": 9.1,
+          "modificationTime": "2023-03-01T01:10:15.723334Z"
+        }
+      ],
+      "description": "## Overview\n[atob](https://www.npmjs.com/package/atob) is a package that Uses Buffer to emulate the exact functionality of the browser's atob.\n\nAffected versions of this package are vulnerable to Uninitialized Memory Exposure. It allocates uninitialized Buffers when a number is passed in user provided fields.\n## Remediation\nUpgrade `atob` to version 2.1.0 or higher.\n## References\n- [HackerOne Report](https://hackerone.com/reports/321686)\n",
+      "epssDetails": {
+        "percentile": "0.78329",
+        "probability": "0.00745",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2018-3745"
+        ],
+        "CWE": [
+          "CWE-201"
+        ],
+        "NSP": [
+          "646"
+        ],
+        "GHSA": [
+          "GHSA-8w4h-3cm3-2pm2"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-ATOB-12131"
+        ]
+      },
+      "packageName": "atob",
+      "proprietary": false,
+      "creationTime": "2018-03-04T16:43:31.873000Z",
+      "functions_new": [],
+      "alternativeIds": [
+        "SNYK-JS-ATOB-12131"
+      ],
+      "disclosureTime": "2018-04-29T16:43:31Z",
+      "packageManager": "npm",
+      "publicationTime": "2018-04-30T13:07:31Z",
+      "modificationTime": "2023-03-01T01:10:15.723334Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "aessoft-class-autocomplete@AESSoft/vscode-class-autocomplete-for-html#9d788e08fb950930a8c143497ea9a6a4e0567f80",
+        "css@2.2.1",
+        "source-map-resolve@0.3.1",
+        "atob@1.1.3"
+      ],
+      "upgradePath": [
+        false,
+        "css@2.2.2",
+        "source-map-resolve@0.5.1",
+        "atob@2.1.0"
+      ],
+      "version": "1.1.3",
+      "name": "atob",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 24,
+  "severityMap": {
+    "critical": 0,
+    "high": 0,
+    "medium": 1,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "1 vulnerable dependency path",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/AESSoft/vscode-class-autocomplete-for-html.git"
+}

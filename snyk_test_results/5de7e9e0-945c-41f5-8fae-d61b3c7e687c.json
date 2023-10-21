@@ -1,0 +1,1797 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-DOTPROP-543489",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L/E:P/RL:O/RC:C",
+      "credit": [
+        "aaron_costello"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">1.0.1 <4.2.1",
+          ">=5.0.0 <5.1.1"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.2.1",
+        "5.1.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.3,
+      "functions": [
+        {
+          "version": [
+            ">1.0.1 <5.1.1"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "className": null,
+            "functionName": "module.exports.set"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "dot-prop",
+      "references": [
+        {
+          "url": "https://github.com/sindresorhus/dot-prop/commit/3039c8c07f6fdaa8b595ec869ae0895686a7a0f2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://hackerone.com/reports/719856",
+          "title": "HackerOne Report"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+          "cvssV3BaseScore": 7.3,
+          "modificationTime": "2022-09-01T21:49:01.095389Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+          "cvssV3BaseScore": 7.3,
+          "modificationTime": "2022-08-06T01:11:14.209198Z"
+        }
+      ],
+      "description": "## Overview\n[dot-prop](https://github.com/sindresorhus/dot-prop#readme) is a package to get, set, or delete a property from a nested object using a dot path.\n\nAffected versions of this package are vulnerable to Prototype Pollution. It is possible for a user to modify the prototype of a base object.\r\n\r\n## PoC by aaron_costello \r\n```\r\nvar dotProp = require(\"dot-prop\")\r\nconst object = {};\r\nconsole.log(\"Before \" + object.b); //Undefined\r\ndotProp.set(object, '__proto__.b', true);\r\nconsole.log(\"After \" + {}.b); //true\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `dot-prop` to version 4.2.1, 5.1.1 or higher.\n## References\n- [GitHub Commit](https://github.com/sindresorhus/dot-prop/commit/3039c8c07f6fdaa8b595ec869ae0895686a7a0f2)\n- [HackerOne Report](https://hackerone.com/reports/719856)\n",
+      "epssDetails": {
+        "percentile": "0.54383",
+        "probability": "0.00183",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-8116"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ],
+        "GHSA": [
+          "GHSA-ff7x-qrg7-qggm"
+        ]
+      },
+      "packageName": "dot-prop",
+      "proprietary": false,
+      "creationTime": "2020-01-28T15:18:37.743372Z",
+      "functions_new": [
+        {
+          "version": [
+            ">1.0.1 <5.1.1"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "functionName": "module.exports.set"
+          }
+        }
+      ],
+      "alternativeIds": [],
+      "disclosureTime": "2020-01-28T10:17:51Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-01-28T16:23:39Z",
+      "modificationTime": "2022-09-01T21:49:01.095389Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-translate@jianzhichun/vscode-translate#aeabe4da8bc6cf8affc9663dc9b5f3c92920d6e3",
+        "google-translate-api@2.3.0",
+        "configstore@2.1.0",
+        "dot-prop@3.0.0"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "configstore@3.0.0",
+        "dot-prop@4.2.1"
+      ],
+      "version": "3.0.0",
+      "name": "dot-prop",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-DOTPROP-543489",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L/E:P/RL:O/RC:C",
+      "credit": [
+        "aaron_costello"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">1.0.1 <4.2.1",
+          ">=5.0.0 <5.1.1"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.2.1",
+        "5.1.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.3,
+      "functions": [
+        {
+          "version": [
+            ">1.0.1 <5.1.1"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "className": null,
+            "functionName": "module.exports.set"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "dot-prop",
+      "references": [
+        {
+          "url": "https://github.com/sindresorhus/dot-prop/commit/3039c8c07f6fdaa8b595ec869ae0895686a7a0f2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://hackerone.com/reports/719856",
+          "title": "HackerOne Report"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+          "cvssV3BaseScore": 7.3,
+          "modificationTime": "2022-09-01T21:49:01.095389Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+          "cvssV3BaseScore": 7.3,
+          "modificationTime": "2022-08-06T01:11:14.209198Z"
+        }
+      ],
+      "description": "## Overview\n[dot-prop](https://github.com/sindresorhus/dot-prop#readme) is a package to get, set, or delete a property from a nested object using a dot path.\n\nAffected versions of this package are vulnerable to Prototype Pollution. It is possible for a user to modify the prototype of a base object.\r\n\r\n## PoC by aaron_costello \r\n```\r\nvar dotProp = require(\"dot-prop\")\r\nconst object = {};\r\nconsole.log(\"Before \" + object.b); //Undefined\r\ndotProp.set(object, '__proto__.b', true);\r\nconsole.log(\"After \" + {}.b); //true\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `dot-prop` to version 4.2.1, 5.1.1 or higher.\n## References\n- [GitHub Commit](https://github.com/sindresorhus/dot-prop/commit/3039c8c07f6fdaa8b595ec869ae0895686a7a0f2)\n- [HackerOne Report](https://hackerone.com/reports/719856)\n",
+      "epssDetails": {
+        "percentile": "0.54383",
+        "probability": "0.00183",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-8116"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ],
+        "GHSA": [
+          "GHSA-ff7x-qrg7-qggm"
+        ]
+      },
+      "packageName": "dot-prop",
+      "proprietary": false,
+      "creationTime": "2020-01-28T15:18:37.743372Z",
+      "functions_new": [
+        {
+          "version": [
+            ">1.0.1 <5.1.1"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "functionName": "module.exports.set"
+          }
+        }
+      ],
+      "alternativeIds": [],
+      "disclosureTime": "2020-01-28T10:17:51Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-01-28T16:23:39Z",
+      "modificationTime": "2022-09-01T21:49:01.095389Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-translate@jianzhichun/vscode-translate#aeabe4da8bc6cf8affc9663dc9b5f3c92920d6e3",
+        "google-translate-api-cn@1.0.2",
+        "configstore@2.1.0",
+        "dot-prop@3.0.0"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "configstore@3.0.0",
+        "dot-prop@4.2.1"
+      ],
+      "version": "3.0.0",
+      "name": "dot-prop",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-DOTPROP-543489",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L/E:P/RL:O/RC:C",
+      "credit": [
+        "aaron_costello"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">1.0.1 <4.2.1",
+          ">=5.0.0 <5.1.1"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.2.1",
+        "5.1.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.3,
+      "functions": [
+        {
+          "version": [
+            ">1.0.1 <5.1.1"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "className": null,
+            "functionName": "module.exports.set"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "dot-prop",
+      "references": [
+        {
+          "url": "https://github.com/sindresorhus/dot-prop/commit/3039c8c07f6fdaa8b595ec869ae0895686a7a0f2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://hackerone.com/reports/719856",
+          "title": "HackerOne Report"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+          "cvssV3BaseScore": 7.3,
+          "modificationTime": "2022-09-01T21:49:01.095389Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+          "cvssV3BaseScore": 7.3,
+          "modificationTime": "2022-08-06T01:11:14.209198Z"
+        }
+      ],
+      "description": "## Overview\n[dot-prop](https://github.com/sindresorhus/dot-prop#readme) is a package to get, set, or delete a property from a nested object using a dot path.\n\nAffected versions of this package are vulnerable to Prototype Pollution. It is possible for a user to modify the prototype of a base object.\r\n\r\n## PoC by aaron_costello \r\n```\r\nvar dotProp = require(\"dot-prop\")\r\nconst object = {};\r\nconsole.log(\"Before \" + object.b); //Undefined\r\ndotProp.set(object, '__proto__.b', true);\r\nconsole.log(\"After \" + {}.b); //true\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `dot-prop` to version 4.2.1, 5.1.1 or higher.\n## References\n- [GitHub Commit](https://github.com/sindresorhus/dot-prop/commit/3039c8c07f6fdaa8b595ec869ae0895686a7a0f2)\n- [HackerOne Report](https://hackerone.com/reports/719856)\n",
+      "epssDetails": {
+        "percentile": "0.54383",
+        "probability": "0.00183",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-8116"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ],
+        "GHSA": [
+          "GHSA-ff7x-qrg7-qggm"
+        ]
+      },
+      "packageName": "dot-prop",
+      "proprietary": false,
+      "creationTime": "2020-01-28T15:18:37.743372Z",
+      "functions_new": [
+        {
+          "version": [
+            ">1.0.1 <5.1.1"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "functionName": "module.exports.set"
+          }
+        }
+      ],
+      "alternativeIds": [],
+      "disclosureTime": "2020-01-28T10:17:51Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-01-28T16:23:39Z",
+      "modificationTime": "2022-09-01T21:49:01.095389Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-translate@jianzhichun/vscode-translate#aeabe4da8bc6cf8affc9663dc9b5f3c92920d6e3",
+        "google-translate-api@2.3.0",
+        "google-translate-token@1.0.0",
+        "configstore@2.1.0",
+        "dot-prop@3.0.0"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "configstore@3.0.0",
+        "dot-prop@4.2.1"
+      ],
+      "version": "3.0.0",
+      "name": "dot-prop",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-DOTPROP-543489",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L/E:P/RL:O/RC:C",
+      "credit": [
+        "aaron_costello"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">1.0.1 <4.2.1",
+          ">=5.0.0 <5.1.1"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.2.1",
+        "5.1.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.3,
+      "functions": [
+        {
+          "version": [
+            ">1.0.1 <5.1.1"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "className": null,
+            "functionName": "module.exports.set"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "dot-prop",
+      "references": [
+        {
+          "url": "https://github.com/sindresorhus/dot-prop/commit/3039c8c07f6fdaa8b595ec869ae0895686a7a0f2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://hackerone.com/reports/719856",
+          "title": "HackerOne Report"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+          "cvssV3BaseScore": 7.3,
+          "modificationTime": "2022-09-01T21:49:01.095389Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+          "cvssV3BaseScore": 7.3,
+          "modificationTime": "2022-08-06T01:11:14.209198Z"
+        }
+      ],
+      "description": "## Overview\n[dot-prop](https://github.com/sindresorhus/dot-prop#readme) is a package to get, set, or delete a property from a nested object using a dot path.\n\nAffected versions of this package are vulnerable to Prototype Pollution. It is possible for a user to modify the prototype of a base object.\r\n\r\n## PoC by aaron_costello \r\n```\r\nvar dotProp = require(\"dot-prop\")\r\nconst object = {};\r\nconsole.log(\"Before \" + object.b); //Undefined\r\ndotProp.set(object, '__proto__.b', true);\r\nconsole.log(\"After \" + {}.b); //true\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `dot-prop` to version 4.2.1, 5.1.1 or higher.\n## References\n- [GitHub Commit](https://github.com/sindresorhus/dot-prop/commit/3039c8c07f6fdaa8b595ec869ae0895686a7a0f2)\n- [HackerOne Report](https://hackerone.com/reports/719856)\n",
+      "epssDetails": {
+        "percentile": "0.54383",
+        "probability": "0.00183",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-8116"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ],
+        "GHSA": [
+          "GHSA-ff7x-qrg7-qggm"
+        ]
+      },
+      "packageName": "dot-prop",
+      "proprietary": false,
+      "creationTime": "2020-01-28T15:18:37.743372Z",
+      "functions_new": [
+        {
+          "version": [
+            ">1.0.1 <5.1.1"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "functionName": "module.exports.set"
+          }
+        }
+      ],
+      "alternativeIds": [],
+      "disclosureTime": "2020-01-28T10:17:51Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-01-28T16:23:39Z",
+      "modificationTime": "2022-09-01T21:49:01.095389Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-translate@jianzhichun/vscode-translate#aeabe4da8bc6cf8affc9663dc9b5f3c92920d6e3",
+        "google-translate-api-cn@1.0.2",
+        "google-translate-token@1.0.0",
+        "configstore@2.1.0",
+        "dot-prop@3.0.0"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "configstore@3.0.0",
+        "dot-prop@4.2.1"
+      ],
+      "version": "3.0.0",
+      "name": "dot-prop",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-GOT-2932019",
+      "title": "Open Redirect",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<11.8.5",
+          ">=12.0.0 <12.1.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "11.8.5",
+        "12.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.4,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "got",
+      "references": [
+        {
+          "url": "https://github.com/sindresorhus/got/compare/v12.0.3...v12.1.0",
+          "title": "GitHub Diff"
+        },
+        {
+          "url": "https://github.com/sindresorhus/got/pull/2047",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-06-29T01:11:26.531842Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-11-19T20:57:05.871669Z"
+        }
+      ],
+      "description": "## Overview\n\nAffected versions of this package are vulnerable to Open Redirect due to missing verification of requested URLs. It allowed a victim to be redirected to a UNIX socket.\n## Remediation\nUpgrade `got` to version 11.8.5, 12.1.0 or higher.\n## References\n- [GitHub Diff](https://github.com/sindresorhus/got/compare/v12.0.3...v12.1.0)\n- [GitHub PR](https://github.com/sindresorhus/got/pull/2047)\n",
+      "epssDetails": {
+        "percentile": "0.22655",
+        "probability": "0.00058",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-33987"
+        ],
+        "CWE": [
+          "CWE-601"
+        ]
+      },
+      "packageName": "got",
+      "proprietary": false,
+      "creationTime": "2022-06-19T09:23:24.210132Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-06-19T08:33:16Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-06-19T15:33:44.269688Z",
+      "modificationTime": "2022-11-19T20:57:05.871669Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-translate@jianzhichun/vscode-translate#aeabe4da8bc6cf8affc9663dc9b5f3c92920d6e3",
+        "google-translate-api@2.3.0",
+        "got@6.7.1"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "got@11.8.5"
+      ],
+      "version": "6.7.1",
+      "name": "got",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-GOT-2932019",
+      "title": "Open Redirect",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<11.8.5",
+          ">=12.0.0 <12.1.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "11.8.5",
+        "12.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.4,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "got",
+      "references": [
+        {
+          "url": "https://github.com/sindresorhus/got/compare/v12.0.3...v12.1.0",
+          "title": "GitHub Diff"
+        },
+        {
+          "url": "https://github.com/sindresorhus/got/pull/2047",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-06-29T01:11:26.531842Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-11-19T20:57:05.871669Z"
+        }
+      ],
+      "description": "## Overview\n\nAffected versions of this package are vulnerable to Open Redirect due to missing verification of requested URLs. It allowed a victim to be redirected to a UNIX socket.\n## Remediation\nUpgrade `got` to version 11.8.5, 12.1.0 or higher.\n## References\n- [GitHub Diff](https://github.com/sindresorhus/got/compare/v12.0.3...v12.1.0)\n- [GitHub PR](https://github.com/sindresorhus/got/pull/2047)\n",
+      "epssDetails": {
+        "percentile": "0.22655",
+        "probability": "0.00058",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-33987"
+        ],
+        "CWE": [
+          "CWE-601"
+        ]
+      },
+      "packageName": "got",
+      "proprietary": false,
+      "creationTime": "2022-06-19T09:23:24.210132Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-06-19T08:33:16Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-06-19T15:33:44.269688Z",
+      "modificationTime": "2022-11-19T20:57:05.871669Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-translate@jianzhichun/vscode-translate#aeabe4da8bc6cf8affc9663dc9b5f3c92920d6e3",
+        "google-translate-api-cn@1.0.2",
+        "got@6.7.1"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "got@11.8.5"
+      ],
+      "version": "6.7.1",
+      "name": "got",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-GOT-2932019",
+      "title": "Open Redirect",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<11.8.5",
+          ">=12.0.0 <12.1.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "11.8.5",
+        "12.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.4,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "got",
+      "references": [
+        {
+          "url": "https://github.com/sindresorhus/got/compare/v12.0.3...v12.1.0",
+          "title": "GitHub Diff"
+        },
+        {
+          "url": "https://github.com/sindresorhus/got/pull/2047",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-06-29T01:11:26.531842Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-11-19T20:57:05.871669Z"
+        }
+      ],
+      "description": "## Overview\n\nAffected versions of this package are vulnerable to Open Redirect due to missing verification of requested URLs. It allowed a victim to be redirected to a UNIX socket.\n## Remediation\nUpgrade `got` to version 11.8.5, 12.1.0 or higher.\n## References\n- [GitHub Diff](https://github.com/sindresorhus/got/compare/v12.0.3...v12.1.0)\n- [GitHub PR](https://github.com/sindresorhus/got/pull/2047)\n",
+      "epssDetails": {
+        "percentile": "0.22655",
+        "probability": "0.00058",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-33987"
+        ],
+        "CWE": [
+          "CWE-601"
+        ]
+      },
+      "packageName": "got",
+      "proprietary": false,
+      "creationTime": "2022-06-19T09:23:24.210132Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-06-19T08:33:16Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-06-19T15:33:44.269688Z",
+      "modificationTime": "2022-11-19T20:57:05.871669Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-translate@jianzhichun/vscode-translate#aeabe4da8bc6cf8affc9663dc9b5f3c92920d6e3",
+        "google-translate-api@2.3.0",
+        "google-translate-token@1.0.0",
+        "got@6.7.1"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "got@11.8.5"
+      ],
+      "version": "6.7.1",
+      "name": "got",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-GOT-2932019",
+      "title": "Open Redirect",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<11.8.5",
+          ">=12.0.0 <12.1.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "11.8.5",
+        "12.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.4,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "got",
+      "references": [
+        {
+          "url": "https://github.com/sindresorhus/got/compare/v12.0.3...v12.1.0",
+          "title": "GitHub Diff"
+        },
+        {
+          "url": "https://github.com/sindresorhus/got/pull/2047",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-06-29T01:11:26.531842Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-11-19T20:57:05.871669Z"
+        }
+      ],
+      "description": "## Overview\n\nAffected versions of this package are vulnerable to Open Redirect due to missing verification of requested URLs. It allowed a victim to be redirected to a UNIX socket.\n## Remediation\nUpgrade `got` to version 11.8.5, 12.1.0 or higher.\n## References\n- [GitHub Diff](https://github.com/sindresorhus/got/compare/v12.0.3...v12.1.0)\n- [GitHub PR](https://github.com/sindresorhus/got/pull/2047)\n",
+      "epssDetails": {
+        "percentile": "0.22655",
+        "probability": "0.00058",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-33987"
+        ],
+        "CWE": [
+          "CWE-601"
+        ]
+      },
+      "packageName": "got",
+      "proprietary": false,
+      "creationTime": "2022-06-19T09:23:24.210132Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-06-19T08:33:16Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-06-19T15:33:44.269688Z",
+      "modificationTime": "2022-11-19T20:57:05.871669Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-translate@jianzhichun/vscode-translate#aeabe4da8bc6cf8affc9663dc9b5f3c92920d6e3",
+        "google-translate-api-cn@1.0.2",
+        "google-translate-token@1.0.0",
+        "got@6.7.1"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "got@11.8.5"
+      ],
+      "version": "6.7.1",
+      "name": "got",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-SAFEEVAL-3175701",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:P",
+      "credit": [
+        "Yuhan Gao (gyhlelecola@163.com)",
+        "Peng Zhou (zpbrent@gmail.com)"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "safe-eval",
+      "references": [
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/26",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-12-30T01:10:37.554412Z"
+        }
+      ],
+      "description": "## Overview\n[safe-eval](https://github.com/hacksparrow/safe-eval) is a Safer version of eval()\n\nAffected versions of this package are vulnerable to Prototype Pollution which allows an attacker to add or modify properties of the `Object.prototype.Consolidate` when using the function `safeEval`. This is because the function uses `vm` variable, leading an attacker to modify properties of the `Object.prototype`.\r\n\r\n## PoC\r\n```js\r\nvar unsafe= require(\"safe-eval\")\r\nconsole.log({}.test) //undefined\r\nunsafe(\"__proto__.test=123\")\r\nconsole.log({}.test) //123\r\n```\n\n## Details\n\nPrototype Pollution is a vulnerability affecting JavaScript. Prototype Pollution refers to the ability to inject properties into existing JavaScript language construct prototypes, such as objects. JavaScript allows all Object attributes to be altered, including their magical attributes such as `__proto__`, `constructor` and `prototype`. An attacker manipulates these attributes to overwrite, or pollute, a JavaScript application object prototype of the base object by injecting other values.  Properties on the `Object.prototype` are then inherited by all the JavaScript objects through the prototype chain. When that happens, this leads to either denial of service by triggering JavaScript exceptions, or it tampers with the application source code to force the code path that the attacker injects, thereby leading to remote code execution.\n\nThere are two main ways in which the pollution of prototypes occurs:\n\n-   Unsafe `Object` recursive merge\n    \n-   Property definition by path\n    \n\n### Unsafe Object recursive merge\n\nThe logic of a vulnerable recursive merge function follows the following high-level model:\n```\nmerge (target, source)\n\n  foreach property of source\n\n    if property exists and is an object on both the target and the source\n\n      merge(target[property], source[property])\n\n    else\n\n      target[property] = source[property]\n```\n<br>  \n\nWhen the source object contains a property named `__proto__` defined with `Object.defineProperty()` , the condition that checks if the property exists and is an object on both the target and the source passes and the merge recurses with the target, being the prototype of `Object` and the source of `Object` as defined by the attacker. Properties are then copied on the `Object` prototype.\n\nClone operations are a special sub-class of unsafe recursive merges, which occur when a recursive merge is conducted on an empty object: `merge({},source)`.\n\n`lodash` and `Hoek` are examples of libraries susceptible to recursive merge attacks.\n\n### Property definition by path\n\nThere are a few JavaScript libraries that use an API to define property values on an object based on a given path. The function that is generally affected contains this signature: `theFunction(object, path, value)`\n\nIf the attacker can control the value of “path”, they can set this value to `__proto__.myValue`. `myValue` is then assigned to the prototype of the class of the object.\n\n## Types of attacks\n\nThere are a few methods by which Prototype Pollution can be manipulated:\n\n| Type |Origin  |Short description |\n|--|--|--|\n| **Denial of service (DoS)**|Client  |This is the most likely attack. <br>DoS occurs when `Object` holds generic functions that are implicitly called for various operations (for example, `toString` and `valueOf`). <br> The attacker pollutes `Object.prototype.someattr` and alters its state to an unexpected value such as `Int` or `Object`. In this case, the code fails and is likely to cause a denial of service.  <br>**For example:** if an attacker pollutes `Object.prototype.toString` by defining it as an integer, if the codebase at any point was reliant on `someobject.toString()` it would fail. |\n |**Remote Code Execution**|Client|Remote code execution is generally only possible in cases where the codebase evaluates a specific attribute of an object, and then executes that evaluation.<br>**For example:** `eval(someobject.someattr)`. In this case, if the attacker pollutes `Object.prototype.someattr` they are likely to be able to leverage this in order to execute code.|\n|**Property Injection**|Client|The attacker pollutes properties that the codebase relies on for their informative value, including security properties such as cookies or tokens.<br>  **For example:** if a codebase checks privileges for `someuser.isAdmin`, then when the attacker pollutes `Object.prototype.isAdmin` and sets it to equal `true`, they can then achieve admin privileges.|\n\n## Affected environments\n\nThe following environments are susceptible to a Prototype Pollution attack:\n\n-   Application server\n    \n-   Web server\n\n-   Web browser\n    \n\n## How to prevent\n\n1.  Freeze the prototype— use `Object.freeze (Object.prototype)`.\n    \n2.  Require schema validation of JSON input.\n    \n3.  Avoid using unsafe recursive merge functions.\n    \n4.  Consider using objects without prototypes (for example, `Object.create(null)`), breaking the prototype chain and preventing pollution.\n    \n5.  As a best practice use `Map` instead of `Object`.\n\n### For more information on this vulnerability type:\n\n[Arteau, Oliver. “JavaScript prototype pollution attack in NodeJS application.” GitHub, 26 May 2018](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)\n\n## Remediation\nThere is no fixed version for `safe-eval`.\n## References\n- [GitHub Issue](https://github.com/hacksparrow/safe-eval/issues/26)\n",
+      "epssDetails": {
+        "percentile": "0.48236",
+        "probability": "0.00139",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-25904"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ]
+      },
+      "packageName": "safe-eval",
+      "proprietary": true,
+      "creationTime": "2022-12-19T14:30:10.249447Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-12-19T14:15:56Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-12-19T14:44:52.616658Z",
+      "modificationTime": "2023-01-03T08:54:43.915498Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 94,
+      "from": [
+        "vscode-translate@jianzhichun/vscode-translate#aeabe4da8bc6cf8affc9663dc9b5f3c92920d6e3",
+        "google-translate-api@2.3.0",
+        "safe-eval@0.3.0"
+      ],
+      "upgradePath": [],
+      "version": "0.3.0",
+      "name": "safe-eval",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-SAFEEVAL-3175701",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:P",
+      "credit": [
+        "Yuhan Gao (gyhlelecola@163.com)",
+        "Peng Zhou (zpbrent@gmail.com)"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "safe-eval",
+      "references": [
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/26",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-12-30T01:10:37.554412Z"
+        }
+      ],
+      "description": "## Overview\n[safe-eval](https://github.com/hacksparrow/safe-eval) is a Safer version of eval()\n\nAffected versions of this package are vulnerable to Prototype Pollution which allows an attacker to add or modify properties of the `Object.prototype.Consolidate` when using the function `safeEval`. This is because the function uses `vm` variable, leading an attacker to modify properties of the `Object.prototype`.\r\n\r\n## PoC\r\n```js\r\nvar unsafe= require(\"safe-eval\")\r\nconsole.log({}.test) //undefined\r\nunsafe(\"__proto__.test=123\")\r\nconsole.log({}.test) //123\r\n```\n\n## Details\n\nPrototype Pollution is a vulnerability affecting JavaScript. Prototype Pollution refers to the ability to inject properties into existing JavaScript language construct prototypes, such as objects. JavaScript allows all Object attributes to be altered, including their magical attributes such as `__proto__`, `constructor` and `prototype`. An attacker manipulates these attributes to overwrite, or pollute, a JavaScript application object prototype of the base object by injecting other values.  Properties on the `Object.prototype` are then inherited by all the JavaScript objects through the prototype chain. When that happens, this leads to either denial of service by triggering JavaScript exceptions, or it tampers with the application source code to force the code path that the attacker injects, thereby leading to remote code execution.\n\nThere are two main ways in which the pollution of prototypes occurs:\n\n-   Unsafe `Object` recursive merge\n    \n-   Property definition by path\n    \n\n### Unsafe Object recursive merge\n\nThe logic of a vulnerable recursive merge function follows the following high-level model:\n```\nmerge (target, source)\n\n  foreach property of source\n\n    if property exists and is an object on both the target and the source\n\n      merge(target[property], source[property])\n\n    else\n\n      target[property] = source[property]\n```\n<br>  \n\nWhen the source object contains a property named `__proto__` defined with `Object.defineProperty()` , the condition that checks if the property exists and is an object on both the target and the source passes and the merge recurses with the target, being the prototype of `Object` and the source of `Object` as defined by the attacker. Properties are then copied on the `Object` prototype.\n\nClone operations are a special sub-class of unsafe recursive merges, which occur when a recursive merge is conducted on an empty object: `merge({},source)`.\n\n`lodash` and `Hoek` are examples of libraries susceptible to recursive merge attacks.\n\n### Property definition by path\n\nThere are a few JavaScript libraries that use an API to define property values on an object based on a given path. The function that is generally affected contains this signature: `theFunction(object, path, value)`\n\nIf the attacker can control the value of “path”, they can set this value to `__proto__.myValue`. `myValue` is then assigned to the prototype of the class of the object.\n\n## Types of attacks\n\nThere are a few methods by which Prototype Pollution can be manipulated:\n\n| Type |Origin  |Short description |\n|--|--|--|\n| **Denial of service (DoS)**|Client  |This is the most likely attack. <br>DoS occurs when `Object` holds generic functions that are implicitly called for various operations (for example, `toString` and `valueOf`). <br> The attacker pollutes `Object.prototype.someattr` and alters its state to an unexpected value such as `Int` or `Object`. In this case, the code fails and is likely to cause a denial of service.  <br>**For example:** if an attacker pollutes `Object.prototype.toString` by defining it as an integer, if the codebase at any point was reliant on `someobject.toString()` it would fail. |\n |**Remote Code Execution**|Client|Remote code execution is generally only possible in cases where the codebase evaluates a specific attribute of an object, and then executes that evaluation.<br>**For example:** `eval(someobject.someattr)`. In this case, if the attacker pollutes `Object.prototype.someattr` they are likely to be able to leverage this in order to execute code.|\n|**Property Injection**|Client|The attacker pollutes properties that the codebase relies on for their informative value, including security properties such as cookies or tokens.<br>  **For example:** if a codebase checks privileges for `someuser.isAdmin`, then when the attacker pollutes `Object.prototype.isAdmin` and sets it to equal `true`, they can then achieve admin privileges.|\n\n## Affected environments\n\nThe following environments are susceptible to a Prototype Pollution attack:\n\n-   Application server\n    \n-   Web server\n\n-   Web browser\n    \n\n## How to prevent\n\n1.  Freeze the prototype— use `Object.freeze (Object.prototype)`.\n    \n2.  Require schema validation of JSON input.\n    \n3.  Avoid using unsafe recursive merge functions.\n    \n4.  Consider using objects without prototypes (for example, `Object.create(null)`), breaking the prototype chain and preventing pollution.\n    \n5.  As a best practice use `Map` instead of `Object`.\n\n### For more information on this vulnerability type:\n\n[Arteau, Oliver. “JavaScript prototype pollution attack in NodeJS application.” GitHub, 26 May 2018](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)\n\n## Remediation\nThere is no fixed version for `safe-eval`.\n## References\n- [GitHub Issue](https://github.com/hacksparrow/safe-eval/issues/26)\n",
+      "epssDetails": {
+        "percentile": "0.48236",
+        "probability": "0.00139",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-25904"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ]
+      },
+      "packageName": "safe-eval",
+      "proprietary": true,
+      "creationTime": "2022-12-19T14:30:10.249447Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-12-19T14:15:56Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-12-19T14:44:52.616658Z",
+      "modificationTime": "2023-01-03T08:54:43.915498Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 94,
+      "from": [
+        "vscode-translate@jianzhichun/vscode-translate#aeabe4da8bc6cf8affc9663dc9b5f3c92920d6e3",
+        "google-translate-api-cn@1.0.2",
+        "safe-eval@0.3.0"
+      ],
+      "upgradePath": [],
+      "version": "0.3.0",
+      "name": "safe-eval",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-SAFEEVAL-3373062",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:P",
+      "credit": [
+        "seongil-wi"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "safe-eval",
+      "references": [
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/28",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://gist.github.com/seongil-wi/9d9fc0cc5b7b130419cd45827e59c4f9",
+          "title": "PoC"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+          "cvssV3BaseScore": 10,
+          "modificationTime": "2023-04-15T01:10:12.117002Z"
+        }
+      ],
+      "description": "## Overview\n[safe-eval](https://github.com/hacksparrow/safe-eval) is a Safer version of eval()\n\nAffected versions of this package are vulnerable to Prototype Pollution via the `safeEval` function, due to improper sanitization of its parameter content.\n## PoC\n```js\r\nvar safeEval = require('safe-eval')\r\n\r\nlet code = `\r\n    (function() { \r\n        Error.prepareStackTrace = (_, c) => c.map(c => c.getThis()).find(a => a); \r\n        ret = (new Error()).stack;\r\n        ret.__proto__.polluted = \"ret.__proto__.polluted\";\r\n    })()\r\n`\r\nsafeEval(code);\r\n\r\nconst polluted_result = {}[\"polluted\"];\r\nconsole.log(polluted_result);\r\n```\n\n## Details\n\nPrototype Pollution is a vulnerability affecting JavaScript. Prototype Pollution refers to the ability to inject properties into existing JavaScript language construct prototypes, such as objects. JavaScript allows all Object attributes to be altered, including their magical attributes such as `__proto__`, `constructor` and `prototype`. An attacker manipulates these attributes to overwrite, or pollute, a JavaScript application object prototype of the base object by injecting other values.  Properties on the `Object.prototype` are then inherited by all the JavaScript objects through the prototype chain. When that happens, this leads to either denial of service by triggering JavaScript exceptions, or it tampers with the application source code to force the code path that the attacker injects, thereby leading to remote code execution.\n\nThere are two main ways in which the pollution of prototypes occurs:\n\n-   Unsafe `Object` recursive merge\n    \n-   Property definition by path\n    \n\n### Unsafe Object recursive merge\n\nThe logic of a vulnerable recursive merge function follows the following high-level model:\n```\nmerge (target, source)\n\n  foreach property of source\n\n    if property exists and is an object on both the target and the source\n\n      merge(target[property], source[property])\n\n    else\n\n      target[property] = source[property]\n```\n<br>  \n\nWhen the source object contains a property named `__proto__` defined with `Object.defineProperty()` , the condition that checks if the property exists and is an object on both the target and the source passes and the merge recurses with the target, being the prototype of `Object` and the source of `Object` as defined by the attacker. Properties are then copied on the `Object` prototype.\n\nClone operations are a special sub-class of unsafe recursive merges, which occur when a recursive merge is conducted on an empty object: `merge({},source)`.\n\n`lodash` and `Hoek` are examples of libraries susceptible to recursive merge attacks.\n\n### Property definition by path\n\nThere are a few JavaScript libraries that use an API to define property values on an object based on a given path. The function that is generally affected contains this signature: `theFunction(object, path, value)`\n\nIf the attacker can control the value of “path”, they can set this value to `__proto__.myValue`. `myValue` is then assigned to the prototype of the class of the object.\n\n## Types of attacks\n\nThere are a few methods by which Prototype Pollution can be manipulated:\n\n| Type |Origin  |Short description |\n|--|--|--|\n| **Denial of service (DoS)**|Client  |This is the most likely attack. <br>DoS occurs when `Object` holds generic functions that are implicitly called for various operations (for example, `toString` and `valueOf`). <br> The attacker pollutes `Object.prototype.someattr` and alters its state to an unexpected value such as `Int` or `Object`. In this case, the code fails and is likely to cause a denial of service.  <br>**For example:** if an attacker pollutes `Object.prototype.toString` by defining it as an integer, if the codebase at any point was reliant on `someobject.toString()` it would fail. |\n |**Remote Code Execution**|Client|Remote code execution is generally only possible in cases where the codebase evaluates a specific attribute of an object, and then executes that evaluation.<br>**For example:** `eval(someobject.someattr)`. In this case, if the attacker pollutes `Object.prototype.someattr` they are likely to be able to leverage this in order to execute code.|\n|**Property Injection**|Client|The attacker pollutes properties that the codebase relies on for their informative value, including security properties such as cookies or tokens.<br>  **For example:** if a codebase checks privileges for `someuser.isAdmin`, then when the attacker pollutes `Object.prototype.isAdmin` and sets it to equal `true`, they can then achieve admin privileges.|\n\n## Affected environments\n\nThe following environments are susceptible to a Prototype Pollution attack:\n\n-   Application server\n    \n-   Web server\n\n-   Web browser\n    \n\n## How to prevent\n\n1.  Freeze the prototype— use `Object.freeze (Object.prototype)`.\n    \n2.  Require schema validation of JSON input.\n    \n3.  Avoid using unsafe recursive merge functions.\n    \n4.  Consider using objects without prototypes (for example, `Object.create(null)`), breaking the prototype chain and preventing pollution.\n    \n5.  As a best practice use `Map` instead of `Object`.\n\n### For more information on this vulnerability type:\n\n[Arteau, Oliver. “JavaScript prototype pollution attack in NodeJS application.” GitHub, 26 May 2018](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)\n\n## Remediation\nThere is no fixed version for `safe-eval`.\n## References\n- [GitHub Issue](https://github.com/hacksparrow/safe-eval/issues/28)\n- [PoC](https://gist.github.com/seongil-wi/9d9fc0cc5b7b130419cd45827e59c4f9)\n",
+      "epssDetails": {
+        "percentile": "0.29226",
+        "probability": "0.00071",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-26121"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ]
+      },
+      "packageName": "safe-eval",
+      "proprietary": true,
+      "creationTime": "2023-03-26T12:39:05.210210Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-03-26T12:36:58Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-04-10T10:19:12.401981Z",
+      "modificationTime": "2023-04-15T01:10:12.117002Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 94,
+      "from": [
+        "vscode-translate@jianzhichun/vscode-translate#aeabe4da8bc6cf8affc9663dc9b5f3c92920d6e3",
+        "google-translate-api@2.3.0",
+        "safe-eval@0.3.0"
+      ],
+      "upgradePath": [],
+      "version": "0.3.0",
+      "name": "safe-eval",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-SAFEEVAL-3373062",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:P",
+      "credit": [
+        "seongil-wi"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "safe-eval",
+      "references": [
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/28",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://gist.github.com/seongil-wi/9d9fc0cc5b7b130419cd45827e59c4f9",
+          "title": "PoC"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+          "cvssV3BaseScore": 10,
+          "modificationTime": "2023-04-15T01:10:12.117002Z"
+        }
+      ],
+      "description": "## Overview\n[safe-eval](https://github.com/hacksparrow/safe-eval) is a Safer version of eval()\n\nAffected versions of this package are vulnerable to Prototype Pollution via the `safeEval` function, due to improper sanitization of its parameter content.\n## PoC\n```js\r\nvar safeEval = require('safe-eval')\r\n\r\nlet code = `\r\n    (function() { \r\n        Error.prepareStackTrace = (_, c) => c.map(c => c.getThis()).find(a => a); \r\n        ret = (new Error()).stack;\r\n        ret.__proto__.polluted = \"ret.__proto__.polluted\";\r\n    })()\r\n`\r\nsafeEval(code);\r\n\r\nconst polluted_result = {}[\"polluted\"];\r\nconsole.log(polluted_result);\r\n```\n\n## Details\n\nPrototype Pollution is a vulnerability affecting JavaScript. Prototype Pollution refers to the ability to inject properties into existing JavaScript language construct prototypes, such as objects. JavaScript allows all Object attributes to be altered, including their magical attributes such as `__proto__`, `constructor` and `prototype`. An attacker manipulates these attributes to overwrite, or pollute, a JavaScript application object prototype of the base object by injecting other values.  Properties on the `Object.prototype` are then inherited by all the JavaScript objects through the prototype chain. When that happens, this leads to either denial of service by triggering JavaScript exceptions, or it tampers with the application source code to force the code path that the attacker injects, thereby leading to remote code execution.\n\nThere are two main ways in which the pollution of prototypes occurs:\n\n-   Unsafe `Object` recursive merge\n    \n-   Property definition by path\n    \n\n### Unsafe Object recursive merge\n\nThe logic of a vulnerable recursive merge function follows the following high-level model:\n```\nmerge (target, source)\n\n  foreach property of source\n\n    if property exists and is an object on both the target and the source\n\n      merge(target[property], source[property])\n\n    else\n\n      target[property] = source[property]\n```\n<br>  \n\nWhen the source object contains a property named `__proto__` defined with `Object.defineProperty()` , the condition that checks if the property exists and is an object on both the target and the source passes and the merge recurses with the target, being the prototype of `Object` and the source of `Object` as defined by the attacker. Properties are then copied on the `Object` prototype.\n\nClone operations are a special sub-class of unsafe recursive merges, which occur when a recursive merge is conducted on an empty object: `merge({},source)`.\n\n`lodash` and `Hoek` are examples of libraries susceptible to recursive merge attacks.\n\n### Property definition by path\n\nThere are a few JavaScript libraries that use an API to define property values on an object based on a given path. The function that is generally affected contains this signature: `theFunction(object, path, value)`\n\nIf the attacker can control the value of “path”, they can set this value to `__proto__.myValue`. `myValue` is then assigned to the prototype of the class of the object.\n\n## Types of attacks\n\nThere are a few methods by which Prototype Pollution can be manipulated:\n\n| Type |Origin  |Short description |\n|--|--|--|\n| **Denial of service (DoS)**|Client  |This is the most likely attack. <br>DoS occurs when `Object` holds generic functions that are implicitly called for various operations (for example, `toString` and `valueOf`). <br> The attacker pollutes `Object.prototype.someattr` and alters its state to an unexpected value such as `Int` or `Object`. In this case, the code fails and is likely to cause a denial of service.  <br>**For example:** if an attacker pollutes `Object.prototype.toString` by defining it as an integer, if the codebase at any point was reliant on `someobject.toString()` it would fail. |\n |**Remote Code Execution**|Client|Remote code execution is generally only possible in cases where the codebase evaluates a specific attribute of an object, and then executes that evaluation.<br>**For example:** `eval(someobject.someattr)`. In this case, if the attacker pollutes `Object.prototype.someattr` they are likely to be able to leverage this in order to execute code.|\n|**Property Injection**|Client|The attacker pollutes properties that the codebase relies on for their informative value, including security properties such as cookies or tokens.<br>  **For example:** if a codebase checks privileges for `someuser.isAdmin`, then when the attacker pollutes `Object.prototype.isAdmin` and sets it to equal `true`, they can then achieve admin privileges.|\n\n## Affected environments\n\nThe following environments are susceptible to a Prototype Pollution attack:\n\n-   Application server\n    \n-   Web server\n\n-   Web browser\n    \n\n## How to prevent\n\n1.  Freeze the prototype— use `Object.freeze (Object.prototype)`.\n    \n2.  Require schema validation of JSON input.\n    \n3.  Avoid using unsafe recursive merge functions.\n    \n4.  Consider using objects without prototypes (for example, `Object.create(null)`), breaking the prototype chain and preventing pollution.\n    \n5.  As a best practice use `Map` instead of `Object`.\n\n### For more information on this vulnerability type:\n\n[Arteau, Oliver. “JavaScript prototype pollution attack in NodeJS application.” GitHub, 26 May 2018](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)\n\n## Remediation\nThere is no fixed version for `safe-eval`.\n## References\n- [GitHub Issue](https://github.com/hacksparrow/safe-eval/issues/28)\n- [PoC](https://gist.github.com/seongil-wi/9d9fc0cc5b7b130419cd45827e59c4f9)\n",
+      "epssDetails": {
+        "percentile": "0.29226",
+        "probability": "0.00071",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-26121"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ]
+      },
+      "packageName": "safe-eval",
+      "proprietary": true,
+      "creationTime": "2023-03-26T12:39:05.210210Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-03-26T12:36:58Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-04-10T10:19:12.401981Z",
+      "modificationTime": "2023-04-15T01:10:12.117002Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 94,
+      "from": [
+        "vscode-translate@jianzhichun/vscode-translate#aeabe4da8bc6cf8affc9663dc9b5f3c92920d6e3",
+        "google-translate-api-cn@1.0.2",
+        "safe-eval@0.3.0"
+      ],
+      "upgradePath": [],
+      "version": "0.3.0",
+      "name": "safe-eval",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-SAFEEVAL-3373064",
+      "title": "Sandbox Bypass",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H/E:P",
+      "credit": [
+        "seongil-wi"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 8.8,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "safe-eval",
+      "references": [
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/27",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/31",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/32",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/33",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/34",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/35",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://gist.github.com/seongil-wi/2db6cb884e10137a93132b7f74879cce",
+          "title": "PoC"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+          "cvssV3BaseScore": 10,
+          "modificationTime": "2023-04-19T01:10:08.450505Z"
+        }
+      ],
+      "description": "## Overview\n[safe-eval](https://github.com/hacksparrow/safe-eval) is a Safer version of eval()\n\nAffected versions of this package are vulnerable to Sandbox Bypass due to improper input sanitization. The vulnerability is derived from prototype pollution exploitation.\r\nExploiting this vulnerability might result in remote code execution (\"RCE\").\r\n\r\n**Vulnerable functions:**\r\n\r\n`__defineGetter__`, `stack()`, `toLocaleString()`, `propertyIsEnumerable.call()`,  `valueOf()`.\n## PoC\n```js\r\n\r\nconst safe_eval = require('safe-eval')\r\ncode = `\r\nimport('test').catch((e)=>{})['constructor']['constructor']('return process')().mainModule.require('child_process').execSync('touch rce')\r\n`\r\nsafe_eval(code)\r\n\r\n```\n## Remediation\nThere is no fixed version for `safe-eval`.\n## References\n- [GitHub Issue](https://github.com/hacksparrow/safe-eval/issues/27)\n- [GitHub Issue](https://github.com/hacksparrow/safe-eval/issues/31)\n- [GitHub Issue](https://github.com/hacksparrow/safe-eval/issues/32)\n- [GitHub Issue](https://github.com/hacksparrow/safe-eval/issues/33)\n- [GitHub Issue](https://github.com/hacksparrow/safe-eval/issues/34)\n- [GitHub Issue](https://github.com/hacksparrow/safe-eval/issues/35)\n- [PoC](https://gist.github.com/seongil-wi/2db6cb884e10137a93132b7f74879cce)\n",
+      "epssDetails": {
+        "percentile": "0.72757",
+        "probability": "0.00490",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-26122"
+        ],
+        "CWE": [
+          "CWE-265"
+        ]
+      },
+      "packageName": "safe-eval",
+      "proprietary": true,
+      "creationTime": "2023-03-26T12:50:13.467145Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-03-26T12:48:11Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-04-10T10:19:22.235723Z",
+      "modificationTime": "2023-04-19T01:10:08.450505Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 94,
+      "from": [
+        "vscode-translate@jianzhichun/vscode-translate#aeabe4da8bc6cf8affc9663dc9b5f3c92920d6e3",
+        "google-translate-api@2.3.0",
+        "safe-eval@0.3.0"
+      ],
+      "upgradePath": [],
+      "version": "0.3.0",
+      "name": "safe-eval",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-SAFEEVAL-3373064",
+      "title": "Sandbox Bypass",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H/E:P",
+      "credit": [
+        "seongil-wi"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 8.8,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "safe-eval",
+      "references": [
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/27",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/31",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/32",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/33",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/34",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/35",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://gist.github.com/seongil-wi/2db6cb884e10137a93132b7f74879cce",
+          "title": "PoC"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+          "cvssV3BaseScore": 10,
+          "modificationTime": "2023-04-19T01:10:08.450505Z"
+        }
+      ],
+      "description": "## Overview\n[safe-eval](https://github.com/hacksparrow/safe-eval) is a Safer version of eval()\n\nAffected versions of this package are vulnerable to Sandbox Bypass due to improper input sanitization. The vulnerability is derived from prototype pollution exploitation.\r\nExploiting this vulnerability might result in remote code execution (\"RCE\").\r\n\r\n**Vulnerable functions:**\r\n\r\n`__defineGetter__`, `stack()`, `toLocaleString()`, `propertyIsEnumerable.call()`,  `valueOf()`.\n## PoC\n```js\r\n\r\nconst safe_eval = require('safe-eval')\r\ncode = `\r\nimport('test').catch((e)=>{})['constructor']['constructor']('return process')().mainModule.require('child_process').execSync('touch rce')\r\n`\r\nsafe_eval(code)\r\n\r\n```\n## Remediation\nThere is no fixed version for `safe-eval`.\n## References\n- [GitHub Issue](https://github.com/hacksparrow/safe-eval/issues/27)\n- [GitHub Issue](https://github.com/hacksparrow/safe-eval/issues/31)\n- [GitHub Issue](https://github.com/hacksparrow/safe-eval/issues/32)\n- [GitHub Issue](https://github.com/hacksparrow/safe-eval/issues/33)\n- [GitHub Issue](https://github.com/hacksparrow/safe-eval/issues/34)\n- [GitHub Issue](https://github.com/hacksparrow/safe-eval/issues/35)\n- [PoC](https://gist.github.com/seongil-wi/2db6cb884e10137a93132b7f74879cce)\n",
+      "epssDetails": {
+        "percentile": "0.72757",
+        "probability": "0.00490",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-26122"
+        ],
+        "CWE": [
+          "CWE-265"
+        ]
+      },
+      "packageName": "safe-eval",
+      "proprietary": true,
+      "creationTime": "2023-03-26T12:50:13.467145Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-03-26T12:48:11Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-04-10T10:19:22.235723Z",
+      "modificationTime": "2023-04-19T01:10:08.450505Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 94,
+      "from": [
+        "vscode-translate@jianzhichun/vscode-translate#aeabe4da8bc6cf8affc9663dc9b5f3c92920d6e3",
+        "google-translate-api-cn@1.0.2",
+        "safe-eval@0.3.0"
+      ],
+      "upgradePath": [],
+      "version": "0.3.0",
+      "name": "safe-eval",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-SAFEEVAL-608076",
+      "title": "Sandbox Escape",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:U/RC:C",
+      "credit": [
+        "Anirudh Anand"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 8.1,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "safe-eval",
+      "references": [
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/19",
+          "title": "Github Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-01-03T18:09:29.349464Z"
+        }
+      ],
+      "description": "## Overview\n[safe-eval](https://github.com/hacksparrow/safe-eval) is a Safer version of eval()\n\nAffected versions of this package are vulnerable to Sandbox Escape. It is possible for an attacker to run an arbitrary command on the host machine.\r\n\r\n### POC by Anirudh Anand (for node `12.13.0`)\r\n```\r\nconst safeEval = require('safe-eval');\r\n\r\nconst theFunction = function() {\r\n   const bad = new Error();\r\n   bad.__proto__ = null;\r\n   bad.stack = {\r\n      match(outer) {\r\n         throw outer.constructor.constructor(\"return process\")().mainModule.require('child_process').execSync('whoami').toString();\r\n      }\r\n   };\r\n   return bad;\r\n};\r\n\r\nconst untrusted = `(${theFunction})()`;\r\nconsole.log(safeEval(untrusted));\r\n```\n## Remediation\nThere is no fixed version for `safe-eval`.\n## References\n- [Github Issue](https://github.com/hacksparrow/safe-eval/issues/19)\n",
+      "epssDetails": {
+        "percentile": "0.73243",
+        "probability": "0.00507",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-7710"
+        ],
+        "CWE": [
+          "CWE-265"
+        ],
+        "GHSA": [
+          "GHSA-hrpq-r399-whgw"
+        ]
+      },
+      "packageName": "safe-eval",
+      "proprietary": true,
+      "creationTime": "2020-08-21T09:13:43.105943Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2020-02-28T09:12:38Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-08-21T11:26:39Z",
+      "modificationTime": "2022-01-03T18:09:29.349464Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 94,
+      "from": [
+        "vscode-translate@jianzhichun/vscode-translate#aeabe4da8bc6cf8affc9663dc9b5f3c92920d6e3",
+        "google-translate-api@2.3.0",
+        "safe-eval@0.3.0"
+      ],
+      "upgradePath": [],
+      "version": "0.3.0",
+      "name": "safe-eval",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-SAFEEVAL-608076",
+      "title": "Sandbox Escape",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:U/RC:C",
+      "credit": [
+        "Anirudh Anand"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 8.1,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "safe-eval",
+      "references": [
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/19",
+          "title": "Github Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-01-03T18:09:29.349464Z"
+        }
+      ],
+      "description": "## Overview\n[safe-eval](https://github.com/hacksparrow/safe-eval) is a Safer version of eval()\n\nAffected versions of this package are vulnerable to Sandbox Escape. It is possible for an attacker to run an arbitrary command on the host machine.\r\n\r\n### POC by Anirudh Anand (for node `12.13.0`)\r\n```\r\nconst safeEval = require('safe-eval');\r\n\r\nconst theFunction = function() {\r\n   const bad = new Error();\r\n   bad.__proto__ = null;\r\n   bad.stack = {\r\n      match(outer) {\r\n         throw outer.constructor.constructor(\"return process\")().mainModule.require('child_process').execSync('whoami').toString();\r\n      }\r\n   };\r\n   return bad;\r\n};\r\n\r\nconst untrusted = `(${theFunction})()`;\r\nconsole.log(safeEval(untrusted));\r\n```\n## Remediation\nThere is no fixed version for `safe-eval`.\n## References\n- [Github Issue](https://github.com/hacksparrow/safe-eval/issues/19)\n",
+      "epssDetails": {
+        "percentile": "0.73243",
+        "probability": "0.00507",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-7710"
+        ],
+        "CWE": [
+          "CWE-265"
+        ],
+        "GHSA": [
+          "GHSA-hrpq-r399-whgw"
+        ]
+      },
+      "packageName": "safe-eval",
+      "proprietary": true,
+      "creationTime": "2020-08-21T09:13:43.105943Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2020-02-28T09:12:38Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-08-21T11:26:39Z",
+      "modificationTime": "2022-01-03T18:09:29.349464Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 94,
+      "from": [
+        "vscode-translate@jianzhichun/vscode-translate#aeabe4da8bc6cf8affc9663dc9b5f3c92920d6e3",
+        "google-translate-api-cn@1.0.2",
+        "safe-eval@0.3.0"
+      ],
+      "upgradePath": [],
+      "version": "0.3.0",
+      "name": "safe-eval",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:safe-eval:20170830",
+      "title": "Sandbox Escaping",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+      "credit": [
+        "Alessandro Nadalin"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<0.4.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "0.4.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "critical",
+      "cvssScore": 9.8,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "safe-eval",
+      "references": [
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/5",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/patriksimek/vm2/issues/59",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+          "cvssV3BaseScore": 10,
+          "modificationTime": "2022-01-03T16:21:35.671129Z"
+        }
+      ],
+      "description": "## Overview\n[`safe-eval`] is a version of `eval`, claiming to be safer.\n\nAffected versions of this package are vulnerable to Sandbox Escaping.\nUser input is not sanitized before being passed on to the safeEval function.\nA malicious user could access the object constructors, allowing access to the standard library, then escaping the sandbox.\n\nProof of Concept:\n```\nvar safeEval = require('safe-eval');\nsafeEval(\"this.constructor.constructor('return process')().exit()\");\n```\n\n## Remediation\nUpgrade `safe-eval` to version 0.4.0 or higher.\n\n## References\n- [GitHub Issue #1](https://github.com/hacksparrow/safe-eval/issues/5)\n- [GitHub Issue #2](https://github.com/patriksimek/vm2/issues/59)\n",
+      "epssDetails": {
+        "percentile": "0.63460",
+        "probability": "0.00273",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2017-16088"
+        ],
+        "CWE": [
+          "CWE-265"
+        ],
+        "NSP": [
+          "337"
+        ],
+        "GHSA": [
+          "GHSA-ww6v-677g-p656"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-SAFEEVAL-10755"
+        ]
+      },
+      "packageName": "safe-eval",
+      "proprietary": false,
+      "creationTime": "2017-04-19T23:29:48Z",
+      "functions_new": [],
+      "alternativeIds": [
+        "SNYK-JS-SAFEEVAL-10755"
+      ],
+      "disclosureTime": "2017-08-30T15:56:22Z",
+      "packageManager": "npm",
+      "publicationTime": "2017-09-06T09:07:54.201000Z",
+      "modificationTime": "2022-01-03T16:21:35.671129Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "critical",
+      "packagePopularityRank": 94,
+      "from": [
+        "vscode-translate@jianzhichun/vscode-translate#aeabe4da8bc6cf8affc9663dc9b5f3c92920d6e3",
+        "google-translate-api@2.3.0",
+        "safe-eval@0.3.0"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "safe-eval@0.4.0"
+      ],
+      "version": "0.3.0",
+      "name": "safe-eval",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:safe-eval:20170830",
+      "title": "Sandbox Escaping",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+      "credit": [
+        "Alessandro Nadalin"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<0.4.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "0.4.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "critical",
+      "cvssScore": 9.8,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "safe-eval",
+      "references": [
+        {
+          "url": "https://github.com/hacksparrow/safe-eval/issues/5",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/patriksimek/vm2/issues/59",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+          "cvssV3BaseScore": 10,
+          "modificationTime": "2022-01-03T16:21:35.671129Z"
+        }
+      ],
+      "description": "## Overview\n[`safe-eval`] is a version of `eval`, claiming to be safer.\n\nAffected versions of this package are vulnerable to Sandbox Escaping.\nUser input is not sanitized before being passed on to the safeEval function.\nA malicious user could access the object constructors, allowing access to the standard library, then escaping the sandbox.\n\nProof of Concept:\n```\nvar safeEval = require('safe-eval');\nsafeEval(\"this.constructor.constructor('return process')().exit()\");\n```\n\n## Remediation\nUpgrade `safe-eval` to version 0.4.0 or higher.\n\n## References\n- [GitHub Issue #1](https://github.com/hacksparrow/safe-eval/issues/5)\n- [GitHub Issue #2](https://github.com/patriksimek/vm2/issues/59)\n",
+      "epssDetails": {
+        "percentile": "0.63460",
+        "probability": "0.00273",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2017-16088"
+        ],
+        "CWE": [
+          "CWE-265"
+        ],
+        "NSP": [
+          "337"
+        ],
+        "GHSA": [
+          "GHSA-ww6v-677g-p656"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-SAFEEVAL-10755"
+        ]
+      },
+      "packageName": "safe-eval",
+      "proprietary": false,
+      "creationTime": "2017-04-19T23:29:48Z",
+      "functions_new": [],
+      "alternativeIds": [
+        "SNYK-JS-SAFEEVAL-10755"
+      ],
+      "disclosureTime": "2017-08-30T15:56:22Z",
+      "packageManager": "npm",
+      "publicationTime": "2017-09-06T09:07:54.201000Z",
+      "modificationTime": "2022-01-03T16:21:35.671129Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "critical",
+      "packagePopularityRank": 94,
+      "from": [
+        "vscode-translate@jianzhichun/vscode-translate#aeabe4da8bc6cf8affc9663dc9b5f3c92920d6e3",
+        "google-translate-api-cn@1.0.2",
+        "safe-eval@0.3.0"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "safe-eval@0.4.0"
+      ],
+      "version": "0.3.0",
+      "name": "safe-eval",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 35,
+  "severityMap": {
+    "critical": 2,
+    "high": 8,
+    "medium": 8,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "18 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 7,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/jianzhichun/vscode-translate.git"
+}

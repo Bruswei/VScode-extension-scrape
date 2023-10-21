@@ -1,0 +1,117 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-LOG4JS-2348757",
+      "title": "Information Exposure",
+      "CVSSv3": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N",
+      "credit": [
+        "Lam Wei Li",
+        "ranjit-git"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<6.4.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "6.4.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "log4js",
+      "references": [
+        {
+          "url": "https://github.com/log4js-node/log4js-node/blob/v6.4.0/CHANGELOG.md%23640",
+          "title": "GitHub ChangeLog"
+        },
+        {
+          "url": "https://github.com/log4js-node/log4js-node/commit/8042252861a1b65adb66931fdf702ead34fa9b76",
+          "title": "GitHub Fix Commit"
+        },
+        {
+          "url": "https://github.com/log4js-node/log4js-node/pull/1141",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-01-28T04:10:15.283052Z"
+        }
+      ],
+      "description": "## Overview\n[log4js](https://www.npmjs.org/package/log4js) is a Port of Log4js to work with node.\n\nAffected versions of this package are vulnerable to Information Exposure via the default file permissions for log files that are created by the `file`, `fileSync` and `dateFile` appenders which are world-readable (in unix). This could cause problems if log files contain sensitive information. This would affect any users that have not supplied their own permissions for the files via the mode parameter in the config.\n## Remediation\nUpgrade `log4js` to version 6.4.0 or higher.\n## References\n- [GitHub ChangeLog](https://github.com/log4js-node/log4js-node/blob/v6.4.0/CHANGELOG.md#640)\n- [GitHub Fix Commit](https://github.com/log4js-node/log4js-node/commit/8042252861a1b65adb66931fdf702ead34fa9b76)\n- [GitHub PR](https://github.com/log4js-node/log4js-node/pull/1141)\n",
+      "epssDetails": {
+        "percentile": "0.14429",
+        "probability": "0.00047",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-21704"
+        ],
+        "CWE": [
+          "CWE-276"
+        ],
+        "GHSA": [
+          "GHSA-82v2-mx6x-wq7q"
+        ]
+      },
+      "packageName": "log4js",
+      "proprietary": false,
+      "creationTime": "2022-01-20T14:46:17.291494Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-01-20T14:17:05Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-01-20T16:20:34.271914Z",
+      "modificationTime": "2022-01-28T04:10:15.283052Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "remote-vscode@rafaelmaiolla/remote-vscode#719ae2c66857cb96725221ddd820edd7baf220ea",
+        "log4js@3.0.6"
+      ],
+      "upgradePath": [
+        false,
+        "log4js@6.4.0"
+      ],
+      "version": "3.0.6",
+      "name": "log4js",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 21,
+  "severityMap": {
+    "critical": 0,
+    "high": 0,
+    "medium": 1,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "1 vulnerable dependency path",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/rafaelmaiolla/remote-vscode.git"
+}

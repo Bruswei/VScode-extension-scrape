@@ -1,0 +1,291 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-PARSEPATH-2936439",
+      "title": "Authorization Bypass Through User-Controlled Key",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L/E:P",
+      "credit": [
+        "Rohan Sharma"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<5.0.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "5.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "parse-path",
+      "references": [
+        {
+          "url": "https://github.com/ionicabizau/parse-path/commit/f9ad8856a3c8ae18e1cf4caef5edbabbc42840e8",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+          "cvssV3BaseScore": 7.3,
+          "modificationTime": "2022-07-08T01:11:23.448006Z"
+        }
+      ],
+      "description": "## Overview\n[parse-path](https://www.npmjs.org/package/parse-path) is a Parse paths (local paths, urls: ssh/git/etc)\n\nAffected versions of this package are vulnerable to Authorization Bypass Through User-Controlled Key which is unable to detect the right resource.\n## Remediation\nUpgrade `parse-path` to version 5.0.0 or higher.\n## References\n- [GitHub Commit](https://github.com/ionicabizau/parse-path/commit/f9ad8856a3c8ae18e1cf4caef5edbabbc42840e8)\n",
+      "epssDetails": {
+        "percentile": "0.18924",
+        "probability": "0.00053",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-0624"
+        ],
+        "CWE": [
+          "CWE-639"
+        ]
+      },
+      "packageName": "parse-path",
+      "proprietary": false,
+      "creationTime": "2022-06-28T12:57:05.058957Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-06-28T12:14:17Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-06-28T14:05:39Z",
+      "modificationTime": "2022-07-26T12:46:06.762448Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-open-in-github@ziyasal/vscode-open-in-github#2926da4a1eb44940aab2d5dfc17d2854d28e48ba",
+        "git-url-parse@11.6.0",
+        "git-up@4.0.5",
+        "parse-url@6.0.5",
+        "parse-path@4.0.4"
+      ],
+      "upgradePath": [
+        false,
+        "git-url-parse@12.0.0",
+        "git-up@6.0.0",
+        "parse-url@7.0.2",
+        "parse-path@5.0.0"
+      ],
+      "version": "4.0.4",
+      "name": "parse-path",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-PARSEURL-3023021",
+      "title": "Server-side Request Forgery (SSRF)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N/E:P",
+      "credit": [
+        "ranjit-git"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<8.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "8.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "parse-url",
+      "references": [
+        {
+          "url": "https://github.com/IonicaBizau/parse-url/commit/881ecb46e39286b0c2b3c32fe61dca9377176884",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/IonicaBizau/parse-url/pull/55",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",
+          "cvssV3BaseScore": 9.1,
+          "modificationTime": "2022-09-16T13:11:14.419519Z"
+        }
+      ],
+      "description": "## Overview\n[parse-url](https://www.npmjs.org/package/parse-url) is an An advanced url parser supporting git urls too.\n\nAffected versions of this package are vulnerable to Server-side Request Forgery (SSRF) due to improper detection of protocol, resource, and pathname fields. Exploiting this vulnerability results in bypassing protocol verification.\r\n\r\n## PoC:\r\n\r\n```js\r\nimport parseUrl from \"parse-url\";\r\nimport fetch from 'node-fetch';\r\nvar parsed=parseUrl(\"http://nnnn@localhost:808:/?id=xss\")\r\nif(parsed.resource==\"localhost\"){\r\nconsole.log(\"internal network access is blocked\")\r\n}\r\nelse{\r\n   const response = await fetch('http://'+parsed.resource+parsed.pathname);\r\n        console.log(response)\r\n }\r\n```\n## Remediation\nUpgrade `parse-url` to version 8.1.0 or higher.\n## References\n- [GitHub Commit](https://github.com/IonicaBizau/parse-url/commit/881ecb46e39286b0c2b3c32fe61dca9377176884)\n- [GitHub PR](https://github.com/IonicaBizau/parse-url/pull/55)\n",
+      "epssDetails": {
+        "percentile": "0.36047",
+        "probability": "0.00087",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-2900"
+        ],
+        "CWE": [
+          "CWE-918"
+        ]
+      },
+      "packageName": "parse-url",
+      "proprietary": false,
+      "creationTime": "2022-09-14T12:03:32.538904Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-09-14T11:49:15Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-09-14T13:41:12.691110Z",
+      "modificationTime": "2022-09-16T13:11:14.419519Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-open-in-github@ziyasal/vscode-open-in-github#2926da4a1eb44940aab2d5dfc17d2854d28e48ba",
+        "git-url-parse@11.6.0",
+        "git-up@4.0.5",
+        "parse-url@6.0.5"
+      ],
+      "upgradePath": [
+        false,
+        "git-url-parse@13.0.0",
+        "git-up@7.0.0",
+        "parse-url@8.1.0"
+      ],
+      "version": "6.0.5",
+      "name": "parse-url",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-PARSEURL-3024398",
+      "title": "Improper Input Validation",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:L/I:L/A:L/E:P",
+      "credit": [
+        "Automne"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<8.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "8.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "parse-url",
+      "references": [
+        {
+          "url": "https://github.com/IonicaBizau/parse-url/commit/881ecb46e39286b0c2b3c32fe61dca9377176884",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/IonicaBizau/parse-url/commit/9500430a3b9973bb1b5b2b9b319af2685ad272b3",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2022-09-17T13:10:35.383774Z"
+        }
+      ],
+      "description": "## Overview\n[parse-url](https://www.npmjs.org/package/parse-url) is an An advanced url parser supporting git urls too.\n\nAffected versions of this package are vulnerable to Improper Input Validation due to incorrect parsing of URLs. This allows the attacker to craft a malformed URL which can lead to a phishing attack.\r\n\r\n\r\n\r\n```js\r\n\r\nconst parseUrl = require(\"parse-url\");\r\nconst Url = require(\"url\");\r\n\r\nconst express = require('express');\r\nconst app = express();\r\n\r\nvar url = \"https://www.google.com:x@fakesite.com:x\";\r\nparsed = parseUrl(url);\r\nconsole.log(\"[*]`parse-url` output: \")\r\nconsole.log(parsed);\r\n\r\nparsed2 = Url.parse(url);\r\nconsole.log(\"[*]`url` output: \")\r\nconsole.log(parsed2)\r\n\r\napp.get('/', (req, res) => {\r\n    if (parsed.host == \"www.google.com\") {\r\n        res.send(\"<a href=\\'\" + parsed2.href + \"\\'>CLICK ME!</a>\")\r\n    }\r\n})\r\n\r\napp.listen(8888,\"0.0.0.0\");\r\n\r\n```\n## Remediation\nUpgrade `parse-url` to version 8.1.0 or higher.\n## References\n- [GitHub Commit](https://github.com/IonicaBizau/parse-url/commit/881ecb46e39286b0c2b3c32fe61dca9377176884)\n- [GitHub Commit](https://github.com/IonicaBizau/parse-url/commit/9500430a3b9973bb1b5b2b9b319af2685ad272b3)\n",
+      "epssDetails": {
+        "percentile": "0.14013",
+        "probability": "0.00046",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-3224"
+        ],
+        "CWE": [
+          "CWE-115"
+        ]
+      },
+      "packageName": "parse-url",
+      "proprietary": false,
+      "creationTime": "2022-09-15T12:25:03.697252Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-09-15T12:05:03Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-09-15T13:46:52.766957Z",
+      "modificationTime": "2022-09-17T13:10:35.383774Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-open-in-github@ziyasal/vscode-open-in-github#2926da4a1eb44940aab2d5dfc17d2854d28e48ba",
+        "git-url-parse@11.6.0",
+        "git-up@4.0.5",
+        "parse-url@6.0.5"
+      ],
+      "upgradePath": [
+        false,
+        "git-url-parse@13.0.0",
+        "git-up@7.0.0",
+        "parse-url@8.1.0"
+      ],
+      "version": "6.0.5",
+      "name": "parse-url",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 31,
+  "severityMap": {
+    "critical": 0,
+    "high": 1,
+    "medium": 2,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "3 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 3,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/ziyasal/vscode-open-in-github.git"
+}

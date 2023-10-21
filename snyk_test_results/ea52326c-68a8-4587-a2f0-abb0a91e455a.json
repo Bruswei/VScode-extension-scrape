@@ -1,0 +1,95 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-AGGRIDCOMMUNITY-1932011",
+      "title": "Cross-site Scripting (XSS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N/E:P",
+      "credit": [
+        "luzannew"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<25.2.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "25.2.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.4,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "ag-grid-community",
+      "references": [
+        {
+          "url": "https://github.com/ag-grid/ag-grid/issues/3953",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/ag-grid/ag-grid/releases/tag/v25.2.0",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[ag-grid-community](https://www.ag-grid.com) is a fully-featured and highly customizable JavaScript data grid.\n\nAffected versions of this package are vulnerable to Cross-site Scripting (XSS). By using `cellRenderer` with a simple function and `valueFormatter` together, you are able to target the `loadTemplate` function, which executes the script since it is using the `innerHTML` property.\r\n\r\nThis is only the case when you are returning a string, number, or boolean.\r\n\r\n### PoC\r\n```\r\n// An example application: https://embed.plnkr.co/plunk/fbtYhl\r\n// Replace ColumnDefinition with below\r\n                  headerName: \"Ag grid Testing Header 1 With Long text\",\r\n                  field: \"value\",\r\n                   headerComponent: \"CustomHeader\",\r\n                   valueFormatter: () => `><img src=x onerror=prompt(document.domain)>`\r\n              },\r\n```\n## Details\n\nA cross-site scripting attack occurs when the attacker tricks a legitimate web-based application or site to accept a request as originating from a trusted source.\n\nThis is done by escaping the context of the web application; the web application then delivers that data to its users along with other trusted dynamic content, without validating it. The browser unknowingly executes malicious script on the client side (through client-side languages; usually JavaScript or HTML)  in order to perform actions that are otherwise typically blocked by the browser’s Same Origin Policy.\n\nInjecting malicious code is the most prevalent manner by which XSS is exploited; for this reason, escaping characters in order to prevent this manipulation is the top method for securing code against this vulnerability.\n\nEscaping means that the application is coded to mark key characters, and particularly key characters included in user input, to prevent those characters from being interpreted in a dangerous context. For example, in HTML, `<` can be coded as  `&lt`; and `>` can be coded as `&gt`; in order to be interpreted and displayed as themselves in text, while within the code itself, they are used for HTML tags. If malicious content is injected into an application that escapes special characters and that malicious content uses `<` and `>` as HTML tags, those characters are nonetheless not interpreted as HTML tags by the browser if they’ve been correctly escaped in the application code and in this way the attempted attack is diverted.\n \nThe most prominent use of XSS is to steal cookies (source: OWASP HttpOnly) and hijack user sessions, but XSS exploits have been used to expose sensitive information, enable access to privileged services and functionality and deliver malware. \n\n### Types of attacks\nThere are a few methods by which XSS can be manipulated:\n\n|Type|Origin|Description|\n|--|--|--|\n|**Stored**|Server|The malicious code is inserted in the application (usually as a link) by the attacker. The code is activated every time a user clicks the link.|\n|**Reflected**|Server|The attacker delivers a malicious link externally from the vulnerable web site application to a user. When clicked, malicious code is sent to the vulnerable web site, which reflects the attack back to the user’s browser.| \n|**DOM-based**|Client|The attacker forces the user’s browser to render a malicious page. The data in the page itself delivers the cross-site scripting data.|\n|**Mutated**| |The attacker injects code that appears safe, but is then rewritten and modified by the browser, while parsing the markup. An example is rebalancing unclosed quotation marks or even adding quotation marks to unquoted parameters.|\n\n### Affected environments\nThe following environments are susceptible to an XSS attack:\n\n* Web servers\n* Application servers\n* Web application environments\n\n### How to prevent\nThis section describes the top best practices designed to specifically protect your code: \n\n* Sanitize data input in an HTTP request before reflecting it back, ensuring all data is validated, filtered or escaped before echoing anything back to the user, such as the values of query parameters during searches. \n* Convert special characters such as `?`, `&`, `/`, `<`, `>` and spaces to their respective HTML or URL encoded equivalents. \n* Give users the option to disable client-side scripts.\n* Redirect invalid requests.\n* Detect simultaneous logins, including those from two separate IP addresses, and invalidate those sessions.\n* Use and enforce a Content Security Policy (source: Wikipedia) to disable any features that might be manipulated for an XSS attack.\n* Read the documentation for any of the libraries referenced in your code to understand which elements allow for embedded HTML.\n\n## Remediation\nUpgrade `ag-grid-community` to version 25.2.0 or higher.\n## References\n- [GitHub Issue](https://github.com/ag-grid/ag-grid/issues/3953)\n- [GitHub Release](https://github.com/ag-grid/ag-grid/releases/tag/v25.2.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-79"
+        ]
+      },
+      "packageName": "ag-grid-community",
+      "proprietary": false,
+      "creationTime": "2021-11-26T11:54:09.608680Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-11-26T11:38:34Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-11-26T16:20:25.342557Z",
+      "modificationTime": "2021-11-26T16:20:25.344594Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 98,
+      "from": [
+        "plsql-language@zabel-xyz/plsql-language#28b3f624a88d96c9cc1d4f03653b658f1c234566",
+        "ag-grid-community@20.2.0"
+      ],
+      "upgradePath": [
+        false,
+        "ag-grid-community@25.2.0"
+      ],
+      "version": "20.2.0",
+      "name": "ag-grid-community",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 1,
+  "severityMap": {
+    "critical": 0,
+    "high": 0,
+    "medium": 1,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "1 vulnerable dependency path",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/zabel-xyz/plsql-language.git"
+}

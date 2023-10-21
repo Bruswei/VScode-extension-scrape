@@ -1,0 +1,211 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-MARKED-2342073",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "MakeNowJust"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.0.10"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.0.10"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "marked",
+      "references": [
+        {
+          "url": "https://github.com/markedjs/marked/commit/c4a3ccd344b6929afa8a1d50ac54a721e57012c0",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-11-16T13:11:44.709580Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-27T04:42:33.242073Z"
+        }
+      ],
+      "description": "## Overview\n[marked](https://marked.js.org/) is a low-level compiler for parsing markdown without caching or blocking for long periods of time.\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) when passing unsanitized user input to `inline.reflinkSearch`, if it is not being parsed by a time-limited worker thread.\r\n\r\n## PoC\r\n```js\r\nimport * as marked from 'marked';\r\n\r\nconsole.log(marked.parse(`[x]: x\r\n\r\n\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](\\\\[\\\\](`));\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `marked` to version 4.0.10 or higher.\n## References\n- [GitHub Commit](https://github.com/markedjs/marked/commit/c4a3ccd344b6929afa8a1d50ac54a721e57012c0)\n",
+      "epssDetails": {
+        "percentile": "0.34397",
+        "probability": "0.00084",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-21681"
+        ],
+        "CWE": [
+          "CWE-1333"
+        ],
+        "GHSA": [
+          "GHSA-5v2h-r2cx-5xgj"
+        ]
+      },
+      "packageName": "marked",
+      "proprietary": false,
+      "creationTime": "2022-01-16T09:07:08.101529Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-01-16T08:58:04Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-01-16T14:42:47.883887Z",
+      "modificationTime": "2022-11-16T13:11:44.709580Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "coddx-alpha@coddx-hq/coddx-alpha#fb0ac6595a5aa60b805f5eed654452a2f1e9ac1f",
+        "marked@2.1.3"
+      ],
+      "upgradePath": [
+        false,
+        "marked@4.0.10"
+      ],
+      "version": "2.1.3",
+      "name": "marked",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-MARKED-2342082",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "MakeNowJust"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.0.10"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.0.10"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "marked",
+      "references": [
+        {
+          "url": "https://github.com/markedjs/marked/commit/c4a3ccd344b6929afa8a1d50ac54a721e57012c0",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/markedjs/marked/releases/tag/v4.0.10",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-11-16T13:11:44.791041Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-27T04:41:54.714094Z"
+        }
+      ],
+      "description": "## Overview\n[marked](https://marked.js.org/) is a low-level compiler for parsing markdown without caching or blocking for long periods of time.\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) when unsanitized user input is passed to `block.def`.\r\n\r\n## PoC\r\n```js\r\nimport * as marked from \"marked\";\r\nmarked.parse(`[x]:${' '.repeat(1500)}x ${' '.repeat(1500)} x`);\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `marked` to version 4.0.10 or higher.\n## References\n- [GitHub Commit](https://github.com/markedjs/marked/commit/c4a3ccd344b6929afa8a1d50ac54a721e57012c0)\n- [GitHub Release](https://github.com/markedjs/marked/releases/tag/v4.0.10)\n",
+      "epssDetails": {
+        "percentile": "0.43363",
+        "probability": "0.00112",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-21680"
+        ],
+        "CWE": [
+          "CWE-1333"
+        ],
+        "GHSA": [
+          "GHSA-rrrm-qjm4-v8hf"
+        ]
+      },
+      "packageName": "marked",
+      "proprietary": false,
+      "creationTime": "2022-01-16T12:11:35.068696Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-01-14T21:04:41Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-01-16T15:23:59.300943Z",
+      "modificationTime": "2022-11-16T13:11:44.791041Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "coddx-alpha@coddx-hq/coddx-alpha#fb0ac6595a5aa60b805f5eed654452a2f1e9ac1f",
+        "marked@2.1.3"
+      ],
+      "upgradePath": [
+        false,
+        "marked@4.0.10"
+      ],
+      "version": "2.1.3",
+      "name": "marked",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 122,
+  "severityMap": {
+    "critical": 0,
+    "high": 0,
+    "medium": 2,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "2 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 2,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/coddx-hq/coddx-alpha.git"
+}

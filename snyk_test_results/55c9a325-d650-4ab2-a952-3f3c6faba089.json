@@ -1,0 +1,310 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-CONNECT-5846225",
+      "title": "Cross-site Scripting (XSS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N/E:P",
+      "credit": [
+        "Sergio Arcos"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<2.8.2"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "2.8.2"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.1,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "connect",
+      "references": [
+        {
+          "url": "https://github.com/senchalabs/connect/commit/126187c4e12162e231b87350740045e5bb06e93a",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/senchalabs/connect/commit/277e5aad6a95d00f55571a9a0e11f2fa190d8135",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/senchalabs/connect/issues/831",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://exchange.xforce.ibmcloud.com/vulnerabilities/92710",
+          "title": "X-force Vulnerability Report"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2022-01-03T17:37:56.356146Z"
+        }
+      ],
+      "description": "## Overview\n[connect](https://www.npmjs.com/package/connect) is a stack of middleware that is executed in order in each request.\n\nAffected versions of this package are vulnerable to Cross-site Scripting (XSS). The \"methodOverride\" middleware allows the HTTP post to override the method of the request with the value of the `_method` post key or with the header `x-http-method-override`.\r\n\r\nDue to improper user input sanitization, the `req.method` could contain any kind of value. Because the `req.method` did not match any common method VERB, connect answered with a 404 page containing the \"Cannot `[method]` `[url]`\" content. The method was not properly encoded for output in the browser.\n## PoC\n```js\r\n\r\ncurl \"localhost:3000\" -d \"_method=<script src=http://nodesecurity.io/xss.js></script>\"\r\nCannot <SCRIPT SRC=HTTP://NODESECURITY.IO/XSS.JS></SCRIPT> /\r\n\r\n```\n## Details\n\nA cross-site scripting attack occurs when the attacker tricks a legitimate web-based application or site to accept a request as originating from a trusted source.\n\nThis is done by escaping the context of the web application; the web application then delivers that data to its users along with other trusted dynamic content, without validating it. The browser unknowingly executes malicious script on the client side (through client-side languages; usually JavaScript or HTML)  in order to perform actions that are otherwise typically blocked by the browser’s Same Origin Policy.\n\nInjecting malicious code is the most prevalent manner by which XSS is exploited; for this reason, escaping characters in order to prevent this manipulation is the top method for securing code against this vulnerability.\n\nEscaping means that the application is coded to mark key characters, and particularly key characters included in user input, to prevent those characters from being interpreted in a dangerous context. For example, in HTML, `<` can be coded as  `&lt`; and `>` can be coded as `&gt`; in order to be interpreted and displayed as themselves in text, while within the code itself, they are used for HTML tags. If malicious content is injected into an application that escapes special characters and that malicious content uses `<` and `>` as HTML tags, those characters are nonetheless not interpreted as HTML tags by the browser if they’ve been correctly escaped in the application code and in this way the attempted attack is diverted.\n \nThe most prominent use of XSS is to steal cookies (source: OWASP HttpOnly) and hijack user sessions, but XSS exploits have been used to expose sensitive information, enable access to privileged services and functionality and deliver malware. \n\n### Types of attacks\nThere are a few methods by which XSS can be manipulated:\n\n|Type|Origin|Description|\n|--|--|--|\n|**Stored**|Server|The malicious code is inserted in the application (usually as a link) by the attacker. The code is activated every time a user clicks the link.|\n|**Reflected**|Server|The attacker delivers a malicious link externally from the vulnerable web site application to a user. When clicked, malicious code is sent to the vulnerable web site, which reflects the attack back to the user’s browser.| \n|**DOM-based**|Client|The attacker forces the user’s browser to render a malicious page. The data in the page itself delivers the cross-site scripting data.|\n|**Mutated**| |The attacker injects code that appears safe, but is then rewritten and modified by the browser, while parsing the markup. An example is rebalancing unclosed quotation marks or even adding quotation marks to unquoted parameters.|\n\n### Affected environments\nThe following environments are susceptible to an XSS attack:\n\n* Web servers\n* Application servers\n* Web application environments\n\n### How to prevent\nThis section describes the top best practices designed to specifically protect your code: \n\n* Sanitize data input in an HTTP request before reflecting it back, ensuring all data is validated, filtered or escaped before echoing anything back to the user, such as the values of query parameters during searches. \n* Convert special characters such as `?`, `&`, `/`, `<`, `>` and spaces to their respective HTML or URL encoded equivalents. \n* Give users the option to disable client-side scripts.\n* Redirect invalid requests.\n* Detect simultaneous logins, including those from two separate IP addresses, and invalidate those sessions.\n* Use and enforce a Content Security Policy (source: Wikipedia) to disable any features that might be manipulated for an XSS attack.\n* Read the documentation for any of the libraries referenced in your code to understand which elements allow for embedded HTML.\n\n## Remediation\nUpgrade `connect` to version 2.8.2 or higher.\n## References\n- [GitHub Commit](https://github.com/senchalabs/connect/commit/126187c4e12162e231b87350740045e5bb06e93a)\n- [GitHub Commit](https://github.com/senchalabs/connect/commit/277e5aad6a95d00f55571a9a0e11f2fa190d8135)\n- [GitHub Issue](https://github.com/senchalabs/connect/issues/831)\n- [X-force Vulnerability Report](https://exchange.xforce.ibmcloud.com/vulnerabilities/92710)\n",
+      "epssDetails": {
+        "percentile": "0.69176",
+        "probability": "0.00372",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2013-7371"
+        ],
+        "CWE": [
+          "CWE-79"
+        ],
+        "GHSA": [
+          "GHSA-6w62-83g6-rfhj"
+        ]
+      },
+      "packageName": "connect",
+      "proprietary": false,
+      "creationTime": "2023-08-20T11:08:26.920418Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-05-05T00:29:11Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-08-20T11:08:27.103146Z",
+      "modificationTime": "2023-08-28T08:19:36.512009Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "All-Autocomplete@atishay/vscode-allautocomplete#d2e4fc9a8cd1c551600debb39429e19697dbfed3",
+        "triejs@0.1.5",
+        "foounit@0.1.2",
+        "connect@1.8.5"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "connect@2.8.2"
+      ],
+      "version": "1.8.5",
+      "name": "connect",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:connect:20120107",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+      "credit": [
+        "bunkat"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">=1.4.0 <2.0.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "2.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "connect",
+      "references": [
+        {
+          "url": "https://github.com/senchalabs/connect/commit/2b0e8d69a14312fa2fd3449685be0c0896dfe53e",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/senchalabs/connect/issues/452",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[`connect`](https://www.npmjs.com/package/connect) is a high performance middleware framework.\n\nAffected versions of the package are vulnerable to Denial of Service (DoS) attacks. It is possible to crash the node server by requesting a url with a trailing backslash in the end.\n\n## Details\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\r\n\r\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\r\n\r\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\r\n\r\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\r\n\r\nTwo common types of DoS vulnerabilities:\r\n\r\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\r\n\r\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](npm:ws:20171108)\n\n## Remediation\nUpgrade `connect` to version 2.0.0 or higher.\n\n## References\n- [GitHub Issue](https://github.com/senchalabs/connect/issues/452)\n- [GitHub Commit](https://github.com/senchalabs/connect/commit/2b0e8d69a14312fa2fd3449685be0c0896dfe53e)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-CONNECT-10382"
+        ]
+      },
+      "packageName": "connect",
+      "proprietary": false,
+      "creationTime": "2017-01-19T13:05:48.328000Z",
+      "functions_new": [],
+      "alternativeIds": [
+        "SNYK-JS-CONNECT-10382"
+      ],
+      "disclosureTime": "2012-01-06T22:00:00Z",
+      "packageManager": "npm",
+      "publicationTime": "2017-02-13T13:05:48.328000Z",
+      "modificationTime": "2020-12-14T14:41:35.187373Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "All-Autocomplete@atishay/vscode-allautocomplete#d2e4fc9a8cd1c551600debb39429e19697dbfed3",
+        "triejs@0.1.5",
+        "foounit@0.1.2",
+        "connect@1.8.5"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "connect@2.0.0"
+      ],
+      "version": "1.8.5",
+      "name": "connect",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:connect:20130701",
+      "title": "Cross-site Scripting (XSS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+      "credit": [
+        "Sergio Arcos"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<2.8.2"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "2.8.2"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "connect",
+      "references": [
+        {
+          "url": "https://github.com/senchalabs/connect/commit/126187c4e12162e231b87350740045e5bb06e93a",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/senchalabs/connect/commit/277e5aad6a95d00f55571a9a0e11f2fa190d8135",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/3",
+          "title": "NPM Security Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2022-01-03T17:37:54.800166Z"
+        }
+      ],
+      "description": "## Overview\n[connect](https://www.npmjs.com/package/connect) is a stack of middleware that is executed in order in each request.\n\nAffected versions of this package are vulnerable to Cross-site Scripting (XSS). The `methodOverride` middleware allows the http post to override the method of the request with the value of the `_method` post key or with the header `x-http-method-override`.\r\n\r\nBecause the user post input was not checked, req.method could contain any kind of value. Because the req.method did not match any common method VERB, connect answered with a 404 page containing the \"Cannot [method] [url]\" content. The method was not properly encoded for output in the browser.\r\n\r\n\r\n**Example**\r\n\r\n```\r\n~ curl \"localhost:3000\" -d \"_method=<script src=http://nodesecurity.io/xss.js></script>\"\r\nCannot <SCRIPT SRC=HTTP://NODESECURITY.IO/XSS.JS></SCRIPT> /\r\n```\r\n\r\n**Mitigation factors**\r\n\r\nUpdate to version 2.8.2 or disable methodOverride. It is not possible to avoid the vulnerability if you have enabled this middleware in the top of your stack.\r\n\r\n**History**\r\n\r\n- (2013-06-27) [Bug reported](https://github.com/senchalabs/connect/issues/831)\r\n- (2013-06-27) [First fix: escape req.method output - v2.8.1](https://github.com/senchalabs/connect/commit/277e5aad6a95d00f55571a9a0e11f2fa190d8135)\r\n- (2013-06-27) [Second fix: whitelist - v2.8.2](https://github.com/senchalabs/connect/commit/126187c4e12162e231b87350740045e5bb06e93a)\n## Details\n\nA cross-site scripting attack occurs when the attacker tricks a legitimate web-based application or site to accept a request as originating from a trusted source.\n\nThis is done by escaping the context of the web application; the web application then delivers that data to its users along with other trusted dynamic content, without validating it. The browser unknowingly executes malicious script on the client side (through client-side languages; usually JavaScript or HTML)  in order to perform actions that are otherwise typically blocked by the browser’s Same Origin Policy.\n\nInjecting malicious code is the most prevalent manner by which XSS is exploited; for this reason, escaping characters in order to prevent this manipulation is the top method for securing code against this vulnerability.\n\nEscaping means that the application is coded to mark key characters, and particularly key characters included in user input, to prevent those characters from being interpreted in a dangerous context. For example, in HTML, `<` can be coded as  `&lt`; and `>` can be coded as `&gt`; in order to be interpreted and displayed as themselves in text, while within the code itself, they are used for HTML tags. If malicious content is injected into an application that escapes special characters and that malicious content uses `<` and `>` as HTML tags, those characters are nonetheless not interpreted as HTML tags by the browser if they’ve been correctly escaped in the application code and in this way the attempted attack is diverted.\n \nThe most prominent use of XSS is to steal cookies (source: OWASP HttpOnly) and hijack user sessions, but XSS exploits have been used to expose sensitive information, enable access to privileged services and functionality and deliver malware. \n\n### Types of attacks\nThere are a few methods by which XSS can be manipulated:\n\n|Type|Origin|Description|\n|--|--|--|\n|**Stored**|Server|The malicious code is inserted in the application (usually as a link) by the attacker. The code is activated every time a user clicks the link.|\n|**Reflected**|Server|The attacker delivers a malicious link externally from the vulnerable web site application to a user. When clicked, malicious code is sent to the vulnerable web site, which reflects the attack back to the user’s browser.| \n|**DOM-based**|Client|The attacker forces the user’s browser to render a malicious page. The data in the page itself delivers the cross-site scripting data.|\n|**Mutated**| |The attacker injects code that appears safe, but is then rewritten and modified by the browser, while parsing the markup. An example is rebalancing unclosed quotation marks or even adding quotation marks to unquoted parameters.|\n\n### Affected environments\nThe following environments are susceptible to an XSS attack:\n\n* Web servers\n* Application servers\n* Web application environments\n\n### How to prevent\nThis section describes the top best practices designed to specifically protect your code: \n\n* Sanitize data input in an HTTP request before reflecting it back, ensuring all data is validated, filtered or escaped before echoing anything back to the user, such as the values of query parameters during searches. \n* Convert special characters such as `?`, `&`, `/`, `<`, `>` and spaces to their respective HTML or URL encoded equivalents. \n* Give users the option to disable client-side scripts.\n* Redirect invalid requests.\n* Detect simultaneous logins, including those from two separate IP addresses, and invalidate those sessions.\n* Use and enforce a Content Security Policy (source: Wikipedia) to disable any features that might be manipulated for an XSS attack.\n* Read the documentation for any of the libraries referenced in your code to understand which elements allow for embedded HTML.\n\n## Remediation\nUpgrade `connect` to version 2.8.2 or higher.\n## References\n- [GitHub Commit](https://github.com/senchalabs/connect/commit/126187c4e12162e231b87350740045e5bb06e93a)\n- [GitHub Commit](https://github.com/senchalabs/connect/commit/277e5aad6a95d00f55571a9a0e11f2fa190d8135)\n- [NPM Security Advisory](https://www.npmjs.com/advisories/3)\n",
+      "epssDetails": {
+        "percentile": "0.73275",
+        "probability": "0.00508",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2013-7370"
+        ],
+        "CWE": [
+          "CWE-79"
+        ],
+        "NSP": [
+          "3"
+        ],
+        "GHSA": [
+          "GHSA-3fw8-66wf-pr7m"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-CONNECT-10005"
+        ]
+      },
+      "packageName": "connect",
+      "proprietary": false,
+      "creationTime": "2013-06-30T22:08:59Z",
+      "functions_new": [],
+      "alternativeIds": [
+        "SNYK-JS-CONNECT-10005"
+      ],
+      "disclosureTime": "2013-06-30T22:08:59Z",
+      "packageManager": "npm",
+      "publicationTime": "2013-06-30T22:08:59Z",
+      "modificationTime": "2022-01-03T17:37:54.800166Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "All-Autocomplete@atishay/vscode-allautocomplete#d2e4fc9a8cd1c551600debb39429e19697dbfed3",
+        "triejs@0.1.5",
+        "foounit@0.1.2",
+        "connect@1.8.5"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "connect@2.8.2"
+      ],
+      "version": "1.8.5",
+      "name": "connect",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 24,
+  "severityMap": {
+    "critical": 0,
+    "high": 0,
+    "medium": 3,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "3 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 3,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/atishay/vscode-allautocomplete.git"
+}

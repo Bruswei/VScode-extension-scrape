@@ -1,0 +1,148 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "npm:mem:20180117",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:L/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N",
+      "credit": [
+        "juancampa"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.0.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "4.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.1,
+      "functions": [
+        {
+          "version": [
+            ">1.1.0<4.0.0"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "className": null,
+            "functionName": "module.exports.memoized.setData"
+          }
+        },
+        {
+          "version": [
+            "<=1.1.0"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "className": null,
+            "functionName": "module.exports.memoized"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "mem",
+      "references": [
+        {
+          "url": "https://github.com/sindresorhus/mem/commit/da4e4398cb27b602de3bd55f746efa9b4a31702b",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/sindresorhus/mem/issues/14",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n \n[mem](https://www.npmjs.com/package/mem) is an optimization used to speed up consecutive function calls by caching the result of calls with identical input.\n\n\nAffected versions of this package are vulnerable to Denial of Service (DoS).\nOld results were deleted from the cache and could cause a memory leak.\n\n## details\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\r\n\r\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\r\n\r\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\r\n\r\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\r\n\r\nTwo common types of DoS vulnerabilities:\r\n\r\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\r\n\r\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](npm:ws:20171108)\n\n## Remediation\n\nUpgrade mem to version 4.0.0 or higher.\n\n\n## References\n\n- [GitHub Commit](https://github.com/sindresorhus/mem/commit/da4e4398cb27b602de3bd55f746efa9b4a31702b)\n\n- [GitHub Issue](https://github.com/sindresorhus/mem/issues/14)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ],
+        "NSP": [
+          "1084"
+        ],
+        "GHSA": [
+          "GHSA-4xcv-9jjx-gfj3"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-MEM-11138"
+        ]
+      },
+      "packageName": "mem",
+      "proprietary": false,
+      "creationTime": "2018-01-17T18:19:13Z",
+      "functions_new": [
+        {
+          "version": [
+            ">1.1.0<4.0.0"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "functionName": "module.exports.memoized.setData"
+          }
+        },
+        {
+          "version": [
+            "<=1.1.0"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "functionName": "module.exports.memoized"
+          }
+        }
+      ],
+      "alternativeIds": [
+        "SNYK-JS-MEM-11138"
+      ],
+      "disclosureTime": "2018-01-17T18:19:13Z",
+      "packageManager": "npm",
+      "publicationTime": "2018-08-29T11:23:09Z",
+      "modificationTime": "2020-12-14T14:41:35.054482Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "spellright@bartosz-antosik/vscode-spellright#f843d5d369dc70a363fda5a9b38fcafcd5d0eacc",
+        "os-locale@2.1.0",
+        "mem@1.1.0"
+      ],
+      "upgradePath": [
+        false,
+        "os-locale@3.0.1",
+        "mem@4.0.0"
+      ],
+      "version": "1.1.0",
+      "name": "mem",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 143,
+  "severityMap": {
+    "critical": 0,
+    "high": 0,
+    "medium": 1,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "1 vulnerable dependency path",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/bartosz-antosik/vscode-spellright.git"
+}

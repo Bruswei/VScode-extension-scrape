@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Couldn't find the requested package or version",
+  "path": "https://gitlab.com/smartive/open-source/christoph/typescript-hero.git"
+}

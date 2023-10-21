@@ -1,0 +1,114 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-BABELTRAVERSE-5962462",
+      "title": "Incomplete List of Disallowed Inputs",
+      "CVSSv3": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+      "credit": [
+        "William Khem-Marquez"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<7.23.2",
+          ">=8.0.0-alpha.0 <8.0.0-alpha.4"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "7.23.2",
+        "8.0.0-alpha.4"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "critical",
+      "cvssScore": 9.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "@babel/traverse",
+      "references": [
+        {
+          "url": "https://github.com/babel/babel/commit/b13376b346946e3f62fc0848c1d2a23223314c82",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/babel/babel/pull/16033",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/babel/babel/releases/tag/v7.23.2",
+          "title": "GitHub Release"
+        },
+        {
+          "url": "https://github.com/babel/babel/releases/tag/v8.0.0-alpha.4",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n\nAffected versions of this package are vulnerable to Incomplete List of Disallowed Inputs when using plugins that rely on the `path.evaluate()` or `path.evaluateTruthy()` internal Babel methods. \r\n\r\n\r\n**Note:**\r\n\r\nThis is only exploitable if the attacker uses known affected plugins such as `@babel/plugin-transform-runtime`, `@babel/preset-env` when using its `useBuiltIns` option, and any \"polyfill provider\" plugin that depends on `@babel/helper-define-polyfill-provider`. No other plugins under the `@babel/` namespace are impacted, but third-party plugins might be.\r\n\r\n*Users that only compile trusted code are **not** impacted.*\r\n\r\n## Workaround\r\n\r\nUsers who are unable to upgrade the library can upgrade the affected plugins instead, to avoid triggering the vulnerable code path in affected `@babel/traverse`.\n## Remediation\nUpgrade `@babel/traverse` to version 7.23.2, 8.0.0-alpha.4 or higher.\n## References\n- [GitHub Commit](https://github.com/babel/babel/commit/b13376b346946e3f62fc0848c1d2a23223314c82)\n- [GitHub PR](https://github.com/babel/babel/pull/16033)\n- [GitHub Release](https://github.com/babel/babel/releases/tag/v7.23.2)\n- [GitHub Release](https://github.com/babel/babel/releases/tag/v8.0.0-alpha.4)\n",
+      "epssDetails": {
+        "percentile": "0.12526",
+        "probability": "0.00045",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-45133"
+        ],
+        "CWE": [
+          "CWE-184"
+        ],
+        "GHSA": [
+          "GHSA-67hx-6x53-jw92"
+        ]
+      },
+      "packageName": "@babel/traverse",
+      "proprietary": false,
+      "creationTime": "2023-10-13T06:39:08.115661Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-10-12T17:48:28Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-10-13T06:39:08.430378Z",
+      "modificationTime": "2023-10-16T14:25:20.086589Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "critical",
+      "packagePopularityRank": 99,
+      "from": [
+        "abracadabra@nicoespeon/abracadabra#39c93124d868d25c079771b689d4488aa25584d7",
+        "@babel/traverse@7.20.12"
+      ],
+      "upgradePath": [
+        false,
+        "@babel/traverse@7.23.2"
+      ],
+      "version": "7.20.12",
+      "name": "@babel/traverse",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 205,
+  "severityMap": {
+    "critical": 1,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "1 vulnerable dependency path",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/nicoespeon/abracadabra.git"
+}

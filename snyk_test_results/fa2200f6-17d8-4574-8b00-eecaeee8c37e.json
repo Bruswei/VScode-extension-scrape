@@ -1,0 +1,119 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-POSTCSS-5926692",
+      "title": "Improper Input Validation",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<8.4.31"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "8.4.31"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "postcss",
+      "references": [
+        {
+          "url": "https://github.com/postcss/postcss/commit/58cc860b4c1707510c9cd1bc1fa30b423a9ad6c5",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/postcss/postcss/pull/1890",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/postcss/postcss/releases/tag/8.4.31",
+          "title": "GitHub Release"
+        },
+        {
+          "url": "https://github.com/postcss/postcss/blob/main/lib/tokenize.js%23L25",
+          "title": "Vulnerable Code"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2023-10-11T01:10:59.257507Z"
+        }
+      ],
+      "description": "## Overview\n[postcss](https://www.npmjs.com/package/postcss) is a PostCSS is a tool for transforming styles with JS plugins.\n\nAffected versions of this package are vulnerable to Improper Input Validation when parsing external Cascading Style Sheets (CSS) with linters using PostCSS. An attacker can cause discrepancies by injecting malicious CSS rules, such as `@font-face{ font:(\\r/*);}`.\r\nThis vulnerability is because of an insecure regular expression usage in the `RE_BAD_BRACKET` variable.\n## Remediation\nUpgrade `postcss` to version 8.4.31 or higher.\n## References\n- [GitHub Commit](https://github.com/postcss/postcss/commit/58cc860b4c1707510c9cd1bc1fa30b423a9ad6c5)\n- [GitHub PR](https://github.com/postcss/postcss/pull/1890)\n- [GitHub Release](https://github.com/postcss/postcss/releases/tag/8.4.31)\n- [Vulnerable Code](https://github.com/postcss/postcss/blob/main/lib/tokenize.js#L25)\n",
+      "epssDetails": {
+        "percentile": "0.12509",
+        "probability": "0.00045",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-44270"
+        ],
+        "CWE": [
+          "CWE-20"
+        ]
+      },
+      "packageName": "postcss",
+      "proprietary": false,
+      "creationTime": "2023-10-01T10:42:55.486681Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-09-29T22:46:45Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-10-01T11:23:35.354495Z",
+      "modificationTime": "2023-10-11T08:35:34.664727Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "fluent-ui-vscode@TheOld/vscode-fluent-ui#e7f865dbe8a6bb7a4c070c7703ea5f2c677e3ce4",
+        "@node-minify/cssnano@8.0.6",
+        "postcss@8.4.21"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "postcss@8.4.31"
+      ],
+      "version": "8.4.21",
+      "name": "postcss",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 144,
+  "severityMap": {
+    "critical": 0,
+    "high": 0,
+    "medium": 1,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "1 vulnerable dependency path",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/TheOld/vscode-fluent-ui.git"
+}

@@ -1,0 +1,486 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-JSONWEBTOKEN-3180022",
+      "title": "Improper Authentication",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:L/I:H/A:L",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<9.0.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "9.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.4,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "jsonwebtoken",
+      "references": [
+        {
+          "url": "https://github.com/auth0/node-jsonwebtoken/commit/e1fa9dcc12054a8681db4e6373da1b30cf7016e3",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/auth0/node-jsonwebtoken/releases/tag/v9.0.0",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:H/A:L",
+          "cvssV3BaseScore": 7.6,
+          "modificationTime": "2023-02-28T01:10:17.504751Z"
+        }
+      ],
+      "description": "## Overview\n[jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) is a JSON Web Token implementation (symmetric and asymmetric)\n\nAffected versions of this package are vulnerable to Improper Authentication such that the lack of algorithm definition in the `jwt.verify()` function can lead to signature validation bypass due to defaulting to the `none` algorithm for signature verification. \r\n\r\n## Exploitability\r\nUsers are affected only if all of the following conditions are true for the `jwt.verify()` function:\r\n\r\n1) A token with no signature is received.\r\n\r\n2) No algorithms are specified.\r\n\r\n3) A falsy (e.g., `null`, `false`, `undefined`) secret or key is passed.\n## Remediation\nUpgrade `jsonwebtoken` to version 9.0.0 or higher.\n## References\n- [GitHub Commit](https://github.com/auth0/node-jsonwebtoken/commit/e1fa9dcc12054a8681db4e6373da1b30cf7016e3)\n- [GitHub Release](https://github.com/auth0/node-jsonwebtoken/releases/tag/v9.0.0)\n",
+      "epssDetails": {
+        "percentile": "0.12836",
+        "probability": "0.00046",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-23540"
+        ],
+        "CWE": [
+          "CWE-287"
+        ],
+        "GHSA": [
+          "GHSA-qwph-4952-7xr6"
+        ]
+      },
+      "packageName": "jsonwebtoken",
+      "proprietary": false,
+      "creationTime": "2022-12-22T09:09:36.072853Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-12-22T03:32:59Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-12-22T09:13:25.290846Z",
+      "modificationTime": "2023-02-28T01:10:17.504751Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "dx-code-companion@msrivastav13/DX-Code-Companion#f08e1f12fa079ef6864f13ede4c27887e24ab0ff",
+        "@salesforce/core@2.37.1",
+        "jsonwebtoken@8.5.0"
+      ],
+      "upgradePath": [
+        false,
+        "@salesforce/core@3.32.12",
+        "jsonwebtoken@9.0.0"
+      ],
+      "version": "8.5.0",
+      "name": "jsonwebtoken",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-JSONWEBTOKEN-3180024",
+      "title": "Improper Restriction of Security Token Assignment",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<9.0.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "9.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "jsonwebtoken",
+      "references": [
+        {
+          "url": "https://github.com/auth0/node-jsonwebtoken/commit/e1fa9dcc12054a8681db4e6373da1b30cf7016e3",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/auth0/node-jsonwebtoken/releases/tag/v9.0.0",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+          "cvssV3BaseScore": 6.3,
+          "modificationTime": "2023-02-28T01:10:17.572355Z"
+        }
+      ],
+      "description": "## Overview\n[jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) is a JSON Web Token implementation (symmetric and asymmetric)\n\nAffected versions of this package are vulnerable to Improper Restriction of Security Token Assignment via the `secretOrPublicKey ` argument due to misconfigurations of the key retrieval function `jwt.verify()`. Exploiting this vulnerability might result in incorrect verification of forged tokens when tokens signed with an asymmetric public key could be verified with a symmetric HS256 algorithm.\r\n\r\n**Note:**\r\nThis vulnerability affects your application if it supports the usage of both symmetric and asymmetric keys in `jwt.verify()` implementation with the same key retrieval function.\n## Remediation\nUpgrade `jsonwebtoken` to version 9.0.0 or higher.\n## References\n- [GitHub Commit](https://github.com/auth0/node-jsonwebtoken/commit/e1fa9dcc12054a8681db4e6373da1b30cf7016e3)\n- [GitHub Release](https://github.com/auth0/node-jsonwebtoken/releases/tag/v9.0.0)\n",
+      "epssDetails": {
+        "percentile": "0.18857",
+        "probability": "0.00053",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-23541"
+        ],
+        "CWE": [
+          "CWE-1259"
+        ],
+        "GHSA": [
+          "GHSA-hjrf-2m68-5959"
+        ]
+      },
+      "packageName": "jsonwebtoken",
+      "proprietary": false,
+      "creationTime": "2022-12-22T09:14:27.155728Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-12-22T03:33:19Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-12-22T09:16:03.621406Z",
+      "modificationTime": "2023-02-28T01:10:17.572355Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "dx-code-companion@msrivastav13/DX-Code-Companion#f08e1f12fa079ef6864f13ede4c27887e24ab0ff",
+        "@salesforce/core@2.37.1",
+        "jsonwebtoken@8.5.0"
+      ],
+      "upgradePath": [
+        false,
+        "@salesforce/core@3.32.12",
+        "jsonwebtoken@9.0.0"
+      ],
+      "version": "8.5.0",
+      "name": "jsonwebtoken",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-JSONWEBTOKEN-3180026",
+      "title": "Use of a Broken or Risky Cryptographic Algorithm",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:H/I:H/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<9.0.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "9.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.8,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "jsonwebtoken",
+      "references": [
+        {
+          "url": "https://github.com/auth0/node-jsonwebtoken/commit/e1fa9dcc12054a8681db4e6373da1b30cf7016e3",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/auth0/node-jsonwebtoken/releases/tag/v9.0.0",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N",
+          "cvssV3BaseScore": 8.1,
+          "modificationTime": "2022-12-31T01:11:45.823807Z"
+        }
+      ],
+      "description": "## Overview\n[jsonwebtoken](https://github.com/auth0/node-jsonwebtoken) is a JSON Web Token implementation (symmetric and asymmetric)\n\nAffected versions of this package are vulnerable to Use of a Broken or Risky Cryptographic Algorithm such that the library can be misconfigured to use legacy, insecure key types for signature verification. For example, DSA keys could be used with the RS256 algorithm. \r\n\r\n## Exploitability\r\n\r\nUsers are affected when using an algorithm and a key type _other_ than the combinations mentioned below:\r\n\r\nEC: ES256, ES384, ES512\r\n                  \r\nRSA: RS256, RS384, RS512, PS256, PS384, PS512 \r\n\r\nRSA-PSS: PS256, PS384, PS512                      \r\n\r\nAnd for Elliptic Curve algorithms:\r\n\r\nES256: prime256v1\r\n\r\nES384: secp384r1\r\n\r\nES512:  secp521r1 \r\n\r\n## Workaround \r\n\r\nUsers who are unable to upgrade to the fixed version can use the  `allowInvalidAsymmetricKeyTypes` option  to `true` in the `sign()` and `verify()` functions to continue usage of invalid key type/algorithm combination in 9.0.0 for legacy compatibility.\n## Remediation\nUpgrade `jsonwebtoken` to version 9.0.0 or higher.\n## References\n- [GitHub Commit](https://github.com/auth0/node-jsonwebtoken/commit/e1fa9dcc12054a8681db4e6373da1b30cf7016e3)\n- [GitHub Release](https://github.com/auth0/node-jsonwebtoken/releases/tag/v9.0.0)\n",
+      "epssDetails": {
+        "percentile": "0.16925",
+        "probability": "0.00050",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-23539"
+        ],
+        "CWE": [
+          "CWE-327"
+        ],
+        "GHSA": [
+          "GHSA-8cf7-32gw-wr33"
+        ]
+      },
+      "packageName": "jsonwebtoken",
+      "proprietary": false,
+      "creationTime": "2022-12-22T09:19:03.430735Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-12-22T03:32:22Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-12-22T10:32:50.173080Z",
+      "modificationTime": "2023-01-01T13:30:43.098324Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "dx-code-companion@msrivastav13/DX-Code-Companion#f08e1f12fa079ef6864f13ede4c27887e24ab0ff",
+        "@salesforce/core@2.37.1",
+        "jsonwebtoken@8.5.0"
+      ],
+      "upgradePath": [
+        false,
+        "@salesforce/core@3.32.12",
+        "jsonwebtoken@9.0.0"
+      ],
+      "version": "8.5.0",
+      "name": "jsonwebtoken",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-REQUEST-3361831",
+      "title": "Server-side Request Forgery (SSRF)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N/E:P",
+      "credit": [
+        "SzymonDrosdzol"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "request",
+      "references": [
+        {
+          "url": "https://github.com/request/request/commit/d42332182512e56ba68446f49c3e3711e04301a2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/request/request/issues/3442",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/request/request/pull/3444",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2023-03-23T01:10:17.579856Z"
+        }
+      ],
+      "description": "## Overview\n[request](https://www.npmjs.com/package/request) is a simplified http request client.\n\nAffected versions of this package are vulnerable to Server-side Request Forgery (SSRF) due to insufficient checks in the `lib/redirect.js` file by allowing insecure redirects in the default configuration, via an attacker-controller server that does a cross-protocol redirect (HTTP to HTTPS, or HTTPS to HTTP).\r\n\r\n**NOTE:** `request` package has been deprecated, so a fix is not expected. See https://github.com/request/request/issues/3142.\n## Remediation\nA fix was pushed into the `master` branch but not yet published.\n## References\n- [GitHub Commit](https://github.com/request/request/commit/d42332182512e56ba68446f49c3e3711e04301a2)\n- [GitHub Issue](https://github.com/request/request/issues/3442)\n- [GitHub PR](https://github.com/request/request/pull/3444)\n",
+      "epssDetails": {
+        "percentile": "0.24986",
+        "probability": "0.00063",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-28155"
+        ],
+        "CWE": [
+          "CWE-918"
+        ]
+      },
+      "packageName": "request",
+      "proprietary": false,
+      "creationTime": "2023-03-16T13:58:23.124636Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-03-16T13:49:16Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-03-17T07:46:44.219769Z",
+      "modificationTime": "2023-08-30T13:20:36.826459Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "dx-code-companion@msrivastav13/DX-Code-Companion#f08e1f12fa079ef6864f13ede4c27887e24ab0ff",
+        "@salesforce/core@2.37.1",
+        "jsforce@1.11.1",
+        "request@2.88.2"
+      ],
+      "upgradePath": [],
+      "version": "2.88.2",
+      "name": "request",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-TOUGHCOOKIE-5672873",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N/E:P",
+      "credit": [
+        "Kokorin Vsevolod"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.1.3"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.1.3"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "tough-cookie",
+      "references": [
+        {
+          "url": "https://github.com/salesforce/tough-cookie/commit/12d474791bb856004e858fdb1c47b7608d09cf6e",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/salesforce/tough-cookie/issues/282",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/salesforce/tough-cookie/releases/tag/v4.1.3",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.5,
+          "modificationTime": "2023-07-06T13:31:55.808983Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2023-07-08T01:12:36.395017Z"
+        }
+      ],
+      "description": "## Overview\n[tough-cookie](https://www.npmjs.com/package/tough-cookie) is a RFC6265 Cookies and CookieJar module for Node.js.\n\nAffected versions of this package are vulnerable to Prototype Pollution due to improper handling of Cookies when using CookieJar in `rejectPublicSuffixes=false` mode. Due to an issue with the manner in which the objects are initialized, an attacker can expose or modify a limited amount of property information on those objects. There is no impact to availability.\n## PoC\n```\r\n// PoC.js\r\nasync function main(){\r\nvar tough = require(\"tough-cookie\");\r\nvar cookiejar = new tough.CookieJar(undefined,{rejectPublicSuffixes:false});\r\n// Exploit cookie\r\nawait cookiejar.setCookie(\r\n  \"Slonser=polluted; Domain=__proto__; Path=/notauth\",\r\n  \"https://__proto__/admin\"\r\n);\r\n// normal cookie\r\nvar cookie = await cookiejar.setCookie(\r\n  \"Auth=Lol; Domain=google.com; Path=/notauth\",\r\n  \"https://google.com/\"\r\n);\r\n\r\n//Exploit cookie\r\nvar a = {};\r\nconsole.log(a[\"/notauth\"][\"Slonser\"])\r\n}\r\nmain();\r\n```\n\n## Details\n\nPrototype Pollution is a vulnerability affecting JavaScript. Prototype Pollution refers to the ability to inject properties into existing JavaScript language construct prototypes, such as objects. JavaScript allows all Object attributes to be altered, including their magical attributes such as `__proto__`, `constructor` and `prototype`. An attacker manipulates these attributes to overwrite, or pollute, a JavaScript application object prototype of the base object by injecting other values.  Properties on the `Object.prototype` are then inherited by all the JavaScript objects through the prototype chain. When that happens, this leads to either denial of service by triggering JavaScript exceptions, or it tampers with the application source code to force the code path that the attacker injects, thereby leading to remote code execution.\n\nThere are two main ways in which the pollution of prototypes occurs:\n\n-   Unsafe `Object` recursive merge\n    \n-   Property definition by path\n    \n\n### Unsafe Object recursive merge\n\nThe logic of a vulnerable recursive merge function follows the following high-level model:\n```\nmerge (target, source)\n\n  foreach property of source\n\n    if property exists and is an object on both the target and the source\n\n      merge(target[property], source[property])\n\n    else\n\n      target[property] = source[property]\n```\n<br>  \n\nWhen the source object contains a property named `__proto__` defined with `Object.defineProperty()` , the condition that checks if the property exists and is an object on both the target and the source passes and the merge recurses with the target, being the prototype of `Object` and the source of `Object` as defined by the attacker. Properties are then copied on the `Object` prototype.\n\nClone operations are a special sub-class of unsafe recursive merges, which occur when a recursive merge is conducted on an empty object: `merge({},source)`.\n\n`lodash` and `Hoek` are examples of libraries susceptible to recursive merge attacks.\n\n### Property definition by path\n\nThere are a few JavaScript libraries that use an API to define property values on an object based on a given path. The function that is generally affected contains this signature: `theFunction(object, path, value)`\n\nIf the attacker can control the value of “path”, they can set this value to `__proto__.myValue`. `myValue` is then assigned to the prototype of the class of the object.\n\n## Types of attacks\n\nThere are a few methods by which Prototype Pollution can be manipulated:\n\n| Type |Origin  |Short description |\n|--|--|--|\n| **Denial of service (DoS)**|Client  |This is the most likely attack. <br>DoS occurs when `Object` holds generic functions that are implicitly called for various operations (for example, `toString` and `valueOf`). <br> The attacker pollutes `Object.prototype.someattr` and alters its state to an unexpected value such as `Int` or `Object`. In this case, the code fails and is likely to cause a denial of service.  <br>**For example:** if an attacker pollutes `Object.prototype.toString` by defining it as an integer, if the codebase at any point was reliant on `someobject.toString()` it would fail. |\n |**Remote Code Execution**|Client|Remote code execution is generally only possible in cases where the codebase evaluates a specific attribute of an object, and then executes that evaluation.<br>**For example:** `eval(someobject.someattr)`. In this case, if the attacker pollutes `Object.prototype.someattr` they are likely to be able to leverage this in order to execute code.|\n|**Property Injection**|Client|The attacker pollutes properties that the codebase relies on for their informative value, including security properties such as cookies or tokens.<br>  **For example:** if a codebase checks privileges for `someuser.isAdmin`, then when the attacker pollutes `Object.prototype.isAdmin` and sets it to equal `true`, they can then achieve admin privileges.|\n\n## Affected environments\n\nThe following environments are susceptible to a Prototype Pollution attack:\n\n-   Application server\n    \n-   Web server\n\n-   Web browser\n    \n\n## How to prevent\n\n1.  Freeze the prototype— use `Object.freeze (Object.prototype)`.\n    \n2.  Require schema validation of JSON input.\n    \n3.  Avoid using unsafe recursive merge functions.\n    \n4.  Consider using objects without prototypes (for example, `Object.create(null)`), breaking the prototype chain and preventing pollution.\n    \n5.  As a best practice use `Map` instead of `Object`.\n\n### For more information on this vulnerability type:\n\n[Arteau, Oliver. “JavaScript prototype pollution attack in NodeJS application.” GitHub, 26 May 2018](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)\n\n## Remediation\nUpgrade `tough-cookie` to version 4.1.3 or higher.\n## References\n- [GitHub Commit](https://github.com/salesforce/tough-cookie/commit/12d474791bb856004e858fdb1c47b7608d09cf6e)\n- [GitHub Issue](https://github.com/salesforce/tough-cookie/issues/282)\n- [GitHub Release](https://github.com/salesforce/tough-cookie/releases/tag/v4.1.3)\n",
+      "epssDetails": {
+        "percentile": "0.53347",
+        "probability": "0.00173",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-26136"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ]
+      },
+      "packageName": "tough-cookie",
+      "proprietary": true,
+      "creationTime": "2023-06-08T15:08:51.664280Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-06-08T14:45:59Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-06-30T11:54:16.657348Z",
+      "modificationTime": "2023-07-09T13:39:02.212708Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "dx-code-companion@msrivastav13/DX-Code-Companion#f08e1f12fa079ef6864f13ede4c27887e24ab0ff",
+        "@salesforce/core@2.37.1",
+        "jsforce@1.11.1",
+        "request@2.88.2",
+        "tough-cookie@2.5.0"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        false,
+        "tough-cookie@4.1.3"
+      ],
+      "version": "2.5.0",
+      "name": "tough-cookie",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 172,
+  "severityMap": {
+    "critical": 0,
+    "high": 0,
+    "medium": 5,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "5 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 5,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/msrivastav13/DX-Code-Companion.git"
+}

@@ -1,0 +1,106 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-LIX-560905",
+      "title": "Machine-In-The-Middle",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:L/I:H/A:H",
+      "credit": [
+        "Grayson Hardaway"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.1,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "lix",
+      "references": [
+        {
+          "url": "https://www.npmjs.com/advisories/1306",
+          "title": "NPM Security Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 8.1,
+          "modificationTime": "2022-01-03T18:02:33.136964Z"
+        }
+      ],
+      "description": "## Overview\n[lix](https://www.npmjs.com/package/lix) is a package manager that makes it easy for you to track dependencies used in your Haxe project, and to make sure everyone always has the right versions when they build your app.\n\nAffected versions of this package are vulnerable to Machine-In-The-Middle. It accepts downloads with `http` and follows `location` header redirects for package downloads. This allows for an attacker in a privileged network position to intercept a lix package installation and redirect the download to a malicious source.\n## Remediation\nThere is no fixed version for `lix`.\n## References\n- [NPM Security Advisory](https://www.npmjs.com/advisories/1306)\n",
+      "epssDetails": {
+        "percentile": "0.46887",
+        "probability": "0.00131",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-10800"
+        ],
+        "CWE": [
+          "CWE-300"
+        ],
+        "NSP": [
+          "1306"
+        ],
+        "GHSA": [
+          "GHSA-q8xg-8xwf-m598"
+        ]
+      },
+      "packageName": "lix",
+      "proprietary": false,
+      "creationTime": "2020-03-22T09:28:46.370714Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2020-03-20T09:34:44Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-03-22T15:12:18.244856Z",
+      "modificationTime": "2022-01-03T18:02:33.136964Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 0,
+      "from": [
+        "codedox@vshaxe/codedox#708304e4c1a94063da81b6bd792f3ad5da3895d7",
+        "lix@15.12.0"
+      ],
+      "upgradePath": [],
+      "version": "15.12.0",
+      "name": "lix",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 1,
+  "severityMap": {
+    "critical": 0,
+    "high": 1,
+    "medium": 0,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "1 vulnerable dependency path",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/vshaxe/codedox.git"
+}

@@ -1,0 +1,1101 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-D3COLOR-1076592",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "d3-color",
+      "references": [
+        {
+          "url": "https://github.com/d3/d3-color/pull/100",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/99",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/89",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/releases/tag/v3.1.0",
+          "title": "Github Releases"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[d3-color](https://www.npmjs.org/package/d3-color) is a Color spaces! RGB, HSL, Cubehelix, Lab and HCL (Lch).\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `rgb()` and `hrc()` functions. \r\n\r\nPoC by Yeting Li: \r\n```\r\nvar d3Color = require(\"d3-color\")\r\n// d3Color.rgb(\"rgb(255,255,255)\")\r\n\r\nfunction build_blank(n) {\r\n    var ret = \"rgb(\"\r\n    for (var i = 0; i < n; i++) {\r\n        ret += \"1\"\r\n    }\r\n    return ret + \"!\";\r\n}\r\n\r\nfor(var i = 1; i <= 5000000; i++) {\r\n    if (i % 1000 == 0) {\r\n        var time = Date.now();\r\n        var attack_str = build_blank(i)\r\n        d3Color.rgb(attack_str)\r\n        var time_cost = Date.now() - time;\r\n        console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n    }\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `d3-color` to version 3.1.0 or higher.\n## References\n- [Github PR](https://github.com/d3/d3-color/pull/100)\n- [Github PR](https://github.com/d3/d3-color/pull/99)\n- [GitHub PR](https://github.com/d3/d3-color/pull/89)\n- [Github Releases](https://github.com/d3/d3-color/releases/tag/v3.1.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "d3-color",
+      "proprietary": true,
+      "creationTime": "2021-02-18T13:32:47.195986Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-18T13:30:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-05T14:17:56Z",
+      "modificationTime": "2022-11-28T09:46:50.031732Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "typescript-notebook@DonJayamanne/typescript-notebook#d3c419b635ba2c88179cef3ebf0ecf58563f2410",
+        "@tensorflow/tfjs-vis@1.5.1",
+        "vega@5.20.0",
+        "vega-functions@5.12.1",
+        "d3-color@2.0.0"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "vega@5.22.0",
+        "vega-functions@5.13.0",
+        "d3-color@3.1.0"
+      ],
+      "version": "2.0.0",
+      "name": "d3-color",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-D3COLOR-1076592",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "d3-color",
+      "references": [
+        {
+          "url": "https://github.com/d3/d3-color/pull/100",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/99",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/89",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/releases/tag/v3.1.0",
+          "title": "Github Releases"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[d3-color](https://www.npmjs.org/package/d3-color) is a Color spaces! RGB, HSL, Cubehelix, Lab and HCL (Lch).\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `rgb()` and `hrc()` functions. \r\n\r\nPoC by Yeting Li: \r\n```\r\nvar d3Color = require(\"d3-color\")\r\n// d3Color.rgb(\"rgb(255,255,255)\")\r\n\r\nfunction build_blank(n) {\r\n    var ret = \"rgb(\"\r\n    for (var i = 0; i < n; i++) {\r\n        ret += \"1\"\r\n    }\r\n    return ret + \"!\";\r\n}\r\n\r\nfor(var i = 1; i <= 5000000; i++) {\r\n    if (i % 1000 == 0) {\r\n        var time = Date.now();\r\n        var attack_str = build_blank(i)\r\n        d3Color.rgb(attack_str)\r\n        var time_cost = Date.now() - time;\r\n        console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n    }\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `d3-color` to version 3.1.0 or higher.\n## References\n- [Github PR](https://github.com/d3/d3-color/pull/100)\n- [Github PR](https://github.com/d3/d3-color/pull/99)\n- [GitHub PR](https://github.com/d3/d3-color/pull/89)\n- [Github Releases](https://github.com/d3/d3-color/releases/tag/v3.1.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "d3-color",
+      "proprietary": true,
+      "creationTime": "2021-02-18T13:32:47.195986Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-18T13:30:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-05T14:17:56Z",
+      "modificationTime": "2022-11-28T09:46:50.031732Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "typescript-notebook@DonJayamanne/typescript-notebook#d3c419b635ba2c88179cef3ebf0ecf58563f2410",
+        "@tensorflow/tfjs-vis@1.5.1",
+        "vega@5.20.0",
+        "vega-geo@4.3.8",
+        "d3-color@2.0.0"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "vega@5.22.0",
+        "vega-geo@4.4.0",
+        "d3-color@3.1.0"
+      ],
+      "version": "2.0.0",
+      "name": "d3-color",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-D3COLOR-1076592",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "d3-color",
+      "references": [
+        {
+          "url": "https://github.com/d3/d3-color/pull/100",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/99",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/89",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/releases/tag/v3.1.0",
+          "title": "Github Releases"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[d3-color](https://www.npmjs.org/package/d3-color) is a Color spaces! RGB, HSL, Cubehelix, Lab and HCL (Lch).\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `rgb()` and `hrc()` functions. \r\n\r\nPoC by Yeting Li: \r\n```\r\nvar d3Color = require(\"d3-color\")\r\n// d3Color.rgb(\"rgb(255,255,255)\")\r\n\r\nfunction build_blank(n) {\r\n    var ret = \"rgb(\"\r\n    for (var i = 0; i < n; i++) {\r\n        ret += \"1\"\r\n    }\r\n    return ret + \"!\";\r\n}\r\n\r\nfor(var i = 1; i <= 5000000; i++) {\r\n    if (i % 1000 == 0) {\r\n        var time = Date.now();\r\n        var attack_str = build_blank(i)\r\n        d3Color.rgb(attack_str)\r\n        var time_cost = Date.now() - time;\r\n        console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n    }\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `d3-color` to version 3.1.0 or higher.\n## References\n- [Github PR](https://github.com/d3/d3-color/pull/100)\n- [Github PR](https://github.com/d3/d3-color/pull/99)\n- [GitHub PR](https://github.com/d3/d3-color/pull/89)\n- [Github Releases](https://github.com/d3/d3-color/releases/tag/v3.1.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "d3-color",
+      "proprietary": true,
+      "creationTime": "2021-02-18T13:32:47.195986Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-18T13:30:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-05T14:17:56Z",
+      "modificationTime": "2022-11-28T09:46:50.031732Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "typescript-notebook@DonJayamanne/typescript-notebook#d3c419b635ba2c88179cef3ebf0ecf58563f2410",
+        "@tensorflow/tfjs-vis@1.5.1",
+        "vega@5.20.0",
+        "vega-encode@4.8.3",
+        "d3-interpolate@2.0.1",
+        "d3-color@2.0.0"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "vega@5.22.0",
+        "vega-encode@4.9.0",
+        "d3-interpolate@3.0.1",
+        "d3-color@3.1.0"
+      ],
+      "version": "2.0.0",
+      "name": "d3-color",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-D3COLOR-1076592",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "d3-color",
+      "references": [
+        {
+          "url": "https://github.com/d3/d3-color/pull/100",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/99",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/89",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/releases/tag/v3.1.0",
+          "title": "Github Releases"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[d3-color](https://www.npmjs.org/package/d3-color) is a Color spaces! RGB, HSL, Cubehelix, Lab and HCL (Lch).\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `rgb()` and `hrc()` functions. \r\n\r\nPoC by Yeting Li: \r\n```\r\nvar d3Color = require(\"d3-color\")\r\n// d3Color.rgb(\"rgb(255,255,255)\")\r\n\r\nfunction build_blank(n) {\r\n    var ret = \"rgb(\"\r\n    for (var i = 0; i < n; i++) {\r\n        ret += \"1\"\r\n    }\r\n    return ret + \"!\";\r\n}\r\n\r\nfor(var i = 1; i <= 5000000; i++) {\r\n    if (i % 1000 == 0) {\r\n        var time = Date.now();\r\n        var attack_str = build_blank(i)\r\n        d3Color.rgb(attack_str)\r\n        var time_cost = Date.now() - time;\r\n        console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n    }\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `d3-color` to version 3.1.0 or higher.\n## References\n- [Github PR](https://github.com/d3/d3-color/pull/100)\n- [Github PR](https://github.com/d3/d3-color/pull/99)\n- [GitHub PR](https://github.com/d3/d3-color/pull/89)\n- [Github Releases](https://github.com/d3/d3-color/releases/tag/v3.1.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "d3-color",
+      "proprietary": true,
+      "creationTime": "2021-02-18T13:32:47.195986Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-18T13:30:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-05T14:17:56Z",
+      "modificationTime": "2022-11-28T09:46:50.031732Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "typescript-notebook@DonJayamanne/typescript-notebook#d3c419b635ba2c88179cef3ebf0ecf58563f2410",
+        "@tensorflow/tfjs-vis@1.5.1",
+        "vega@5.20.0",
+        "vega-scale@7.1.1",
+        "d3-interpolate@2.0.1",
+        "d3-color@2.0.0"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "vega@5.22.0",
+        "vega-scale@7.2.0",
+        "d3-interpolate@3.0.1",
+        "d3-color@3.1.0"
+      ],
+      "version": "2.0.0",
+      "name": "d3-color",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-D3COLOR-1076592",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "d3-color",
+      "references": [
+        {
+          "url": "https://github.com/d3/d3-color/pull/100",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/99",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/89",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/releases/tag/v3.1.0",
+          "title": "Github Releases"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[d3-color](https://www.npmjs.org/package/d3-color) is a Color spaces! RGB, HSL, Cubehelix, Lab and HCL (Lch).\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `rgb()` and `hrc()` functions. \r\n\r\nPoC by Yeting Li: \r\n```\r\nvar d3Color = require(\"d3-color\")\r\n// d3Color.rgb(\"rgb(255,255,255)\")\r\n\r\nfunction build_blank(n) {\r\n    var ret = \"rgb(\"\r\n    for (var i = 0; i < n; i++) {\r\n        ret += \"1\"\r\n    }\r\n    return ret + \"!\";\r\n}\r\n\r\nfor(var i = 1; i <= 5000000; i++) {\r\n    if (i % 1000 == 0) {\r\n        var time = Date.now();\r\n        var attack_str = build_blank(i)\r\n        d3Color.rgb(attack_str)\r\n        var time_cost = Date.now() - time;\r\n        console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n    }\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `d3-color` to version 3.1.0 or higher.\n## References\n- [Github PR](https://github.com/d3/d3-color/pull/100)\n- [Github PR](https://github.com/d3/d3-color/pull/99)\n- [GitHub PR](https://github.com/d3/d3-color/pull/89)\n- [Github Releases](https://github.com/d3/d3-color/releases/tag/v3.1.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "d3-color",
+      "proprietary": true,
+      "creationTime": "2021-02-18T13:32:47.195986Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-18T13:30:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-05T14:17:56Z",
+      "modificationTime": "2022-11-28T09:46:50.031732Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "typescript-notebook@DonJayamanne/typescript-notebook#d3c419b635ba2c88179cef3ebf0ecf58563f2410",
+        "@tensorflow/tfjs-vis@1.5.1",
+        "vega@5.20.0",
+        "vega-scale@7.1.1",
+        "d3-scale@3.3.0",
+        "d3-interpolate@2.0.1",
+        "d3-color@2.0.0"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "vega@5.22.0",
+        "vega-scale@7.2.0",
+        "d3-scale@4.0.2",
+        "d3-interpolate@3.0.0",
+        "d3-color@3.1.0"
+      ],
+      "version": "2.0.0",
+      "name": "d3-color",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-NODEFETCH-2342118",
+      "title": "Information Exposure",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<2.6.7",
+          ">=3.0.0 <3.1.1"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "2.6.7",
+        "3.1.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "node-fetch",
+      "references": [
+        {
+          "url": "https://github.com/node-fetch/node-fetch/commit/1ef4b560a17e644a02a3bfdea7631ffeee578b35",
+          "title": "Github Commit"
+        },
+        {
+          "url": "https://github.com/node-fetch/node-fetch/commit/36e47e8a6406185921e4985dcbeff140d73eaa10",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/node-fetch/node-fetch/pull/1449/commits/5c32f002fdd65b1c6a8f1e3620210813d45c7e60",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/node-fetch/node-fetch/pull/1449",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "SUSE",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:H/I:N/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2023-02-02T01:54:20.392355Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2022-10-29T01:10:37.609069Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:H/I:N/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2022-11-27T21:31:03.384329Z"
+        }
+      ],
+      "description": "## Overview\n[node-fetch](https://www.npmjs.com/package/node-fetch) is a light-weight module that brings window.fetch to node.js\n\nAffected versions of this package are vulnerable to Information Exposure when fetching a remote url with Cookie, if it get a `Location` response header, it will follow that url and try to fetch that url with provided cookie. This can lead to forwarding secure headers to 3th party.\n## Remediation\nUpgrade `node-fetch` to version 2.6.7, 3.1.1 or higher.\n## References\n- [Github Commit](https://github.com/node-fetch/node-fetch/commit/1ef4b560a17e644a02a3bfdea7631ffeee578b35)\n- [GitHub Commit](https://github.com/node-fetch/node-fetch/commit/36e47e8a6406185921e4985dcbeff140d73eaa10)\n- [GitHub Commit](https://github.com/node-fetch/node-fetch/pull/1449/commits/5c32f002fdd65b1c6a8f1e3620210813d45c7e60)\n- [GitHub PR](https://github.com/node-fetch/node-fetch/pull/1449)\n",
+      "epssDetails": {
+        "percentile": "0.42975",
+        "probability": "0.00110",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-0235"
+        ],
+        "CWE": [
+          "CWE-200"
+        ]
+      },
+      "packageName": "node-fetch",
+      "proprietary": false,
+      "creationTime": "2022-01-17T12:08:00.675849Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-01-17T12:00:01Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-01-17T16:25:00Z",
+      "modificationTime": "2023-05-19T12:42:39.331764Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "typescript-notebook@DonJayamanne/typescript-notebook#d3c419b635ba2c88179cef3ebf0ecf58563f2410",
+        "@tensorflow/tfjs-vis@1.5.1",
+        "glamor@2.20.40",
+        "fbjs@0.8.18",
+        "isomorphic-fetch@2.2.1",
+        "node-fetch@1.7.3"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "fbjs@2.0.0"
+      ],
+      "version": "1.7.3",
+      "name": "node-fetch",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-NODEFETCH-674311",
+      "title": "Denial of Service",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H/E:U/RL:O/RC:R",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<2.6.1",
+          ">=3.0.0-beta.1 <3.0.0-beta.9"
+        ]
+      },
+      "exploit": "Unproven",
+      "fixedIn": [
+        "2.6.1",
+        "3.0.0-beta.9"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.9,
+      "functions": [
+        {
+          "version": [
+            ">1.7.1 <1.7.4",
+            ">2.0.0-alpha.7 <2.6.1"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "className": null,
+            "functionName": "fetch"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "node-fetch",
+      "references": [
+        {
+          "url": "https://github.com/node-fetch/node-fetch/security/advisories/GHSA-w7rc-rwvf-8q5r",
+          "title": "GitHub Advisory"
+        },
+        {
+          "url": "https://github.com/node-fetch/node-fetch/commit/2358a6c2563d1730a0cdaccc197c611949f6a334",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-01-03T18:04:53.378913Z"
+        }
+      ],
+      "description": "## Overview\n[node-fetch](https://www.npmjs.com/package/node-fetch) is a light-weight module that brings window.fetch to node.js\n\nAffected versions of this package are vulnerable to Denial of Service. Node Fetch did not honor the `size` option after following a redirect, which means that when a content size was over the limit, a FetchError would never get thrown and the process would end without failure.\n## Remediation\nUpgrade `node-fetch` to version 2.6.1, 3.0.0-beta.9 or higher.\n## References\n- [GitHub Advisory](https://github.com/node-fetch/node-fetch/security/advisories/GHSA-w7rc-rwvf-8q5r)\n- [GitHub Commit](https://github.com/node-fetch/node-fetch/commit/2358a6c2563d1730a0cdaccc197c611949f6a334)\n",
+      "epssDetails": {
+        "percentile": "0.39244",
+        "probability": "0.00096",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-15168"
+        ],
+        "CWE": [
+          "CWE-400"
+        ],
+        "GHSA": [
+          "GHSA-w7rc-rwvf-8q5r"
+        ]
+      },
+      "packageName": "node-fetch",
+      "proprietary": false,
+      "creationTime": "2020-09-11T10:50:56.354201Z",
+      "functions_new": [
+        {
+          "version": [
+            ">1.7.1 <1.7.4",
+            ">2.0.0-alpha.7 <2.6.1"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "functionName": "fetch"
+          }
+        }
+      ],
+      "alternativeIds": [],
+      "disclosureTime": "2020-09-10T17:55:53Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-09-11T14:12:46Z",
+      "modificationTime": "2022-01-26T16:47:31.069025Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "typescript-notebook@DonJayamanne/typescript-notebook#d3c419b635ba2c88179cef3ebf0ecf58563f2410",
+        "@tensorflow/tfjs-vis@1.5.1",
+        "glamor@2.20.40",
+        "fbjs@0.8.18",
+        "isomorphic-fetch@2.2.1",
+        "node-fetch@1.7.3"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "fbjs@2.0.0"
+      ],
+      "version": "1.7.3",
+      "name": "node-fetch",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-VEGA-3338521",
+      "title": "Cross-site Scripting (XSS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N/E:P",
+      "credit": [
+        "Aleh Zasypkin"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<5.23.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "5.23.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.4,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "vega",
+      "references": [
+        {
+          "url": "https://github.com/vega/vega/commit/01adb034f24727d3bb321bbbb6696a7f4cd91689",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/vega/vega/releases/tag/v5.23.0",
+          "title": "GitHub Release"
+        },
+        {
+          "url": "https://github.com/vega/vega/blob/7eafbbd4d53d0ce9f08e74ff96c90d411b1bb80a/packages/vega-functions/src/functions/lasso.js%23L13",
+          "title": "Vulnerable Code"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2023-03-10T01:10:09.343846Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2023-05-04T13:35:40.260264Z"
+        }
+      ],
+      "description": "## Overview\n[vega](https://github.com/vega/vega) is a library that implements Vega visualization grammar.\n\nAffected versions of this package are vulnerable to Cross-site Scripting (XSS) via the `lassoAppend` function. `lassoAppend` accepts 3 arguments and internally invokes `push` function on the 1st argument specifying array consisting of 2nd and 3rd arguments as `push` call argument. The type of the 1st argument is supposed to be an array, but it's not enforced.\r\n\r\nThis makes it possible to specify any object with a `push` function as the 1st argument, `push` function can be set to any function that can be access via `event.view` (not all such functions can be exploited due to invalid context or signature, but some can, e.g. `console.log`).\r\n\r\n## PoC\r\n\r\n```json\r\n{\r\n  \"$schema\": \"https://vega.github.io/schema/vega/v5.json\",\r\n  \"width\": 350,\r\n  \"height\": 350,\r\n  \"autosize\": \"none\",\r\n  \"description\": \"Toggle Button\",\r\n  \"signals\": [\r\n    {\r\n      \"name\": \"toggle\",\r\n      \"value\": false,\r\n      \"on\": [\r\n        {\r\n          \"events\": {\"type\": \"click\", \"markname\": \"circle\"},\r\n          \"update\": \"toggle ? false : true\"\r\n        }\r\n      ]\r\n    },\r\n    {\r\n      \"name\": \"addFilter\",\r\n      \"on\": [\r\n        {\r\n          \"events\": {\"type\": \"mousemove\", \"source\": \"window\"},\r\n          \"update\": \"lassoAppend({'push':event.view.setImmediate},'alert(document.domain)','alert(document.cookie)')\"\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"marks\": [\r\n    {\r\n      \"name\": \"circle\",\r\n      \"type\": \"symbol\",\r\n      \"zindex\": 1,\r\n      \"encode\": {\r\n        \"enter\": {\r\n          \"y\": {\"signal\": \"height/2\"},\r\n          \"angle\": {\"value\": 0},\r\n          \"size\": {\"value\": 400},\r\n          \"shape\": {\"value\": \"circle\"},\r\n          \"fill\": {\"value\": \"white\"},\r\n          \"stroke\": {\"value\": \"white\"},\r\n          \"strokeWidth\": {\"value\": 2},\r\n          \"cursor\": {\"value\": \"pointer\"},\r\n          \"tooltip\": {\"signal\": \"{Tip: 'Click to fire XSS'}\"}\r\n        },\r\n        \"update\": {\"x\": {\"signal\": \"toggle === true ? 190 : 165\"}}\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"rectangle\",\r\n      \"type\": \"rect\",\r\n      \"zindex\": 0,\r\n      \"encode\": {\r\n        \"enter\": {\r\n          \"x\": {\"value\": 152},\r\n          \"y\": {\"value\": 162.5},\r\n          \"width\": {\"value\": 50},\r\n          \"height\": {\"value\": 25},\r\n          \"cornerRadius\": {\"value\": 20}\r\n        },\r\n        \"update\": {\r\n          \"fill\": {\"signal\": \"toggle === true ? '#006BB4' : '#939597'\"}\r\n        }\r\n      }\r\n    }\r\n  ]\r\n}\r\n```\n## Details\n\nA cross-site scripting attack occurs when the attacker tricks a legitimate web-based application or site to accept a request as originating from a trusted source.\n\nThis is done by escaping the context of the web application; the web application then delivers that data to its users along with other trusted dynamic content, without validating it. The browser unknowingly executes malicious script on the client side (through client-side languages; usually JavaScript or HTML)  in order to perform actions that are otherwise typically blocked by the browser’s Same Origin Policy.\n\nInjecting malicious code is the most prevalent manner by which XSS is exploited; for this reason, escaping characters in order to prevent this manipulation is the top method for securing code against this vulnerability.\n\nEscaping means that the application is coded to mark key characters, and particularly key characters included in user input, to prevent those characters from being interpreted in a dangerous context. For example, in HTML, `<` can be coded as  `&lt`; and `>` can be coded as `&gt`; in order to be interpreted and displayed as themselves in text, while within the code itself, they are used for HTML tags. If malicious content is injected into an application that escapes special characters and that malicious content uses `<` and `>` as HTML tags, those characters are nonetheless not interpreted as HTML tags by the browser if they’ve been correctly escaped in the application code and in this way the attempted attack is diverted.\n \nThe most prominent use of XSS is to steal cookies (source: OWASP HttpOnly) and hijack user sessions, but XSS exploits have been used to expose sensitive information, enable access to privileged services and functionality and deliver malware. \n\n### Types of attacks\nThere are a few methods by which XSS can be manipulated:\n\n|Type|Origin|Description|\n|--|--|--|\n|**Stored**|Server|The malicious code is inserted in the application (usually as a link) by the attacker. The code is activated every time a user clicks the link.|\n|**Reflected**|Server|The attacker delivers a malicious link externally from the vulnerable web site application to a user. When clicked, malicious code is sent to the vulnerable web site, which reflects the attack back to the user’s browser.| \n|**DOM-based**|Client|The attacker forces the user’s browser to render a malicious page. The data in the page itself delivers the cross-site scripting data.|\n|**Mutated**| |The attacker injects code that appears safe, but is then rewritten and modified by the browser, while parsing the markup. An example is rebalancing unclosed quotation marks or even adding quotation marks to unquoted parameters.|\n\n### Affected environments\nThe following environments are susceptible to an XSS attack:\n\n* Web servers\n* Application servers\n* Web application environments\n\n### How to prevent\nThis section describes the top best practices designed to specifically protect your code: \n\n* Sanitize data input in an HTTP request before reflecting it back, ensuring all data is validated, filtered or escaped before echoing anything back to the user, such as the values of query parameters during searches. \n* Convert special characters such as `?`, `&`, `/`, `<`, `>` and spaces to their respective HTML or URL encoded equivalents. \n* Give users the option to disable client-side scripts.\n* Redirect invalid requests.\n* Detect simultaneous logins, including those from two separate IP addresses, and invalidate those sessions.\n* Use and enforce a Content Security Policy (source: Wikipedia) to disable any features that might be manipulated for an XSS attack.\n* Read the documentation for any of the libraries referenced in your code to understand which elements allow for embedded HTML.\n\n## Remediation\nUpgrade `vega` to version 5.23.0 or higher.\n## References\n- [GitHub Commit](https://github.com/vega/vega/commit/01adb034f24727d3bb321bbbb6696a7f4cd91689)\n- [GitHub Release](https://github.com/vega/vega/releases/tag/v5.23.0)\n- [Vulnerable Code](https://github.com/vega/vega/blob/7eafbbd4d53d0ce9f08e74ff96c90d411b1bb80a/packages/vega-functions/src/functions/lasso.js#L13)\n",
+      "epssDetails": {
+        "percentile": "0.18452",
+        "probability": "0.00052",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-26487"
+        ],
+        "CWE": [
+          "CWE-79"
+        ],
+        "GHSA": [
+          "GHSA-w5m3-xh75-mp55"
+        ]
+      },
+      "packageName": "vega",
+      "proprietary": false,
+      "creationTime": "2023-03-03T08:30:45.263655Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-03-02T23:08:21Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-03-03T08:30:45.241673Z",
+      "modificationTime": "2023-05-04T13:35:40.260264Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 96,
+      "from": [
+        "typescript-notebook@DonJayamanne/typescript-notebook#d3c419b635ba2c88179cef3ebf0ecf58563f2410",
+        "@tensorflow/tfjs-vis@1.5.1",
+        "vega@5.20.0"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "vega@5.23.0"
+      ],
+      "version": "5.20.0",
+      "name": "vega",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-VEGA-3338522",
+      "title": "Cross-site Scripting (XSS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N/E:P",
+      "credit": [
+        "Alex Chapman"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<5.23.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "5.23.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.4,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "vega",
+      "references": [
+        {
+          "url": "https://github.com/vega/vega/commit/ab371a0093a8cb6215f7bdd5716f33aba6b6ee0f",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/vega/vega/releases/tag/v5.23.0",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2023-03-10T01:10:09.201294Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2023-05-04T13:35:13.445637Z"
+        }
+      ],
+      "description": "## Overview\n[vega](https://github.com/vega/vega) is a library that implements Vega visualization grammar.\n\nAffected versions of this package are vulnerable to Cross-site Scripting (XSS) via the `scale` expression function which has the ability to call arbitrary functions with a single controlled argument. This can be exploited to escape the Vega expression sandbox in order to execute arbitrary JavaScript.\r\n\r\n## PoC\r\n\r\n```json\r\n{\r\n  \"$schema\": \"https://vega.github.io/schema/vega/v5.json\",\r\n  \"data\": [\r\n    {\r\n      \"name\": \"XSS PoC\",\r\n      \"values\": [1],\r\n      \"transform\": [\r\n        {\r\n          \"type\": \"formula\",\r\n          \"as\": \"amount\",\r\n          \"expr\": \"scale('func', null,  {context: {scales: {func: {value: scale('func', 'eval(atob(\\\"YWxlcnQoMSk7\\\"))', {context: {scales: {func: {value: [].constructor.constructor}}}})}}}})\"\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}\r\n```\n## Details\n\nA cross-site scripting attack occurs when the attacker tricks a legitimate web-based application or site to accept a request as originating from a trusted source.\n\nThis is done by escaping the context of the web application; the web application then delivers that data to its users along with other trusted dynamic content, without validating it. The browser unknowingly executes malicious script on the client side (through client-side languages; usually JavaScript or HTML)  in order to perform actions that are otherwise typically blocked by the browser’s Same Origin Policy.\n\nInjecting malicious code is the most prevalent manner by which XSS is exploited; for this reason, escaping characters in order to prevent this manipulation is the top method for securing code against this vulnerability.\n\nEscaping means that the application is coded to mark key characters, and particularly key characters included in user input, to prevent those characters from being interpreted in a dangerous context. For example, in HTML, `<` can be coded as  `&lt`; and `>` can be coded as `&gt`; in order to be interpreted and displayed as themselves in text, while within the code itself, they are used for HTML tags. If malicious content is injected into an application that escapes special characters and that malicious content uses `<` and `>` as HTML tags, those characters are nonetheless not interpreted as HTML tags by the browser if they’ve been correctly escaped in the application code and in this way the attempted attack is diverted.\n \nThe most prominent use of XSS is to steal cookies (source: OWASP HttpOnly) and hijack user sessions, but XSS exploits have been used to expose sensitive information, enable access to privileged services and functionality and deliver malware. \n\n### Types of attacks\nThere are a few methods by which XSS can be manipulated:\n\n|Type|Origin|Description|\n|--|--|--|\n|**Stored**|Server|The malicious code is inserted in the application (usually as a link) by the attacker. The code is activated every time a user clicks the link.|\n|**Reflected**|Server|The attacker delivers a malicious link externally from the vulnerable web site application to a user. When clicked, malicious code is sent to the vulnerable web site, which reflects the attack back to the user’s browser.| \n|**DOM-based**|Client|The attacker forces the user’s browser to render a malicious page. The data in the page itself delivers the cross-site scripting data.|\n|**Mutated**| |The attacker injects code that appears safe, but is then rewritten and modified by the browser, while parsing the markup. An example is rebalancing unclosed quotation marks or even adding quotation marks to unquoted parameters.|\n\n### Affected environments\nThe following environments are susceptible to an XSS attack:\n\n* Web servers\n* Application servers\n* Web application environments\n\n### How to prevent\nThis section describes the top best practices designed to specifically protect your code: \n\n* Sanitize data input in an HTTP request before reflecting it back, ensuring all data is validated, filtered or escaped before echoing anything back to the user, such as the values of query parameters during searches. \n* Convert special characters such as `?`, `&`, `/`, `<`, `>` and spaces to their respective HTML or URL encoded equivalents. \n* Give users the option to disable client-side scripts.\n* Redirect invalid requests.\n* Detect simultaneous logins, including those from two separate IP addresses, and invalidate those sessions.\n* Use and enforce a Content Security Policy (source: Wikipedia) to disable any features that might be manipulated for an XSS attack.\n* Read the documentation for any of the libraries referenced in your code to understand which elements allow for embedded HTML.\n\n## Remediation\nUpgrade `vega` to version 5.23.0 or higher.\n## References\n- [GitHub Commit](https://github.com/vega/vega/commit/ab371a0093a8cb6215f7bdd5716f33aba6b6ee0f)\n- [GitHub Release](https://github.com/vega/vega/releases/tag/v5.23.0)\n",
+      "epssDetails": {
+        "percentile": "0.18162",
+        "probability": "0.00052",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-26486"
+        ],
+        "CWE": [
+          "CWE-79"
+        ],
+        "GHSA": [
+          "GHSA-4vq7-882g-wcg4"
+        ]
+      },
+      "packageName": "vega",
+      "proprietary": false,
+      "creationTime": "2023-03-03T08:40:43.158788Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-03-02T23:11:05Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-03-03T08:40:43.522882Z",
+      "modificationTime": "2023-05-04T13:35:13.445637Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 96,
+      "from": [
+        "typescript-notebook@DonJayamanne/typescript-notebook#d3c419b635ba2c88179cef3ebf0ecf58563f2410",
+        "@tensorflow/tfjs-vis@1.5.1",
+        "vega@5.20.0"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "vega@5.23.0"
+      ],
+      "version": "5.20.0",
+      "name": "vega",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-VEGAFUNCTIONS-3338520",
+      "title": "Cross-site Scripting (XSS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N/E:P",
+      "credit": [
+        "Aleh Zasypkin"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<5.13.1"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "5.13.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.4,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "vega-functions",
+      "references": [
+        {
+          "url": "https://github.com/vega/vega/commit/01adb034f24727d3bb321bbbb6696a7f4cd91689",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/vega/vega/releases/tag/v5.23.0",
+          "title": "GitHub Release"
+        },
+        {
+          "url": "https://github.com/vega/vega/blob/7eafbbd4d53d0ce9f08e74ff96c90d411b1bb80a/packages/vega-functions/src/functions/lasso.js%23L13",
+          "title": "Vulnerable Code"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2023-03-10T01:10:09.343846Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2023-05-04T13:35:40.260264Z"
+        }
+      ],
+      "description": "## Overview\n[vega-functions](https://www.npmjs.org/package/vega-functions) is a Custom functions for the Vega expression language.\n\nAffected versions of this package are vulnerable to Cross-site Scripting (XSS) via the `lassoAppend` function. `lassoAppend` accepts 3 arguments and internally invokes `push` function on the 1st argument specifying array consisting of 2nd and 3rd arguments as `push` call argument. The type of the 1st argument is supposed to be an array, but it's not enforced.\r\n\r\nThis makes it possible to specify any object with a `push` function as the 1st argument, `push` function can be set to any function that can be access via `event.view` (not all such functions can be exploited due to invalid context or signature, but some can, e.g. `console.log`).\r\n\r\n## PoC\r\n\r\n```json\r\n{\r\n  \"$schema\": \"https://vega.github.io/schema/vega/v5.json\",\r\n  \"width\": 350,\r\n  \"height\": 350,\r\n  \"autosize\": \"none\",\r\n  \"description\": \"Toggle Button\",\r\n  \"signals\": [\r\n    {\r\n      \"name\": \"toggle\",\r\n      \"value\": false,\r\n      \"on\": [\r\n        {\r\n          \"events\": {\"type\": \"click\", \"markname\": \"circle\"},\r\n          \"update\": \"toggle ? false : true\"\r\n        }\r\n      ]\r\n    },\r\n    {\r\n      \"name\": \"addFilter\",\r\n      \"on\": [\r\n        {\r\n          \"events\": {\"type\": \"mousemove\", \"source\": \"window\"},\r\n          \"update\": \"lassoAppend({'push':event.view.setImmediate},'alert(document.domain)','alert(document.cookie)')\"\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"marks\": [\r\n    {\r\n      \"name\": \"circle\",\r\n      \"type\": \"symbol\",\r\n      \"zindex\": 1,\r\n      \"encode\": {\r\n        \"enter\": {\r\n          \"y\": {\"signal\": \"height/2\"},\r\n          \"angle\": {\"value\": 0},\r\n          \"size\": {\"value\": 400},\r\n          \"shape\": {\"value\": \"circle\"},\r\n          \"fill\": {\"value\": \"white\"},\r\n          \"stroke\": {\"value\": \"white\"},\r\n          \"strokeWidth\": {\"value\": 2},\r\n          \"cursor\": {\"value\": \"pointer\"},\r\n          \"tooltip\": {\"signal\": \"{Tip: 'Click to fire XSS'}\"}\r\n        },\r\n        \"update\": {\"x\": {\"signal\": \"toggle === true ? 190 : 165\"}}\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"rectangle\",\r\n      \"type\": \"rect\",\r\n      \"zindex\": 0,\r\n      \"encode\": {\r\n        \"enter\": {\r\n          \"x\": {\"value\": 152},\r\n          \"y\": {\"value\": 162.5},\r\n          \"width\": {\"value\": 50},\r\n          \"height\": {\"value\": 25},\r\n          \"cornerRadius\": {\"value\": 20}\r\n        },\r\n        \"update\": {\r\n          \"fill\": {\"signal\": \"toggle === true ? '#006BB4' : '#939597'\"}\r\n        }\r\n      }\r\n    }\r\n  ]\r\n}\r\n```\n## Details\n\nA cross-site scripting attack occurs when the attacker tricks a legitimate web-based application or site to accept a request as originating from a trusted source.\n\nThis is done by escaping the context of the web application; the web application then delivers that data to its users along with other trusted dynamic content, without validating it. The browser unknowingly executes malicious script on the client side (through client-side languages; usually JavaScript or HTML)  in order to perform actions that are otherwise typically blocked by the browser’s Same Origin Policy.\n\nInjecting malicious code is the most prevalent manner by which XSS is exploited; for this reason, escaping characters in order to prevent this manipulation is the top method for securing code against this vulnerability.\n\nEscaping means that the application is coded to mark key characters, and particularly key characters included in user input, to prevent those characters from being interpreted in a dangerous context. For example, in HTML, `<` can be coded as  `&lt`; and `>` can be coded as `&gt`; in order to be interpreted and displayed as themselves in text, while within the code itself, they are used for HTML tags. If malicious content is injected into an application that escapes special characters and that malicious content uses `<` and `>` as HTML tags, those characters are nonetheless not interpreted as HTML tags by the browser if they’ve been correctly escaped in the application code and in this way the attempted attack is diverted.\n \nThe most prominent use of XSS is to steal cookies (source: OWASP HttpOnly) and hijack user sessions, but XSS exploits have been used to expose sensitive information, enable access to privileged services and functionality and deliver malware. \n\n### Types of attacks\nThere are a few methods by which XSS can be manipulated:\n\n|Type|Origin|Description|\n|--|--|--|\n|**Stored**|Server|The malicious code is inserted in the application (usually as a link) by the attacker. The code is activated every time a user clicks the link.|\n|**Reflected**|Server|The attacker delivers a malicious link externally from the vulnerable web site application to a user. When clicked, malicious code is sent to the vulnerable web site, which reflects the attack back to the user’s browser.| \n|**DOM-based**|Client|The attacker forces the user’s browser to render a malicious page. The data in the page itself delivers the cross-site scripting data.|\n|**Mutated**| |The attacker injects code that appears safe, but is then rewritten and modified by the browser, while parsing the markup. An example is rebalancing unclosed quotation marks or even adding quotation marks to unquoted parameters.|\n\n### Affected environments\nThe following environments are susceptible to an XSS attack:\n\n* Web servers\n* Application servers\n* Web application environments\n\n### How to prevent\nThis section describes the top best practices designed to specifically protect your code: \n\n* Sanitize data input in an HTTP request before reflecting it back, ensuring all data is validated, filtered or escaped before echoing anything back to the user, such as the values of query parameters during searches. \n* Convert special characters such as `?`, `&`, `/`, `<`, `>` and spaces to their respective HTML or URL encoded equivalents. \n* Give users the option to disable client-side scripts.\n* Redirect invalid requests.\n* Detect simultaneous logins, including those from two separate IP addresses, and invalidate those sessions.\n* Use and enforce a Content Security Policy (source: Wikipedia) to disable any features that might be manipulated for an XSS attack.\n* Read the documentation for any of the libraries referenced in your code to understand which elements allow for embedded HTML.\n\n## Remediation\nUpgrade `vega-functions` to version 5.13.1 or higher.\n## References\n- [GitHub Commit](https://github.com/vega/vega/commit/01adb034f24727d3bb321bbbb6696a7f4cd91689)\n- [GitHub Release](https://github.com/vega/vega/releases/tag/v5.23.0)\n- [Vulnerable Code](https://github.com/vega/vega/blob/7eafbbd4d53d0ce9f08e74ff96c90d411b1bb80a/packages/vega-functions/src/functions/lasso.js#L13)\n",
+      "epssDetails": {
+        "percentile": "0.18452",
+        "probability": "0.00052",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-26487"
+        ],
+        "CWE": [
+          "CWE-79"
+        ],
+        "GHSA": [
+          "GHSA-w5m3-xh75-mp55"
+        ]
+      },
+      "packageName": "vega-functions",
+      "proprietary": false,
+      "creationTime": "2023-03-03T08:30:45.065389Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-03-02T23:08:21Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-03-03T08:30:45.241673Z",
+      "modificationTime": "2023-05-04T13:35:40.260264Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 96,
+      "from": [
+        "typescript-notebook@DonJayamanne/typescript-notebook#d3c419b635ba2c88179cef3ebf0ecf58563f2410",
+        "@tensorflow/tfjs-vis@1.5.1",
+        "vega@5.20.0",
+        "vega-functions@5.12.1"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "vega@5.22.0",
+        "vega-functions@5.13.1"
+      ],
+      "version": "5.12.1",
+      "name": "vega-functions",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-VEGAFUNCTIONS-3338523",
+      "title": "Cross-site Scripting (XSS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N/E:P",
+      "credit": [
+        "Alex Chapman"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<5.13.1"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "5.13.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.4,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "vega-functions",
+      "references": [
+        {
+          "url": "https://github.com/vega/vega/commit/ab371a0093a8cb6215f7bdd5716f33aba6b6ee0f",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/vega/vega/releases/tag/v5.23.0",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2023-03-10T01:10:09.201294Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2023-05-04T13:35:13.445637Z"
+        }
+      ],
+      "description": "## Overview\n[vega-functions](https://www.npmjs.org/package/vega-functions) is a Custom functions for the Vega expression language.\n\nAffected versions of this package are vulnerable to Cross-site Scripting (XSS) via the `scale` expression function which has the ability to call arbitrary functions with a single controlled argument. This can be exploited to escape the Vega expression sandbox in order to execute arbitrary JavaScript.\r\n\r\n## PoC\r\n\r\n```json\r\n{\r\n  \"$schema\": \"https://vega.github.io/schema/vega/v5.json\",\r\n  \"data\": [\r\n    {\r\n      \"name\": \"XSS PoC\",\r\n      \"values\": [1],\r\n      \"transform\": [\r\n        {\r\n          \"type\": \"formula\",\r\n          \"as\": \"amount\",\r\n          \"expr\": \"scale('func', null,  {context: {scales: {func: {value: scale('func', 'eval(atob(\\\"YWxlcnQoMSk7\\\"))', {context: {scales: {func: {value: [].constructor.constructor}}}})}}}})\"\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}\r\n```\n## Details\n\nA cross-site scripting attack occurs when the attacker tricks a legitimate web-based application or site to accept a request as originating from a trusted source.\n\nThis is done by escaping the context of the web application; the web application then delivers that data to its users along with other trusted dynamic content, without validating it. The browser unknowingly executes malicious script on the client side (through client-side languages; usually JavaScript or HTML)  in order to perform actions that are otherwise typically blocked by the browser’s Same Origin Policy.\n\nInjecting malicious code is the most prevalent manner by which XSS is exploited; for this reason, escaping characters in order to prevent this manipulation is the top method for securing code against this vulnerability.\n\nEscaping means that the application is coded to mark key characters, and particularly key characters included in user input, to prevent those characters from being interpreted in a dangerous context. For example, in HTML, `<` can be coded as  `&lt`; and `>` can be coded as `&gt`; in order to be interpreted and displayed as themselves in text, while within the code itself, they are used for HTML tags. If malicious content is injected into an application that escapes special characters and that malicious content uses `<` and `>` as HTML tags, those characters are nonetheless not interpreted as HTML tags by the browser if they’ve been correctly escaped in the application code and in this way the attempted attack is diverted.\n \nThe most prominent use of XSS is to steal cookies (source: OWASP HttpOnly) and hijack user sessions, but XSS exploits have been used to expose sensitive information, enable access to privileged services and functionality and deliver malware. \n\n### Types of attacks\nThere are a few methods by which XSS can be manipulated:\n\n|Type|Origin|Description|\n|--|--|--|\n|**Stored**|Server|The malicious code is inserted in the application (usually as a link) by the attacker. The code is activated every time a user clicks the link.|\n|**Reflected**|Server|The attacker delivers a malicious link externally from the vulnerable web site application to a user. When clicked, malicious code is sent to the vulnerable web site, which reflects the attack back to the user’s browser.| \n|**DOM-based**|Client|The attacker forces the user’s browser to render a malicious page. The data in the page itself delivers the cross-site scripting data.|\n|**Mutated**| |The attacker injects code that appears safe, but is then rewritten and modified by the browser, while parsing the markup. An example is rebalancing unclosed quotation marks or even adding quotation marks to unquoted parameters.|\n\n### Affected environments\nThe following environments are susceptible to an XSS attack:\n\n* Web servers\n* Application servers\n* Web application environments\n\n### How to prevent\nThis section describes the top best practices designed to specifically protect your code: \n\n* Sanitize data input in an HTTP request before reflecting it back, ensuring all data is validated, filtered or escaped before echoing anything back to the user, such as the values of query parameters during searches. \n* Convert special characters such as `?`, `&`, `/`, `<`, `>` and spaces to their respective HTML or URL encoded equivalents. \n* Give users the option to disable client-side scripts.\n* Redirect invalid requests.\n* Detect simultaneous logins, including those from two separate IP addresses, and invalidate those sessions.\n* Use and enforce a Content Security Policy (source: Wikipedia) to disable any features that might be manipulated for an XSS attack.\n* Read the documentation for any of the libraries referenced in your code to understand which elements allow for embedded HTML.\n\n## Remediation\nUpgrade `vega-functions` to version 5.13.1 or higher.\n## References\n- [GitHub Commit](https://github.com/vega/vega/commit/ab371a0093a8cb6215f7bdd5716f33aba6b6ee0f)\n- [GitHub Release](https://github.com/vega/vega/releases/tag/v5.23.0)\n",
+      "epssDetails": {
+        "percentile": "0.18162",
+        "probability": "0.00052",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-26486"
+        ],
+        "CWE": [
+          "CWE-79"
+        ],
+        "GHSA": [
+          "GHSA-4vq7-882g-wcg4"
+        ]
+      },
+      "packageName": "vega-functions",
+      "proprietary": false,
+      "creationTime": "2023-03-03T08:40:43.540389Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-03-02T23:11:05Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-03-03T08:40:43.522882Z",
+      "modificationTime": "2023-05-04T13:35:13.445637Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 96,
+      "from": [
+        "typescript-notebook@DonJayamanne/typescript-notebook#d3c419b635ba2c88179cef3ebf0ecf58563f2410",
+        "@tensorflow/tfjs-vis@1.5.1",
+        "vega@5.20.0",
+        "vega-functions@5.12.1"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "vega@5.22.0",
+        "vega-functions@5.13.1"
+      ],
+      "version": "5.12.1",
+      "name": "vega-functions",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 218,
+  "severityMap": {
+    "critical": 0,
+    "high": 0,
+    "medium": 11,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "11 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 7,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/DonJayamanne/typescript-notebook.git"
+}

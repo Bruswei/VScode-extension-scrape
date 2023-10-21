@@ -1,0 +1,251 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-NODEFETCH-2342118",
+      "title": "Information Exposure",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<2.6.7",
+          ">=3.0.0 <3.1.1"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "2.6.7",
+        "3.1.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "node-fetch",
+      "references": [
+        {
+          "url": "https://github.com/node-fetch/node-fetch/commit/1ef4b560a17e644a02a3bfdea7631ffeee578b35",
+          "title": "Github Commit"
+        },
+        {
+          "url": "https://github.com/node-fetch/node-fetch/commit/36e47e8a6406185921e4985dcbeff140d73eaa10",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/node-fetch/node-fetch/pull/1449/commits/5c32f002fdd65b1c6a8f1e3620210813d45c7e60",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/node-fetch/node-fetch/pull/1449",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "SUSE",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:H/I:N/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2023-02-02T01:54:20.392355Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2022-10-29T01:10:37.609069Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:C/C:H/I:N/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2022-11-27T21:31:03.384329Z"
+        }
+      ],
+      "description": "## Overview\n[node-fetch](https://www.npmjs.com/package/node-fetch) is a light-weight module that brings window.fetch to node.js\n\nAffected versions of this package are vulnerable to Information Exposure when fetching a remote url with Cookie, if it get a `Location` response header, it will follow that url and try to fetch that url with provided cookie. This can lead to forwarding secure headers to 3th party.\n## Remediation\nUpgrade `node-fetch` to version 2.6.7, 3.1.1 or higher.\n## References\n- [Github Commit](https://github.com/node-fetch/node-fetch/commit/1ef4b560a17e644a02a3bfdea7631ffeee578b35)\n- [GitHub Commit](https://github.com/node-fetch/node-fetch/commit/36e47e8a6406185921e4985dcbeff140d73eaa10)\n- [GitHub Commit](https://github.com/node-fetch/node-fetch/pull/1449/commits/5c32f002fdd65b1c6a8f1e3620210813d45c7e60)\n- [GitHub PR](https://github.com/node-fetch/node-fetch/pull/1449)\n",
+      "epssDetails": {
+        "percentile": "0.42975",
+        "probability": "0.00110",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-0235"
+        ],
+        "CWE": [
+          "CWE-200"
+        ]
+      },
+      "packageName": "node-fetch",
+      "proprietary": false,
+      "creationTime": "2022-01-17T12:08:00.675849Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-01-17T12:00:01Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-01-17T16:25:00Z",
+      "modificationTime": "2023-05-19T12:42:39.331764Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-tldr@bmuskalla/vscode-tldr#4c6dcde16b9a84e4595c8b1e97336270550250f7",
+        "isomorphic-fetch@2.2.1",
+        "node-fetch@1.7.3"
+      ],
+      "upgradePath": [
+        false,
+        "isomorphic-fetch@3.0.0",
+        "node-fetch@2.6.7"
+      ],
+      "version": "1.7.3",
+      "name": "node-fetch",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-NODEFETCH-674311",
+      "title": "Denial of Service",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H/E:U/RL:O/RC:R",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<2.6.1",
+          ">=3.0.0-beta.1 <3.0.0-beta.9"
+        ]
+      },
+      "exploit": "Unproven",
+      "fixedIn": [
+        "2.6.1",
+        "3.0.0-beta.9"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.9,
+      "functions": [
+        {
+          "version": [
+            ">1.7.1 <1.7.4",
+            ">2.0.0-alpha.7 <2.6.1"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "className": null,
+            "functionName": "fetch"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "node-fetch",
+      "references": [
+        {
+          "url": "https://github.com/node-fetch/node-fetch/security/advisories/GHSA-w7rc-rwvf-8q5r",
+          "title": "GitHub Advisory"
+        },
+        {
+          "url": "https://github.com/node-fetch/node-fetch/commit/2358a6c2563d1730a0cdaccc197c611949f6a334",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-01-03T18:04:53.378913Z"
+        }
+      ],
+      "description": "## Overview\n[node-fetch](https://www.npmjs.com/package/node-fetch) is a light-weight module that brings window.fetch to node.js\n\nAffected versions of this package are vulnerable to Denial of Service. Node Fetch did not honor the `size` option after following a redirect, which means that when a content size was over the limit, a FetchError would never get thrown and the process would end without failure.\n## Remediation\nUpgrade `node-fetch` to version 2.6.1, 3.0.0-beta.9 or higher.\n## References\n- [GitHub Advisory](https://github.com/node-fetch/node-fetch/security/advisories/GHSA-w7rc-rwvf-8q5r)\n- [GitHub Commit](https://github.com/node-fetch/node-fetch/commit/2358a6c2563d1730a0cdaccc197c611949f6a334)\n",
+      "epssDetails": {
+        "percentile": "0.39244",
+        "probability": "0.00096",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-15168"
+        ],
+        "CWE": [
+          "CWE-400"
+        ],
+        "GHSA": [
+          "GHSA-w7rc-rwvf-8q5r"
+        ]
+      },
+      "packageName": "node-fetch",
+      "proprietary": false,
+      "creationTime": "2020-09-11T10:50:56.354201Z",
+      "functions_new": [
+        {
+          "version": [
+            ">1.7.1 <1.7.4",
+            ">2.0.0-alpha.7 <2.6.1"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "functionName": "fetch"
+          }
+        }
+      ],
+      "alternativeIds": [],
+      "disclosureTime": "2020-09-10T17:55:53Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-09-11T14:12:46Z",
+      "modificationTime": "2022-01-26T16:47:31.069025Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-tldr@bmuskalla/vscode-tldr#4c6dcde16b9a84e4595c8b1e97336270550250f7",
+        "isomorphic-fetch@2.2.1",
+        "node-fetch@1.7.3"
+      ],
+      "upgradePath": [
+        false,
+        "isomorphic-fetch@3.0.0",
+        "node-fetch@2.6.1"
+      ],
+      "version": "1.7.3",
+      "name": "node-fetch",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 7,
+  "severityMap": {
+    "critical": 0,
+    "high": 0,
+    "medium": 2,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "2 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 2,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/bmuskalla/vscode-tldr.git"
+}

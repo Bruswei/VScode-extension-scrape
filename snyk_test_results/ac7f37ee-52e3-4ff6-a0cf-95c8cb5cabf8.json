@@ -1,0 +1,309 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-ADMZIP-1065796",
+      "title": "Directory Traversal",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N",
+      "credit": [
+        "cthackers"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<0.5.2"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "0.5.2"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.4,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "adm-zip",
+      "references": [
+        {
+          "url": "https://github.com/cthackers/adm-zip/commit/119dcad6599adccc77982feb14a0c7440fa63013",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[adm-zip](https://www.npmjs.com/package/adm-zip) is a JavaScript implementation for zip data compression for NodeJS.\n\nAffected versions of this package are vulnerable to Directory Traversal. It could extract files outside the target folder.\n\n## Details\n\nA Directory Traversal attack (also known as path traversal) aims to access files and directories that are stored outside the intended folder. By manipulating files with \"dot-dot-slash (../)\" sequences and its variations, or by using absolute file paths, it may be possible to access arbitrary files and directories stored on file system, including application source code, configuration, and other critical system files.\n\nDirectory Traversal vulnerabilities can be generally divided into two types:\n\n- **Information Disclosure**: Allows the attacker to gain information about the folder structure or read the contents of sensitive files on the system.\n\n`st` is a module for serving static files on web pages, and contains a [vulnerability of this type](https://snyk.io/vuln/npm:st:20140206). In our example, we will serve files from the `public` route.\n\nIf an attacker requests the following URL from our server, it will in turn leak the sensitive private key of the root user.\n\n```\ncurl http://localhost:8080/public/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/root/.ssh/id_rsa\n```\n**Note** `%2e` is the URL encoded version of `.` (dot).\n\n- **Writing arbitrary files**: Allows the attacker to create or replace existing files. This type of vulnerability is also known as `Zip-Slip`. \n\nOne way to achieve this is by using a malicious `zip` archive that holds path traversal filenames. When each filename in the zip archive gets concatenated to the target extraction folder, without validation, the final path ends up outside of the target folder. If an executable or a configuration file is overwritten with a file containing malicious code, the problem can turn into an arbitrary code execution issue quite easily.\n\nThe following is an example of a `zip` archive with one benign file and one malicious file. Extracting the malicious file will result in traversing out of the target folder, ending up in `/root/.ssh/` overwriting the `authorized_keys` file:\n\n```\n2018-04-15 22:04:29 .....           19           19  good.txt\n2018-04-15 22:04:42 .....           20           20  ../../../../../../root/.ssh/authorized_keys\n```\n\n## Remediation\nUpgrade `adm-zip` to version 0.5.2 or higher.\n## References\n- [GitHub Commit](https://github.com/cthackers/adm-zip/commit/119dcad6599adccc77982feb14a0c7440fa63013)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-22"
+        ]
+      },
+      "packageName": "adm-zip",
+      "proprietary": false,
+      "creationTime": "2021-01-28T07:59:50.454879Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-01-28T07:59:22Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-02-15T17:04:18.109270Z",
+      "modificationTime": "2021-02-15T17:04:18.111270Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "docxreader@skfrost19/Docx-Viewer#9fe3e0e7c79c90a8da65339562e23c05e24c001e",
+        "odt2html@1.0.1",
+        "adm-zip@0.4.7"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "adm-zip@0.5.2"
+      ],
+      "version": "0.4.7",
+      "name": "adm-zip",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-JSBEAUTIFY-2311652",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+      "credit": [
+        "kevinbackhouse"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<1.14.1"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.14.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "js-beautify",
+      "references": [
+        {
+          "url": "https://github.com/beautify-web/js-beautify/pull/1968/commits/034172dafed43e63d4cbc09b09dd9dbf151bbc13",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/beautify-web/js-beautify/pull/1973/commits/19c5862299b685524536608ddef62587536ad73e",
+          "title": "GitHub Fix Commit"
+        },
+        {
+          "url": "https://github.com/beautify-web/js-beautify/pull/1973",
+          "title": "GitHub Fix PR"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[js-beautify](https://www.npmjs.com/package/js-beautify) is a reformat and re-indent bookmarklets, ugly JavaScript, unpack scripts packed by Dean Edward’s popular packer, as well as partly deobfuscate scripts processed by the npm package \"javascript-obfuscator\".\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) due to an unsafe regex in `tokenizer.py` and `tokenizer.js`.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `js-beautify` to version 1.14.1 or higher.\n## References\n- [GitHub Commit](https://github.com/beautify-web/js-beautify/pull/1968/commits/034172dafed43e63d4cbc09b09dd9dbf151bbc13)\n- [GitHub Fix Commit](https://github.com/beautify-web/js-beautify/pull/1973/commits/19c5862299b685524536608ddef62587536ad73e)\n- [GitHub Fix PR](https://github.com/beautify-web/js-beautify/pull/1973)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-1333"
+        ],
+        "GHSL": [
+          "GHSL-2021-113"
+        ]
+      },
+      "packageName": "js-beautify",
+      "proprietary": false,
+      "creationTime": "2021-12-07T12:36:54.420575Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-07T12:18:39Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-01-12T16:36:31Z",
+      "modificationTime": "2022-03-29T11:03:55.469422Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "docxreader@skfrost19/Docx-Viewer#9fe3e0e7c79c90a8da65339562e23c05e24c001e",
+        "odt2html@1.0.1",
+        "js-beautify@1.6.3"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "js-beautify@1.14.1"
+      ],
+      "version": "1.6.3",
+      "name": "js-beautify",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:adm-zip:20180415",
+      "title": "Arbitrary File Write via Archive Extraction (Zip Slip)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:H/A:H/E:H/RL:O/RC:C",
+      "credit": [
+        "Snyk Security Research",
+        "Sébastien Mignot",
+        "Alex Chapman"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<0.4.11"
+        ]
+      },
+      "exploit": "High",
+      "fixedIn": [
+        "0.4.11"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "critical",
+      "cvssScore": 9.4,
+      "functions": [
+        {
+          "version": [
+            ">0.1.1 <0.4.11"
+          ],
+          "functionId": {
+            "filePath": "adm-zip.js",
+            "className": null,
+            "functionName": "module.exports.getEntry"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "adm-zip",
+      "references": [
+        {
+          "url": "https://github.com/cthackers/adm-zip/commit/d01fa8c80c3a5fcf5ce1eda82d96600c62910d3f",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/cthackers/adm-zip/pull/212/commits/6f4dfeb9a2166e93207443879988f97d88a37cde",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://hackerone.com/reports/362118",
+          "title": "Hackerone Report"
+        },
+        {
+          "url": "https://github.com/snyk/zip-slip-vulnerability",
+          "title": "Zip Slip Advisory"
+        },
+        {
+          "url": "https://security.snyk.io/research/zip-slip-vulnerability",
+          "title": "Zip Slip Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:N/I:H/A:N",
+          "cvssV3BaseScore": 5.5,
+          "modificationTime": "2022-01-03T16:12:48.999778Z"
+        }
+      ],
+      "description": "## Overview\n\n[adm-zip](https://www.npmjs.com/package/adm-zip) is a JavaScript implementation for zip data compression for NodeJS.\n\n\nAffected versions of this package are vulnerable to Arbitrary File Write via Archive Extraction (Zip Slip).\n\n## Details\nIt is exploited using a specially crafted zip archive, that holds path traversal filenames. When exploited, a filename in a malicious archive is concatenated to the target extraction directory, which results in the final path ending up outside of the target folder. For instance, a zip may hold a file with a \"../../file.exe\" location and thus break out of the target folder. If an executable or a configuration file is overwritten with a file containing malicious code, the problem can turn into an arbitrary code execution issue quite easily.\r\n\r\nThe following is an example of a zip archive with one benign file and one malicious file. Extracting the malicous file will result in traversing out of the target folder, ending up in `/root/.ssh/` overwriting the `authorized_keys` file:\r\n\r\n```\r\n\r\n+2018-04-15 22:04:29 ..... 19 19 good.txt\r\n\r\n+2018-04-15 22:04:42 ..... 20 20 ../../../../../../root/.ssh/authorized_keys\r\n\r\n```\n\n## Remediation\n\nUpgrade `adm-zip` to version 0.4.11 or higher.\n\n\n## References\n\n- [GitHub Commit](https://github.com/cthackers/adm-zip/commit/d01fa8c80c3a5fcf5ce1eda82d96600c62910d3f)\n\n- [GitHub Commit](https://github.com/cthackers/adm-zip/pull/212/commits/6f4dfeb9a2166e93207443879988f97d88a37cde)\n\n- [Hackerone Report](https://hackerone.com/reports/362118)\n\n- [Zip Slip Advisory](https://github.com/snyk/zip-slip-vulnerability)\n\n- [Zip Slip Advisory](https://security.snyk.io/research/zip-slip-vulnerability)\n",
+      "epssDetails": {
+        "percentile": "0.36992",
+        "probability": "0.00089",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2018-1002204"
+        ],
+        "CWE": [
+          "CWE-29"
+        ],
+        "NSP": [
+          "681",
+          "994"
+        ],
+        "GHSA": [
+          "GHSA-3v6h-hqm4-2rg6"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-ADMZIP-11093"
+        ]
+      },
+      "packageName": "adm-zip",
+      "proprietary": true,
+      "creationTime": "2018-05-30T12:09:16.138000Z",
+      "functions_new": [
+        {
+          "version": [
+            ">0.1.1 <0.4.11"
+          ],
+          "functionId": {
+            "filePath": "adm-zip.js",
+            "functionName": "module.exports.getEntry"
+          }
+        }
+      ],
+      "alternativeIds": [
+        "SNYK-JS-ADMZIP-11093"
+      ],
+      "disclosureTime": "2018-04-14T21:00:00Z",
+      "packageManager": "npm",
+      "publicationTime": "2018-05-31T07:09:16Z",
+      "modificationTime": "2022-08-25T12:19:52.295190Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "critical",
+      "packagePopularityRank": 99,
+      "from": [
+        "docxreader@skfrost19/Docx-Viewer#9fe3e0e7c79c90a8da65339562e23c05e24c001e",
+        "odt2html@1.0.1",
+        "adm-zip@0.4.7"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "adm-zip@0.4.11"
+      ],
+      "version": "0.4.7",
+      "name": "adm-zip",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 56,
+  "severityMap": {
+    "critical": 1,
+    "high": 1,
+    "medium": 1,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "3 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 3,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/skfrost19/Docx-Viewer.git"
+}

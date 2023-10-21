@@ -1,0 +1,181 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-OPEN-174041",
+      "title": "Arbitrary Code Injection",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/RL:O",
+      "credit": [
+        "ChaLKer"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<6.0.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "6.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "critical",
+      "cvssScore": 9.8,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "open",
+      "references": [
+        {
+          "url": "https://github.com/pwnall/node-open/issues/68",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://hackerone.com/reports/319473",
+          "title": "HackerOne Report"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/663",
+          "title": "NPM Security Advisory"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[open](https://www.npmjs.com/package/open) is a cross platform package that opens stuff like URLs, files, executables.\n\nAffected versions of this package are vulnerable to Arbitrary Code Injection when unsanitized user input is passed in.\r\n\r\nThe package does come with the following warning in the readme:\r\n\r\n```\r\nThe same care should be taken when calling open as if you were calling child_process.exec directly. If it is an executable it will run in a new shell.\r\n```\r\nThe package `open` is replacing the `opn` package, which is now deprecated. The older versions of `open` are vulnerable. \r\n\r\n**Note: Upgrading `open` to the last version will prevent this vulnerability but is also likely to have unwanted effects since it now has a very different API.**\n## Remediation\nUpgrade `open` to version 6.0.0 or higher.\n## References\n- [GitHub Issue](https://github.com/pwnall/node-open/issues/68)\n- [HackerOne Report](https://hackerone.com/reports/319473)\n- [NPM Security Advisory](https://www.npmjs.com/advisories/663)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-94"
+        ],
+        "NSP": [
+          "663"
+        ],
+        "GHSA": [
+          "GHSA-28xh-wpgr-7fm8"
+        ]
+      },
+      "packageName": "open",
+      "proprietary": false,
+      "creationTime": "2019-03-31T10:27:47.709659Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2018-05-16T19:36:39Z",
+      "packageManager": "npm",
+      "publicationTime": "2019-03-31T10:33:37Z",
+      "modificationTime": "2020-12-14T14:41:24.461051Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "critical",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-express@compulim/vscode-express#052ce463e1fc68cae2dfdcb3ff12f09e636b062c",
+        "open@0.0.5"
+      ],
+      "upgradePath": [
+        false,
+        "open@6.0.0"
+      ],
+      "version": "0.0.5",
+      "name": "open",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:open:20180512",
+      "title": "Arbitrary Command Injection",
+      "CVSSv3": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P/RL:O/RC:C",
+      "credit": [
+        "ChALkeR"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<6.0.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "6.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 8.4,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "open",
+      "references": [
+        {
+          "url": "https://hackerone.com/reports/319473",
+          "title": "HackerOne Report"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[open](https://www.npmjs.com/package/open) is a cross platform package that opens stuff like URLs, files, executables.\n\nAffected versions of this package are vulnerable to Arbitrary Command Injection. Urls are not properly escaped before concatenating them into the command that is opened using `exec()`.\r\n\r\n**Note: Upgrading `open` to the last version will prevent this vulnerability but is also likely to have unwanted effects since it now has a very different API.**\n## Remediation\nUpgrade `open` to version 6.0.0 or higher.\n## References\n- [HackerOne Report](https://hackerone.com/reports/319473)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-264"
+        ],
+        "NSP": [
+          "663"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-OPEN-12148"
+        ]
+      },
+      "packageName": "open",
+      "proprietary": false,
+      "creationTime": "2018-02-25T11:54:41.573000Z",
+      "functions_new": [],
+      "alternativeIds": [
+        "SNYK-JS-OPEN-12148"
+      ],
+      "disclosureTime": "2018-05-12T11:54:41Z",
+      "packageManager": "npm",
+      "publicationTime": "2018-05-13T14:26:27Z",
+      "modificationTime": "2020-06-12T08:52:32.287783Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-express@compulim/vscode-express#052ce463e1fc68cae2dfdcb3ff12f09e636b062c",
+        "open@0.0.5"
+      ],
+      "upgradePath": [
+        false,
+        "open@6.0.0"
+      ],
+      "version": "0.0.5",
+      "name": "open",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 59,
+  "severityMap": {
+    "critical": 1,
+    "high": 1,
+    "medium": 0,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "2 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 2,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/compulim/vscode-express.git"
+}

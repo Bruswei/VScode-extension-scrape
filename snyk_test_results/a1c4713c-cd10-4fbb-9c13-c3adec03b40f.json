@@ -1,0 +1,107 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-SSH2-1656673",
+      "title": "Command Injection",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:L/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<1.0.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": "This vulnerability is only applicable on Windows operating system"
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "ssh2",
+      "references": [
+        {
+          "url": "https://github.com/mscdex/ssh2/commit/f763271f41320e71d5cbee02ea5bc6a2ded3ca21",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+          "cvssV3BaseScore": 10,
+          "modificationTime": "2022-01-03T18:07:55.443023Z"
+        }
+      ],
+      "description": "## Overview\n[ssh2](https://www.npmjs.com/package/ssh2) is a SSH2 client and server modules written in pure JavaScript for node.js.\n\nAffected versions of this package are vulnerable to Command Injection. The issue only exists on Windows. This issue may lead to remote code execution if a client of the library calls the vulnerable method with untrusted input.\n## Remediation\nUpgrade `ssh2` to version 1.0.0 or higher.\n## References\n- [GitHub Commit](https://github.com/mscdex/ssh2/commit/f763271f41320e71d5cbee02ea5bc6a2ded3ca21)\n",
+      "epssDetails": {
+        "percentile": "0.87519",
+        "probability": "0.02089",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-26301"
+        ],
+        "CWE": [
+          "CWE-78"
+        ]
+      },
+      "packageName": "ssh2",
+      "proprietary": false,
+      "creationTime": "2021-09-21T12:34:13.358403Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-09-21T12:30:03Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-09-21T15:24:51.322412Z",
+      "modificationTime": "2022-06-23T10:54:23.005060Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "ftp-simple@humy2833/FTP-Simple#0e1948ebd885c5e70a4e4818f4857ff739238f17",
+        "easy-ftp@0.4.2",
+        "ssh2@0.8.9"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "ssh2@1.0.0"
+      ],
+      "version": "0.8.9",
+      "name": "ssh2",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 68,
+  "severityMap": {
+    "critical": 0,
+    "high": 1,
+    "medium": 0,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "1 vulnerable dependency path",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/humy2833/FTP-Simple.git"
+}

@@ -1,0 +1,376 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-DECOMPRESSTAR-559095",
+      "title": "Arbitrary File Write via Archive Extraction (Zip Slip)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:N/A:N/E:P/RL:U/RC:C",
+      "credit": [
+        "Oscar Arnflo"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.3,
+      "functions": [
+        {
+          "version": [
+            "*"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "className": null,
+            "functionName": "module.exports"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "decompress-tar",
+      "references": [
+        {
+          "url": "https://github.com/kevva/decompress/pull/73",
+          "title": "GitHub Fix PR"
+        },
+        {
+          "url": "https://github.com/kevva/decompress/issues/71",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/kevva/decompress-tar/pull/12",
+          "title": "GitHub PR decompress-tar"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/1217",
+          "title": "NPM Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-01-03T18:04:12.459024Z"
+        }
+      ],
+      "description": "## Overview\n[decompress-tar](https://github.com/kevva/decompress-tar) is a tar plugin for decompress.\n\nAffected versions of this package are vulnerable to Arbitrary File Write via Archive Extraction (Zip Slip). It is possible to bypass the security measures provided by decompress  and conduct ZIP path traversal through symlinks.\r\n\r\n### PoC\r\n\r\n```\r\nconst decompress = require('decompress');\r\n\r\ndecompress('slip.tar.gz', 'dist').then(files => {\r\n\tconsole.log('done!');\r\n});\r\n```\n\n## Details\n\nIt is exploited using a specially crafted zip archive, that holds path traversal filenames. When exploited, a filename in a malicious archive is concatenated to the target extraction directory, which results in the final path ending up outside of the target folder. For instance, a zip may hold a file with a \"../../file.exe\" location and thus break out of the target folder. If an executable or a configuration file is overwritten with a file containing malicious code, the problem can turn into an arbitrary code execution issue quite easily.\n\nThe following is an example of a zip archive with one benign file and one malicious file. Extracting the malicous file will result in traversing out of the target folder, ending up in `/root/.ssh/` overwriting the `authorized_keys` file:\n\n```\n\n+2018-04-15 22:04:29 ..... 19 19 good.txt\n\n+2018-04-15 22:04:42 ..... 20 20 ../../../../../../root/.ssh/authorized_keys\n\n```\n\n## Remediation\nThere is no fixed version for `decompress-tar`.\n## References\n- [GitHub Fix PR](https://github.com/kevva/decompress/pull/73)\n- [GitHub Issue](https://github.com/kevva/decompress/issues/71)\n- [GitHub PR decompress-tar](https://github.com/kevva/decompress-tar/pull/12)\n- [NPM Advisory](https://www.npmjs.com/advisories/1217)\n",
+      "epssDetails": {
+        "percentile": "0.75874",
+        "probability": "0.00619",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-12265"
+        ],
+        "CWE": [
+          "CWE-29"
+        ],
+        "NSP": [
+          "1217"
+        ],
+        "GHSA": [
+          "GHSA-qgfr-5hqp-vrw9"
+        ]
+      },
+      "packageName": "decompress-tar",
+      "proprietary": false,
+      "creationTime": "2020-03-02T11:17:35.161853Z",
+      "functions_new": [
+        {
+          "version": [
+            "*"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "functionName": "module.exports"
+          }
+        }
+      ],
+      "alternativeIds": [],
+      "disclosureTime": "2019-10-15T20:29:24Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-02-27T13:28:41Z",
+      "modificationTime": "2022-01-03T18:04:12.459024Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "java-extension-pack-jdk@cypher256/java-extension-pack#3e831998364af2fb3cccab98d3a50382b1b4026a",
+        "decompress@4.2.1",
+        "decompress-tar@4.1.1"
+      ],
+      "upgradePath": [],
+      "version": "4.1.1",
+      "name": "decompress-tar",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-DECOMPRESSTAR-559095",
+      "title": "Arbitrary File Write via Archive Extraction (Zip Slip)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:N/A:N/E:P/RL:U/RC:C",
+      "credit": [
+        "Oscar Arnflo"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.3,
+      "functions": [
+        {
+          "version": [
+            "*"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "className": null,
+            "functionName": "module.exports"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "decompress-tar",
+      "references": [
+        {
+          "url": "https://github.com/kevva/decompress/pull/73",
+          "title": "GitHub Fix PR"
+        },
+        {
+          "url": "https://github.com/kevva/decompress/issues/71",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/kevva/decompress-tar/pull/12",
+          "title": "GitHub PR decompress-tar"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/1217",
+          "title": "NPM Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-01-03T18:04:12.459024Z"
+        }
+      ],
+      "description": "## Overview\n[decompress-tar](https://github.com/kevva/decompress-tar) is a tar plugin for decompress.\n\nAffected versions of this package are vulnerable to Arbitrary File Write via Archive Extraction (Zip Slip). It is possible to bypass the security measures provided by decompress  and conduct ZIP path traversal through symlinks.\r\n\r\n### PoC\r\n\r\n```\r\nconst decompress = require('decompress');\r\n\r\ndecompress('slip.tar.gz', 'dist').then(files => {\r\n\tconsole.log('done!');\r\n});\r\n```\n\n## Details\n\nIt is exploited using a specially crafted zip archive, that holds path traversal filenames. When exploited, a filename in a malicious archive is concatenated to the target extraction directory, which results in the final path ending up outside of the target folder. For instance, a zip may hold a file with a \"../../file.exe\" location and thus break out of the target folder. If an executable or a configuration file is overwritten with a file containing malicious code, the problem can turn into an arbitrary code execution issue quite easily.\n\nThe following is an example of a zip archive with one benign file and one malicious file. Extracting the malicous file will result in traversing out of the target folder, ending up in `/root/.ssh/` overwriting the `authorized_keys` file:\n\n```\n\n+2018-04-15 22:04:29 ..... 19 19 good.txt\n\n+2018-04-15 22:04:42 ..... 20 20 ../../../../../../root/.ssh/authorized_keys\n\n```\n\n## Remediation\nThere is no fixed version for `decompress-tar`.\n## References\n- [GitHub Fix PR](https://github.com/kevva/decompress/pull/73)\n- [GitHub Issue](https://github.com/kevva/decompress/issues/71)\n- [GitHub PR decompress-tar](https://github.com/kevva/decompress-tar/pull/12)\n- [NPM Advisory](https://www.npmjs.com/advisories/1217)\n",
+      "epssDetails": {
+        "percentile": "0.75874",
+        "probability": "0.00619",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-12265"
+        ],
+        "CWE": [
+          "CWE-29"
+        ],
+        "NSP": [
+          "1217"
+        ],
+        "GHSA": [
+          "GHSA-qgfr-5hqp-vrw9"
+        ]
+      },
+      "packageName": "decompress-tar",
+      "proprietary": false,
+      "creationTime": "2020-03-02T11:17:35.161853Z",
+      "functions_new": [
+        {
+          "version": [
+            "*"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "functionName": "module.exports"
+          }
+        }
+      ],
+      "alternativeIds": [],
+      "disclosureTime": "2019-10-15T20:29:24Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-02-27T13:28:41Z",
+      "modificationTime": "2022-01-03T18:04:12.459024Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "java-extension-pack-jdk@cypher256/java-extension-pack#3e831998364af2fb3cccab98d3a50382b1b4026a",
+        "decompress@4.2.1",
+        "decompress-tarbz2@4.1.1",
+        "decompress-tar@4.1.1"
+      ],
+      "upgradePath": [],
+      "version": "4.1.1",
+      "name": "decompress-tar",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-DECOMPRESSTAR-559095",
+      "title": "Arbitrary File Write via Archive Extraction (Zip Slip)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:N/A:N/E:P/RL:U/RC:C",
+      "credit": [
+        "Oscar Arnflo"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.3,
+      "functions": [
+        {
+          "version": [
+            "*"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "className": null,
+            "functionName": "module.exports"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "decompress-tar",
+      "references": [
+        {
+          "url": "https://github.com/kevva/decompress/pull/73",
+          "title": "GitHub Fix PR"
+        },
+        {
+          "url": "https://github.com/kevva/decompress/issues/71",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/kevva/decompress-tar/pull/12",
+          "title": "GitHub PR decompress-tar"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/1217",
+          "title": "NPM Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-01-03T18:04:12.459024Z"
+        }
+      ],
+      "description": "## Overview\n[decompress-tar](https://github.com/kevva/decompress-tar) is a tar plugin for decompress.\n\nAffected versions of this package are vulnerable to Arbitrary File Write via Archive Extraction (Zip Slip). It is possible to bypass the security measures provided by decompress  and conduct ZIP path traversal through symlinks.\r\n\r\n### PoC\r\n\r\n```\r\nconst decompress = require('decompress');\r\n\r\ndecompress('slip.tar.gz', 'dist').then(files => {\r\n\tconsole.log('done!');\r\n});\r\n```\n\n## Details\n\nIt is exploited using a specially crafted zip archive, that holds path traversal filenames. When exploited, a filename in a malicious archive is concatenated to the target extraction directory, which results in the final path ending up outside of the target folder. For instance, a zip may hold a file with a \"../../file.exe\" location and thus break out of the target folder. If an executable or a configuration file is overwritten with a file containing malicious code, the problem can turn into an arbitrary code execution issue quite easily.\n\nThe following is an example of a zip archive with one benign file and one malicious file. Extracting the malicous file will result in traversing out of the target folder, ending up in `/root/.ssh/` overwriting the `authorized_keys` file:\n\n```\n\n+2018-04-15 22:04:29 ..... 19 19 good.txt\n\n+2018-04-15 22:04:42 ..... 20 20 ../../../../../../root/.ssh/authorized_keys\n\n```\n\n## Remediation\nThere is no fixed version for `decompress-tar`.\n## References\n- [GitHub Fix PR](https://github.com/kevva/decompress/pull/73)\n- [GitHub Issue](https://github.com/kevva/decompress/issues/71)\n- [GitHub PR decompress-tar](https://github.com/kevva/decompress-tar/pull/12)\n- [NPM Advisory](https://www.npmjs.com/advisories/1217)\n",
+      "epssDetails": {
+        "percentile": "0.75874",
+        "probability": "0.00619",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-12265"
+        ],
+        "CWE": [
+          "CWE-29"
+        ],
+        "NSP": [
+          "1217"
+        ],
+        "GHSA": [
+          "GHSA-qgfr-5hqp-vrw9"
+        ]
+      },
+      "packageName": "decompress-tar",
+      "proprietary": false,
+      "creationTime": "2020-03-02T11:17:35.161853Z",
+      "functions_new": [
+        {
+          "version": [
+            "*"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "functionName": "module.exports"
+          }
+        }
+      ],
+      "alternativeIds": [],
+      "disclosureTime": "2019-10-15T20:29:24Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-02-27T13:28:41Z",
+      "modificationTime": "2022-01-03T18:04:12.459024Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "java-extension-pack-jdk@cypher256/java-extension-pack#3e831998364af2fb3cccab98d3a50382b1b4026a",
+        "decompress@4.2.1",
+        "decompress-targz@4.1.1",
+        "decompress-tar@4.1.1"
+      ],
+      "upgradePath": [],
+      "version": "4.1.1",
+      "name": "decompress-tar",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 89,
+  "severityMap": {
+    "critical": 0,
+    "high": 0,
+    "medium": 3,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "3 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/cypher256/java-extension-pack.git"
+}

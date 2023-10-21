@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Couldn't find the requested package or version",
+  "path": "https://github.com/roche-emmanuel/vscode_mql4_syntax.git"
+}

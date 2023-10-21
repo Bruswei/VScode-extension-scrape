@@ -1,0 +1,701 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-ASYNC-2441827",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:P",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">=2.0.0 <2.6.4",
+          ">=3.0.0 <3.2.2"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "2.6.4",
+        "3.2.2"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "async",
+      "references": [
+        {
+          "url": "https://github.com/caolan/async/pull/1828",
+          "title": "GitHub Backport PR"
+        },
+        {
+          "url": "https://github.com/caolan/async/commit/8f7f90342a6571ba1c197d747ebed30c368096d2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/caolan/async/commit/e1ecdbf79264f9ab488c7799f4c76996d5dca66d",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://jsfiddle.net/oz5twjd9/",
+          "title": "PoC"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "SUSE",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 7.8,
+          "modificationTime": "2023-06-22T11:01:37.671750Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 7.8,
+          "modificationTime": "2022-05-14T01:11:01.228151Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 7.8,
+          "modificationTime": "2022-11-27T15:35:48.591671Z"
+        }
+      ],
+      "description": "## Overview\n\nAffected versions of this package are vulnerable to Prototype Pollution via the `mapValues()` method, due to improper check in `createObjectIterator` function.\r\n\r\n## PoC\r\n\r\n```js\r\n//when objects are parsed, all properties are created as own (the objects can come from outside sources (http requests/ file))\r\nconst hasOwn = JSON.parse('{\"__proto__\": {\"isAdmin\": true}}');\r\n\r\n//does not have the property,  because it's inside object's own \"__proto__\"\r\nconsole.log(hasOwn.isAdmin);\r\n\r\nasync.mapValues(hasOwn, (val, key, cb) => cb(null, val), (error, result) => {\r\n  // after the method executes, hasOwn.__proto__ value (isAdmin: true) replaces the prototype of the newly created object, leading to potential exploits.\r\n  console.log(result.isAdmin);\r\n});\r\n```\n\n## Details\n\nPrototype Pollution is a vulnerability affecting JavaScript. Prototype Pollution refers to the ability to inject properties into existing JavaScript language construct prototypes, such as objects. JavaScript allows all Object attributes to be altered, including their magical attributes such as `__proto__`, `constructor` and `prototype`. An attacker manipulates these attributes to overwrite, or pollute, a JavaScript application object prototype of the base object by injecting other values.  Properties on the `Object.prototype` are then inherited by all the JavaScript objects through the prototype chain. When that happens, this leads to either denial of service by triggering JavaScript exceptions, or it tampers with the application source code to force the code path that the attacker injects, thereby leading to remote code execution.\n\nThere are two main ways in which the pollution of prototypes occurs:\n\n-   Unsafe `Object` recursive merge\n    \n-   Property definition by path\n    \n\n### Unsafe Object recursive merge\n\nThe logic of a vulnerable recursive merge function follows the following high-level model:\n```\nmerge (target, source)\n\n  foreach property of source\n\n    if property exists and is an object on both the target and the source\n\n      merge(target[property], source[property])\n\n    else\n\n      target[property] = source[property]\n```\n<br>  \n\nWhen the source object contains a property named `__proto__` defined with `Object.defineProperty()` , the condition that checks if the property exists and is an object on both the target and the source passes and the merge recurses with the target, being the prototype of `Object` and the source of `Object` as defined by the attacker. Properties are then copied on the `Object` prototype.\n\nClone operations are a special sub-class of unsafe recursive merges, which occur when a recursive merge is conducted on an empty object: `merge({},source)`.\n\n`lodash` and `Hoek` are examples of libraries susceptible to recursive merge attacks.\n\n### Property definition by path\n\nThere are a few JavaScript libraries that use an API to define property values on an object based on a given path. The function that is generally affected contains this signature: `theFunction(object, path, value)`\n\nIf the attacker can control the value of “path”, they can set this value to `__proto__.myValue`. `myValue` is then assigned to the prototype of the class of the object.\n\n## Types of attacks\n\nThere are a few methods by which Prototype Pollution can be manipulated:\n\n| Type |Origin  |Short description |\n|--|--|--|\n| **Denial of service (DoS)**|Client  |This is the most likely attack. <br>DoS occurs when `Object` holds generic functions that are implicitly called for various operations (for example, `toString` and `valueOf`). <br> The attacker pollutes `Object.prototype.someattr` and alters its state to an unexpected value such as `Int` or `Object`. In this case, the code fails and is likely to cause a denial of service.  <br>**For example:** if an attacker pollutes `Object.prototype.toString` by defining it as an integer, if the codebase at any point was reliant on `someobject.toString()` it would fail. |\n |**Remote Code Execution**|Client|Remote code execution is generally only possible in cases where the codebase evaluates a specific attribute of an object, and then executes that evaluation.<br>**For example:** `eval(someobject.someattr)`. In this case, if the attacker pollutes `Object.prototype.someattr` they are likely to be able to leverage this in order to execute code.|\n|**Property Injection**|Client|The attacker pollutes properties that the codebase relies on for their informative value, including security properties such as cookies or tokens.<br>  **For example:** if a codebase checks privileges for `someuser.isAdmin`, then when the attacker pollutes `Object.prototype.isAdmin` and sets it to equal `true`, they can then achieve admin privileges.|\n\n## Affected environments\n\nThe following environments are susceptible to a Prototype Pollution attack:\n\n-   Application server\n    \n-   Web server\n\n-   Web browser\n    \n\n## How to prevent\n\n1.  Freeze the prototype— use `Object.freeze (Object.prototype)`.\n    \n2.  Require schema validation of JSON input.\n    \n3.  Avoid using unsafe recursive merge functions.\n    \n4.  Consider using objects without prototypes (for example, `Object.create(null)`), breaking the prototype chain and preventing pollution.\n    \n5.  As a best practice use `Map` instead of `Object`.\n\n### For more information on this vulnerability type:\n\n[Arteau, Oliver. “JavaScript prototype pollution attack in NodeJS application.” GitHub, 26 May 2018](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)\n\n## Remediation\nUpgrade `async` to version 2.6.4, 3.2.2 or higher.\n## References\n- [GitHub Backport PR](https://github.com/caolan/async/pull/1828)\n- [GitHub Commit](https://github.com/caolan/async/commit/8f7f90342a6571ba1c197d747ebed30c368096d2)\n- [GitHub Commit](https://github.com/caolan/async/commit/e1ecdbf79264f9ab488c7799f4c76996d5dca66d)\n- [PoC](https://jsfiddle.net/oz5twjd9/)\n",
+      "epssDetails": {
+        "percentile": "0.28228",
+        "probability": "0.00069",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-43138"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ]
+      },
+      "packageName": "async",
+      "proprietary": false,
+      "creationTime": "2022-04-07T07:58:38.528444Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-04-07T07:49:24Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-04-07T14:22:18Z",
+      "modificationTime": "2023-06-22T11:01:37.671750Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "prophet@SqrTT/prophet#533aa1e621dee3b065e9eb658af6aa63b4a74cdb",
+        "htmlhint@0.14.2",
+        "async@3.2.0"
+      ],
+      "upgradePath": [
+        false,
+        "htmlhint@0.16.2",
+        "async@3.2.2"
+      ],
+      "version": "3.2.0",
+      "name": "async",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-GLOBPARENT-1016905",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<5.1.2"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "5.1.2"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "glob-parent",
+      "references": [
+        {
+          "url": "https://github.com/gulpjs/glob-parent/pull/36",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/gulpjs/glob-parent/releases/tag/v5.1.2",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-03-30T01:11:04.666304Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T15:32:35.708444Z"
+        }
+      ],
+      "description": "## Overview\n[glob-parent](https://www.npmjs.com/package/glob-parent) is a package that helps extracting the non-magic parent path from a glob string.\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS). The `enclosure` regex used to check for strings ending in enclosure containing path separator.\r\n\r\n### PoC by Yeting Li\r\n```\r\nvar globParent = require(\"glob-parent\")\r\nfunction build_attack(n) {\r\nvar ret = \"{\"\r\nfor (var i = 0; i < n; i++) {\r\nret += \"/\"\r\n}\r\n\r\nreturn ret;\r\n}\r\n\r\nglobParent(build_attack(5000));\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `glob-parent` to version 5.1.2 or higher.\n## References\n- [GitHub PR](https://github.com/gulpjs/glob-parent/pull/36)\n- [GitHub Release](https://github.com/gulpjs/glob-parent/releases/tag/v5.1.2)\n",
+      "epssDetails": {
+        "percentile": "0.82180",
+        "probability": "0.01070",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-28469"
+        ],
+        "CWE": [
+          "CWE-400"
+        ],
+        "GHSA": [
+          "GHSA-ww39-953v-wcq6"
+        ]
+      },
+      "packageName": "glob-parent",
+      "proprietary": true,
+      "creationTime": "2020-10-09T09:34:22.716485Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-01-12T12:42:32Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-01-12T15:00:42Z",
+      "modificationTime": "2022-10-25T15:32:35.708444Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "prophet@SqrTT/prophet#533aa1e621dee3b065e9eb658af6aa63b4a74cdb",
+        "htmlhint@0.14.2",
+        "parse-glob@3.0.4",
+        "glob-base@0.3.0",
+        "glob-parent@2.0.0"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        false,
+        "glob-parent@5.1.2"
+      ],
+      "version": "2.0.0",
+      "name": "glob-parent",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-REQUEST-3361831",
+      "title": "Server-side Request Forgery (SSRF)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N/E:P",
+      "credit": [
+        "SzymonDrosdzol"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "request",
+      "references": [
+        {
+          "url": "https://github.com/request/request/commit/d42332182512e56ba68446f49c3e3711e04301a2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/request/request/issues/3442",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/request/request/pull/3444",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2023-03-23T01:10:17.579856Z"
+        }
+      ],
+      "description": "## Overview\n[request](https://www.npmjs.com/package/request) is a simplified http request client.\n\nAffected versions of this package are vulnerable to Server-side Request Forgery (SSRF) due to insufficient checks in the `lib/redirect.js` file by allowing insecure redirects in the default configuration, via an attacker-controller server that does a cross-protocol redirect (HTTP to HTTPS, or HTTPS to HTTP).\r\n\r\n**NOTE:** `request` package has been deprecated, so a fix is not expected. See https://github.com/request/request/issues/3142.\n## Remediation\nA fix was pushed into the `master` branch but not yet published.\n## References\n- [GitHub Commit](https://github.com/request/request/commit/d42332182512e56ba68446f49c3e3711e04301a2)\n- [GitHub Issue](https://github.com/request/request/issues/3442)\n- [GitHub PR](https://github.com/request/request/pull/3444)\n",
+      "epssDetails": {
+        "percentile": "0.24986",
+        "probability": "0.00063",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-28155"
+        ],
+        "CWE": [
+          "CWE-918"
+        ]
+      },
+      "packageName": "request",
+      "proprietary": false,
+      "creationTime": "2023-03-16T13:58:23.124636Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-03-16T13:49:16Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-03-17T07:46:44.219769Z",
+      "modificationTime": "2023-08-30T13:20:36.826459Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "prophet@SqrTT/prophet#533aa1e621dee3b065e9eb658af6aa63b4a74cdb",
+        "htmlhint@0.14.2",
+        "request@2.88.2"
+      ],
+      "upgradePath": [],
+      "version": "2.88.2",
+      "name": "request",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-TOUGHCOOKIE-5672873",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N/E:P",
+      "credit": [
+        "Kokorin Vsevolod"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.1.3"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.1.3"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "tough-cookie",
+      "references": [
+        {
+          "url": "https://github.com/salesforce/tough-cookie/commit/12d474791bb856004e858fdb1c47b7608d09cf6e",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/salesforce/tough-cookie/issues/282",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/salesforce/tough-cookie/releases/tag/v4.1.3",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.5,
+          "modificationTime": "2023-07-06T13:31:55.808983Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2023-07-08T01:12:36.395017Z"
+        }
+      ],
+      "description": "## Overview\n[tough-cookie](https://www.npmjs.com/package/tough-cookie) is a RFC6265 Cookies and CookieJar module for Node.js.\n\nAffected versions of this package are vulnerable to Prototype Pollution due to improper handling of Cookies when using CookieJar in `rejectPublicSuffixes=false` mode. Due to an issue with the manner in which the objects are initialized, an attacker can expose or modify a limited amount of property information on those objects. There is no impact to availability.\n## PoC\n```\r\n// PoC.js\r\nasync function main(){\r\nvar tough = require(\"tough-cookie\");\r\nvar cookiejar = new tough.CookieJar(undefined,{rejectPublicSuffixes:false});\r\n// Exploit cookie\r\nawait cookiejar.setCookie(\r\n  \"Slonser=polluted; Domain=__proto__; Path=/notauth\",\r\n  \"https://__proto__/admin\"\r\n);\r\n// normal cookie\r\nvar cookie = await cookiejar.setCookie(\r\n  \"Auth=Lol; Domain=google.com; Path=/notauth\",\r\n  \"https://google.com/\"\r\n);\r\n\r\n//Exploit cookie\r\nvar a = {};\r\nconsole.log(a[\"/notauth\"][\"Slonser\"])\r\n}\r\nmain();\r\n```\n\n## Details\n\nPrototype Pollution is a vulnerability affecting JavaScript. Prototype Pollution refers to the ability to inject properties into existing JavaScript language construct prototypes, such as objects. JavaScript allows all Object attributes to be altered, including their magical attributes such as `__proto__`, `constructor` and `prototype`. An attacker manipulates these attributes to overwrite, or pollute, a JavaScript application object prototype of the base object by injecting other values.  Properties on the `Object.prototype` are then inherited by all the JavaScript objects through the prototype chain. When that happens, this leads to either denial of service by triggering JavaScript exceptions, or it tampers with the application source code to force the code path that the attacker injects, thereby leading to remote code execution.\n\nThere are two main ways in which the pollution of prototypes occurs:\n\n-   Unsafe `Object` recursive merge\n    \n-   Property definition by path\n    \n\n### Unsafe Object recursive merge\n\nThe logic of a vulnerable recursive merge function follows the following high-level model:\n```\nmerge (target, source)\n\n  foreach property of source\n\n    if property exists and is an object on both the target and the source\n\n      merge(target[property], source[property])\n\n    else\n\n      target[property] = source[property]\n```\n<br>  \n\nWhen the source object contains a property named `__proto__` defined with `Object.defineProperty()` , the condition that checks if the property exists and is an object on both the target and the source passes and the merge recurses with the target, being the prototype of `Object` and the source of `Object` as defined by the attacker. Properties are then copied on the `Object` prototype.\n\nClone operations are a special sub-class of unsafe recursive merges, which occur when a recursive merge is conducted on an empty object: `merge({},source)`.\n\n`lodash` and `Hoek` are examples of libraries susceptible to recursive merge attacks.\n\n### Property definition by path\n\nThere are a few JavaScript libraries that use an API to define property values on an object based on a given path. The function that is generally affected contains this signature: `theFunction(object, path, value)`\n\nIf the attacker can control the value of “path”, they can set this value to `__proto__.myValue`. `myValue` is then assigned to the prototype of the class of the object.\n\n## Types of attacks\n\nThere are a few methods by which Prototype Pollution can be manipulated:\n\n| Type |Origin  |Short description |\n|--|--|--|\n| **Denial of service (DoS)**|Client  |This is the most likely attack. <br>DoS occurs when `Object` holds generic functions that are implicitly called for various operations (for example, `toString` and `valueOf`). <br> The attacker pollutes `Object.prototype.someattr` and alters its state to an unexpected value such as `Int` or `Object`. In this case, the code fails and is likely to cause a denial of service.  <br>**For example:** if an attacker pollutes `Object.prototype.toString` by defining it as an integer, if the codebase at any point was reliant on `someobject.toString()` it would fail. |\n |**Remote Code Execution**|Client|Remote code execution is generally only possible in cases where the codebase evaluates a specific attribute of an object, and then executes that evaluation.<br>**For example:** `eval(someobject.someattr)`. In this case, if the attacker pollutes `Object.prototype.someattr` they are likely to be able to leverage this in order to execute code.|\n|**Property Injection**|Client|The attacker pollutes properties that the codebase relies on for their informative value, including security properties such as cookies or tokens.<br>  **For example:** if a codebase checks privileges for `someuser.isAdmin`, then when the attacker pollutes `Object.prototype.isAdmin` and sets it to equal `true`, they can then achieve admin privileges.|\n\n## Affected environments\n\nThe following environments are susceptible to a Prototype Pollution attack:\n\n-   Application server\n    \n-   Web server\n\n-   Web browser\n    \n\n## How to prevent\n\n1.  Freeze the prototype— use `Object.freeze (Object.prototype)`.\n    \n2.  Require schema validation of JSON input.\n    \n3.  Avoid using unsafe recursive merge functions.\n    \n4.  Consider using objects without prototypes (for example, `Object.create(null)`), breaking the prototype chain and preventing pollution.\n    \n5.  As a best practice use `Map` instead of `Object`.\n\n### For more information on this vulnerability type:\n\n[Arteau, Oliver. “JavaScript prototype pollution attack in NodeJS application.” GitHub, 26 May 2018](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)\n\n## Remediation\nUpgrade `tough-cookie` to version 4.1.3 or higher.\n## References\n- [GitHub Commit](https://github.com/salesforce/tough-cookie/commit/12d474791bb856004e858fdb1c47b7608d09cf6e)\n- [GitHub Issue](https://github.com/salesforce/tough-cookie/issues/282)\n- [GitHub Release](https://github.com/salesforce/tough-cookie/releases/tag/v4.1.3)\n",
+      "epssDetails": {
+        "percentile": "0.53347",
+        "probability": "0.00173",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-26136"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ]
+      },
+      "packageName": "tough-cookie",
+      "proprietary": true,
+      "creationTime": "2023-06-08T15:08:51.664280Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-06-08T14:45:59Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-06-30T11:54:16.657348Z",
+      "modificationTime": "2023-07-09T13:39:02.212708Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "prophet@SqrTT/prophet#533aa1e621dee3b065e9eb658af6aa63b4a74cdb",
+        "htmlhint@0.14.2",
+        "request@2.88.2",
+        "tough-cookie@2.5.0"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "tough-cookie@4.1.3"
+      ],
+      "version": "2.5.0",
+      "name": "tough-cookie",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-XMLDOM-1534562",
+      "title": "Improper Input Validation",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "xmldom",
+      "references": [
+        {
+          "url": "https://github.com/xmldom/xmldom/commit/7b4b743917a892d407356e055b296dcd6d107e8b",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/xmldom/xmldom/issues/271",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-04-26T01:10:30.392784Z"
+        }
+      ],
+      "description": "## Overview\n[xmldom](https://www.npmjs.org/package/xmldom) is an A pure JavaScript W3C standard-based (XML DOM Level 2 Core) DOMParser and XMLSerializer module.\n\nAffected versions of this package are vulnerable to Improper Input Validation. It does not correctly escape special characters when serializing elements are removed from their ancestor. This may lead to unexpected syntactic changes during XML processing in some downstream applications.\r\n\r\n**Note:**\r\nCustomers who use \"xmldom\" package, should use \"@xmldom/xmldom\" instead, as \"xmldom\" is no longer maintained.\n## Remediation\nThere is no fixed version for `xmldom`.\n## References\n- [GitHub Commit](https://github.com/xmldom/xmldom/commit/7b4b743917a892d407356e055b296dcd6d107e8b)\n- [GitHub Issue](https://github.com/xmldom/xmldom/issues/271)\n",
+      "epssDetails": {
+        "percentile": "0.28039",
+        "probability": "0.00068",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-32796"
+        ],
+        "CWE": [
+          "CWE-116"
+        ],
+        "GHSA": [
+          "GHSA-5fg8-2547-mr8q"
+        ]
+      },
+      "packageName": "xmldom",
+      "proprietary": false,
+      "creationTime": "2021-07-28T06:33:12.846430Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-07-28T06:31:31Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-28T15:12:14Z",
+      "modificationTime": "2022-05-11T12:48:26.463897Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "prophet@SqrTT/prophet#533aa1e621dee3b065e9eb658af6aa63b4a74cdb",
+        "xmldom@0.5.0"
+      ],
+      "upgradePath": [],
+      "version": "0.5.0",
+      "name": "xmldom",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-XMLDOM-3042242",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:L/AC:L/PR:N/UI:N/S:C/C:L/I:H/A:L",
+      "credit": [
+        "@Supraja9726"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">=0.0.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 8.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "xmldom",
+      "references": [
+        {
+          "url": "https://github.com/xmldom/xmldom/commit/b5c1be1a42810f7c7c3becdbaa1a93f69372645d",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/xmldom/xmldom/issues/436",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/xmldom/xmldom/releases/tag/0.8.3",
+          "title": "GitHub Release"
+        },
+        {
+          "url": "https://github.com/xmldom/xmldom/blob/bc36efddf9948aba15618f85dc1addfc2ac9d7b2/lib/dom.js%23L1",
+          "title": "Vulnerable Code"
+        },
+        {
+          "url": "https://github.com/xmldom/xmldom/blob/bc36efddf9948aba15618f85dc1addfc2ac9d7b2/lib/dom.js%23L3",
+          "title": "Vulnerable Code"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-11-09T01:11:13.683103Z"
+        }
+      ],
+      "description": "## Overview\n[xmldom](https://www.npmjs.org/package/xmldom) is an A pure JavaScript W3C standard-based (XML DOM Level 2 Core) DOMParser and XMLSerializer module.\n\nAffected versions of this package are vulnerable to Prototype Pollution through the `copy()` function in `dom.js`. Exploiting this vulnerability is possible via the `p` variable.\r\n\r\n*DISPUTED*\r\nThis vulnerability has been [disputed by the maintainers of the package](https://github.com/xmldom/xmldom/issues/436#issuecomment-1321093759). \r\nCurrently the only viable exploit that has been demonstrated is to pollute the target object (rather then the global object which is generally the case for Prototype Pollution vulnerabilities) and it is yet unclear if this limited attack vector exposes any vulnerability in the context of this package. \r\n\r\nSee the linked [GitHub Issue](https://github.com/xmldom/xmldom/issues/436) for full details on the discussion around the legitimacy and potential revocation of this vulnerability.\n\n## Details\n\nPrototype Pollution is a vulnerability affecting JavaScript. Prototype Pollution refers to the ability to inject properties into existing JavaScript language construct prototypes, such as objects. JavaScript allows all Object attributes to be altered, including their magical attributes such as `__proto__`, `constructor` and `prototype`. An attacker manipulates these attributes to overwrite, or pollute, a JavaScript application object prototype of the base object by injecting other values.  Properties on the `Object.prototype` are then inherited by all the JavaScript objects through the prototype chain. When that happens, this leads to either denial of service by triggering JavaScript exceptions, or it tampers with the application source code to force the code path that the attacker injects, thereby leading to remote code execution.\n\nThere are two main ways in which the pollution of prototypes occurs:\n\n-   Unsafe `Object` recursive merge\n    \n-   Property definition by path\n    \n\n### Unsafe Object recursive merge\n\nThe logic of a vulnerable recursive merge function follows the following high-level model:\n```\nmerge (target, source)\n\n  foreach property of source\n\n    if property exists and is an object on both the target and the source\n\n      merge(target[property], source[property])\n\n    else\n\n      target[property] = source[property]\n```\n<br>  \n\nWhen the source object contains a property named `__proto__` defined with `Object.defineProperty()` , the condition that checks if the property exists and is an object on both the target and the source passes and the merge recurses with the target, being the prototype of `Object` and the source of `Object` as defined by the attacker. Properties are then copied on the `Object` prototype.\n\nClone operations are a special sub-class of unsafe recursive merges, which occur when a recursive merge is conducted on an empty object: `merge({},source)`.\n\n`lodash` and `Hoek` are examples of libraries susceptible to recursive merge attacks.\n\n### Property definition by path\n\nThere are a few JavaScript libraries that use an API to define property values on an object based on a given path. The function that is generally affected contains this signature: `theFunction(object, path, value)`\n\nIf the attacker can control the value of “path”, they can set this value to `__proto__.myValue`. `myValue` is then assigned to the prototype of the class of the object.\n\n## Types of attacks\n\nThere are a few methods by which Prototype Pollution can be manipulated:\n\n| Type |Origin  |Short description |\n|--|--|--|\n| **Denial of service (DoS)**|Client  |This is the most likely attack. <br>DoS occurs when `Object` holds generic functions that are implicitly called for various operations (for example, `toString` and `valueOf`). <br> The attacker pollutes `Object.prototype.someattr` and alters its state to an unexpected value such as `Int` or `Object`. In this case, the code fails and is likely to cause a denial of service.  <br>**For example:** if an attacker pollutes `Object.prototype.toString` by defining it as an integer, if the codebase at any point was reliant on `someobject.toString()` it would fail. |\n |**Remote Code Execution**|Client|Remote code execution is generally only possible in cases where the codebase evaluates a specific attribute of an object, and then executes that evaluation.<br>**For example:** `eval(someobject.someattr)`. In this case, if the attacker pollutes `Object.prototype.someattr` they are likely to be able to leverage this in order to execute code.|\n|**Property Injection**|Client|The attacker pollutes properties that the codebase relies on for their informative value, including security properties such as cookies or tokens.<br>  **For example:** if a codebase checks privileges for `someuser.isAdmin`, then when the attacker pollutes `Object.prototype.isAdmin` and sets it to equal `true`, they can then achieve admin privileges.|\n\n## Affected environments\n\nThe following environments are susceptible to a Prototype Pollution attack:\n\n-   Application server\n    \n-   Web server\n\n-   Web browser\n    \n\n## How to prevent\n\n1.  Freeze the prototype— use `Object.freeze (Object.prototype)`.\n    \n2.  Require schema validation of JSON input.\n    \n3.  Avoid using unsafe recursive merge functions.\n    \n4.  Consider using objects without prototypes (for example, `Object.create(null)`), breaking the prototype chain and preventing pollution.\n    \n5.  As a best practice use `Map` instead of `Object`.\n\n### For more information on this vulnerability type:\n\n[Arteau, Oliver. “JavaScript prototype pollution attack in NodeJS application.” GitHub, 26 May 2018](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)\n\n## Remediation\nThere is no fixed version for `xmldom`.\n## References\n- [GitHub Commit](https://github.com/xmldom/xmldom/commit/b5c1be1a42810f7c7c3becdbaa1a93f69372645d)\n- [GitHub Issue](https://github.com/xmldom/xmldom/issues/436)\n- [GitHub Release](https://github.com/xmldom/xmldom/releases/tag/0.8.3)\n- [Vulnerable Code](https://github.com/xmldom/xmldom/blob/bc36efddf9948aba15618f85dc1addfc2ac9d7b2/lib/dom.js#L1)\n- [Vulnerable Code](https://github.com/xmldom/xmldom/blob/bc36efddf9948aba15618f85dc1addfc2ac9d7b2/lib/dom.js#L3)\n",
+      "epssDetails": {
+        "percentile": "0.44366",
+        "probability": "0.00116",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-37616"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ],
+        "GHSA": [
+          "GHSA-9pgh-qqpf-7wqj"
+        ]
+      },
+      "packageName": "xmldom",
+      "proprietary": false,
+      "creationTime": "2022-10-11T06:43:58.053658Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-10-11T06:34:47Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-10-11T11:36:43Z",
+      "modificationTime": "2022-12-26T16:04:03.177916Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "prophet@SqrTT/prophet#533aa1e621dee3b065e9eb658af6aa63b4a74cdb",
+        "xmldom@0.5.0"
+      ],
+      "upgradePath": [],
+      "version": "0.5.0",
+      "name": "xmldom",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-XMLDOM-3092935",
+      "title": "Improper Input Validation",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P",
+      "credit": [
+        "frumioj",
+        "karfau"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "critical",
+      "cvssScore": 9.8,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "xmldom",
+      "references": [
+        {
+          "url": "https://github.com/xmldom/xmldom/commit/c02f786216bed70825f9a351c65e61500f51e931",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/jindw/xmldom/issues/150",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/xmldom/xmldom/releases/tag/0.7.7",
+          "title": "GitHub Release"
+        },
+        {
+          "url": "https://github.com/xmldom/xmldom/releases/tag/0.8.4",
+          "title": "GitHub Release"
+        },
+        {
+          "url": "https://github.com/xmldom/xmldom/releases/tag/0.9.0-beta.4",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-11-05T01:10:37.555445Z"
+        }
+      ],
+      "description": "## Overview\n[xmldom](https://www.npmjs.org/package/xmldom) is an A pure JavaScript W3C standard-based (XML DOM Level 2 Core) DOMParser and XMLSerializer module.\n\nAffected versions of this package are vulnerable to Improper Input Validation due to parsing XML that is not well-formed, and contains multiple top-level elements. All the root nodes are being added to the `childNodes` collection of the `Document`, without reporting or throwing any error.\r\n\r\n## Workarounds\r\nOne of the following approaches might help, depending on your use case:\r\n\r\n1) Instead of searching for elements in the whole DOM, only search in the `documentElement`.\r\n\r\n2) Reject a document with a document that has more than 1 `childNode`.\n## PoC\n```\r\nvar DOMParser = require('xmldom').DOMParser;\r\nvar xmlData = '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\\n' +\r\n'<root>\\n' +\r\n'  <branch girth=\"large\">\\n' +\r\n'    <leaf color=\"green\" />\\n' +\r\n'  </branch>\\n' +\r\n'</root>\\n' +\r\n'<root>\\n' +\r\n'  <branch girth=\"twig\">\\n' +\r\n'    <leaf color=\"gold\" />\\n' +\r\n'  </branch>\\n' +\r\n'</root>\\n';\r\nvar xmlDOM = new DOMParser().parseFromString(xmlData);\r\nconsole.log(xmlDOM.toString());\r\n```\r\n\r\nThis will result with the following output:\r\n```\r\n<?xml version=\"1.0\" encoding=\"UTF-8\"?><root>\r\n  <branch girth=\"large\">\r\n    <leaf color=\"green\"/>\r\n  </branch>\r\n</root>\r\n<root>\r\n  <branch girth=\"twig\">\r\n    <leaf color=\"gold\"/>\r\n  </branch>\r\n</root>\r\n```\n## Remediation\nThere is no fixed version for `xmldom`.\n## References\n- [GitHub Commit](https://github.com/xmldom/xmldom/commit/c02f786216bed70825f9a351c65e61500f51e931)\n- [GitHub Issue](https://github.com/jindw/xmldom/issues/150)\n- [GitHub Release](https://github.com/xmldom/xmldom/releases/tag/0.7.7)\n- [GitHub Release](https://github.com/xmldom/xmldom/releases/tag/0.8.4)\n- [GitHub Release](https://github.com/xmldom/xmldom/releases/tag/0.9.0-beta.4)\n",
+      "epssDetails": {
+        "percentile": "0.23496",
+        "probability": "0.00060",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-39353"
+        ],
+        "CWE": [
+          "CWE-20"
+        ],
+        "GHSA": [
+          "GHSA-crh6-fp67-6883"
+        ]
+      },
+      "packageName": "xmldom",
+      "proprietary": false,
+      "creationTime": "2022-11-02T08:56:15.224765Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-11-01T17:29:11Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-11-02T12:25:35.940676Z",
+      "modificationTime": "2023-03-28T14:18:52.833156Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "critical",
+      "packagePopularityRank": 99,
+      "from": [
+        "prophet@SqrTT/prophet#533aa1e621dee3b065e9eb658af6aa63b4a74cdb",
+        "xmldom@0.5.0"
+      ],
+      "upgradePath": [],
+      "version": "0.5.0",
+      "name": "xmldom",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 124,
+  "severityMap": {
+    "critical": 1,
+    "high": 2,
+    "medium": 4,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "7 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 7,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/SqrTT/prophet.git"
+}

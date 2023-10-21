@@ -1,0 +1,272 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-HTMLTOTEXT-571464",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/RL:O/RC:R",
+      "credit": [
+        "valeriansaliou"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<6.0.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "6.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "html-to-text",
+      "references": [
+        {
+          "url": "https://github.com/werk85/node-html-to-text/pull/172",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[html-to-text](https://www.npmjs.com/package/html-to-text) is an Advanced html to plain text converter\n\nAffected versions of this package are vulnerable to Denial of Service (DoS). The application may crash when the parsed HTML is either very deep or has a big amount of DOM elements.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `html-to-text` to version 6.0.0 or higher.\n## References\n- [GitHub PR](https://github.com/werk85/node-html-to-text/pull/172)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "html-to-text",
+      "proprietary": false,
+      "creationTime": "2020-06-05T09:27:01.276149Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2019-04-07T08:32:15Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-06-05T09:28:17Z",
+      "modificationTime": "2020-11-01T11:18:09.054372Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 98,
+      "from": [
+        "email-viewer@TomasHubelbauer/vscode-email-viewer#e65c3b74bcd7e5e3ef62bff51e399cb514869c12",
+        "mailparser@2.8.1",
+        "html-to-text@5.1.1"
+      ],
+      "upgradePath": [
+        false,
+        "mailparser@3.0.1",
+        "html-to-text@6.0.0"
+      ],
+      "version": "5.1.1",
+      "name": "html-to-text",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-NODEMAILER-1038834",
+      "title": "Command Injection",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:H/E:P/RL:U/RC:C",
+      "credit": [
+        "Vineet Kumar"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<6.4.16"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "6.4.16"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 8.6,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "nodemailer",
+      "references": [
+        {
+          "url": "https://github.com/nodemailer/nodemailer/commit/ba31c64c910d884579875c52d57ac45acc47aa54",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/nodemailer/nodemailer/blob/33b62e2ea6bc9215c99a9bb4bfba94e2fb27ebd0/lib/sendmail-transport/index.js%23L75",
+          "title": "Vulnerable Code"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-01-03T18:10:13.792167Z"
+        }
+      ],
+      "description": "## Overview\n[nodemailer](https://www.npmjs.org/package/nodemailer) is an Easy as cake e-mail sending from your Node.js applications\n\nAffected versions of this package are vulnerable to Command Injection. Use of crafted recipient email addresses may result in arbitrary command flag injection in sendmail transport for sending mails.\r\n\r\n### PoC\r\n```\r\n-bi@example.com (-bi Initialize the alias database.)\r\n-d0.1a@example.com (The option -d0.1 prints the version of sendmail and the options it was compiled with.)\r\n-Dfilename@example.com (Debug output ffile)\r\n```\n## Remediation\nUpgrade `nodemailer` to version 6.4.16 or higher.\n## References\n- [GitHub Commit](https://github.com/nodemailer/nodemailer/commit/ba31c64c910d884579875c52d57ac45acc47aa54)\n- [Vulnerable Code](https://github.com/nodemailer/nodemailer/blob/33b62e2ea6bc9215c99a9bb4bfba94e2fb27ebd0/lib/sendmail-transport/index.js#L75)\n",
+      "epssDetails": {
+        "percentile": "0.80835",
+        "probability": "0.00935",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-7769"
+        ],
+        "CWE": [
+          "CWE-78"
+        ],
+        "GHSA": [
+          "GHSA-48ww-j4fc-435p"
+        ]
+      },
+      "packageName": "nodemailer",
+      "proprietary": true,
+      "creationTime": "2020-11-11T13:28:06.593166Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2020-11-11T13:17:31Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-11-12T16:54:00.101512Z",
+      "modificationTime": "2022-01-03T18:10:13.792167Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "email-viewer@TomasHubelbauer/vscode-email-viewer#e65c3b74bcd7e5e3ef62bff51e399cb514869c12",
+        "mailparser@2.8.1",
+        "nodemailer@6.4.11"
+      ],
+      "upgradePath": [
+        false,
+        "mailparser@3.0.1",
+        "nodemailer@6.4.16"
+      ],
+      "version": "6.4.11",
+      "name": "nodemailer",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-NODEMAILER-1296415",
+      "title": "HTTP Header Injection",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:L/E:P",
+      "credit": [
+        "Adam Williams"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<6.6.1"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "6.6.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "nodemailer",
+      "references": [
+        {
+          "url": "https://github.com/nodemailer/nodemailer/commit/7e02648cc8cd863f5085bad3cd09087bccf84b9f",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/nodemailer/nodemailer/issues/1289",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 8.8,
+          "modificationTime": "2022-01-03T16:36:04.677850Z"
+        }
+      ],
+      "description": "## Overview\n[nodemailer](https://www.npmjs.org/package/nodemailer) is an Easy as cake e-mail sending from your Node.js applications\n\nAffected versions of this package are vulnerable to HTTP Header Injection if unsanitized user input that may contain newlines and carriage returns is passed into an address object.\r\n\r\n### PoC:\r\n```\r\nconst userEmail = 'foo@bar.comrnSubject: foobar'; // imagine this comes from e.g. HTTP request params or is otherwise user-controllable\r\nawait transporter.sendMail({\r\nfrom: '...',\r\nto: '...',\r\nreplyTo: {\r\nname: 'Customer',\r\naddress: userEmail,\r\n},\r\nsubject: 'My Subject',\r\ntext: message,\r\n});\r\n```\n## Remediation\nUpgrade `nodemailer` to version 6.6.1 or higher.\n## References\n- [GitHub Commit](https://github.com/nodemailer/nodemailer/commit/7e02648cc8cd863f5085bad3cd09087bccf84b9f)\n- [GitHub Issue](https://github.com/nodemailer/nodemailer/issues/1289)\n",
+      "epssDetails": {
+        "percentile": "0.70629",
+        "probability": "0.00421",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-23400"
+        ],
+        "CWE": [
+          "CWE-644"
+        ]
+      },
+      "packageName": "nodemailer",
+      "proprietary": true,
+      "creationTime": "2021-05-24T11:54:07.769311Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-05-24T11:46:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-06-28T16:21:01.997291Z",
+      "modificationTime": "2022-01-03T16:36:04.677850Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "email-viewer@TomasHubelbauer/vscode-email-viewer#e65c3b74bcd7e5e3ef62bff51e399cb514869c12",
+        "mailparser@2.8.1",
+        "nodemailer@6.4.11"
+      ],
+      "upgradePath": [
+        false,
+        "mailparser@3.3.0",
+        "nodemailer@6.6.3"
+      ],
+      "version": "6.4.11",
+      "name": "nodemailer",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 38,
+  "severityMap": {
+    "critical": 0,
+    "high": 2,
+    "medium": 1,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "3 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 3,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/TomasHubelbauer/vscode-email-viewer.git"
+}

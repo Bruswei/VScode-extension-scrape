@@ -1,0 +1,253 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-ASYNCVALIDATOR-2311201",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.0.4"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.0.4"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "async-validator",
+      "references": [
+        {
+          "url": "https://github.com/yiminghe/async-validator/commit/0e9a1640aef674f6b6bdc177e8ea405724aa4fb4",
+          "title": "Fix Commit"
+        },
+        {
+          "url": "https://github.com/yiminghe/async-validator/issues/300",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[async-validator](https://www.npmjs.com/package/async-validator) is a validator form asynchronous\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) due to the `type()` function in the `rule.ts` and `index.js` files, which uses an unsafe regular expression to validate user-supplied URLs.\r\nA remote attacker can exploit this vulnerability by supplying a URL that leverages a large number of characters.\r\n\r\n## PoC:\r\n\r\n```js\r\n// poc.js\r\n\r\nconst AsyncValidator = require('async-validator').default;\r\n\r\nconst validator = new AsyncValidator({\r\n  v: {\r\n    type: 'url',\r\n  },\r\n});\r\n\r\nfor (var i = 1; i <= 50000; i++) {\r\n  var time = Date.now();\r\n  var attack_str = '//' + ':'.repeat(i * 15000) + '@';\r\n  validator.validate({\r\n    v: attack_str,\r\n  });\r\n  var time_cost = Date.now() - time;\r\n  console.log(\r\n    'attack_str.length: ' + attack_str.length + ': ' + time_cost + ' ms',\r\n  );\r\n}\r\n\r\n// Output:\r\n\r\nattack_str.length: 15003: 264 ms\r\nattack_str.length: 30003: 1049 ms\r\nattack_str.length: 45003: 2424 ms\r\nattack_str.length: 60003: 4377 ms\r\nattack_str.length: 75003: 7036 ms\r\nattack_str.length: 90003: 10071 ms\r\n\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `async-validator` to version 4.0.4 or higher.\n## References\n- [Fix Commit](https://github.com/yiminghe/async-validator/commit/0e9a1640aef674f6b6bdc177e8ea405724aa4fb4)\n- [GitHub Issue](https://github.com/yiminghe/async-validator/issues/300)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-1333"
+        ]
+      },
+      "packageName": "async-validator",
+      "proprietary": false,
+      "creationTime": "2021-12-07T11:15:22.407642Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-07T11:00:32Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-01-12T12:49:30Z",
+      "modificationTime": "2022-06-09T15:16:44.802377Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-mysql-client2@cweijan/vscode-database-client#770fc48dd59cca02b532026a9f7a44d8150b6834",
+        "element-ui@2.15.14",
+        "async-validator@1.8.5"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "async-validator@4.0.4"
+      ],
+      "version": "1.8.5",
+      "name": "async-validator",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-ASYNCVALIDATOR-2311201",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.0.4"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.0.4"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "async-validator",
+      "references": [
+        {
+          "url": "https://github.com/yiminghe/async-validator/commit/0e9a1640aef674f6b6bdc177e8ea405724aa4fb4",
+          "title": "Fix Commit"
+        },
+        {
+          "url": "https://github.com/yiminghe/async-validator/issues/300",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[async-validator](https://www.npmjs.com/package/async-validator) is a validator form asynchronous\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) due to the `type()` function in the `rule.ts` and `index.js` files, which uses an unsafe regular expression to validate user-supplied URLs.\r\nA remote attacker can exploit this vulnerability by supplying a URL that leverages a large number of characters.\r\n\r\n## PoC:\r\n\r\n```js\r\n// poc.js\r\n\r\nconst AsyncValidator = require('async-validator').default;\r\n\r\nconst validator = new AsyncValidator({\r\n  v: {\r\n    type: 'url',\r\n  },\r\n});\r\n\r\nfor (var i = 1; i <= 50000; i++) {\r\n  var time = Date.now();\r\n  var attack_str = '//' + ':'.repeat(i * 15000) + '@';\r\n  validator.validate({\r\n    v: attack_str,\r\n  });\r\n  var time_cost = Date.now() - time;\r\n  console.log(\r\n    'attack_str.length: ' + attack_str.length + ': ' + time_cost + ' ms',\r\n  );\r\n}\r\n\r\n// Output:\r\n\r\nattack_str.length: 15003: 264 ms\r\nattack_str.length: 30003: 1049 ms\r\nattack_str.length: 45003: 2424 ms\r\nattack_str.length: 60003: 4377 ms\r\nattack_str.length: 75003: 7036 ms\r\nattack_str.length: 90003: 10071 ms\r\n\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `async-validator` to version 4.0.4 or higher.\n## References\n- [Fix Commit](https://github.com/yiminghe/async-validator/commit/0e9a1640aef674f6b6bdc177e8ea405724aa4fb4)\n- [GitHub Issue](https://github.com/yiminghe/async-validator/issues/300)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-1333"
+        ]
+      },
+      "packageName": "async-validator",
+      "proprietary": false,
+      "creationTime": "2021-12-07T11:15:22.407642Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-12-07T11:00:32Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-01-12T12:49:30Z",
+      "modificationTime": "2022-06-09T15:16:44.802377Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-mysql-client2@cweijan/vscode-database-client#770fc48dd59cca02b532026a9f7a44d8150b6834",
+        "umy-table@1.0.8",
+        "async-validator@1.8.5"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "async-validator@4.0.4"
+      ],
+      "version": "1.8.5",
+      "name": "async-validator",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-SSH2-1656673",
+      "title": "Command Injection",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:L/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<1.0.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": "This vulnerability is only applicable on Windows operating system"
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "ssh2",
+      "references": [
+        {
+          "url": "https://github.com/mscdex/ssh2/commit/f763271f41320e71d5cbee02ea5bc6a2ded3ca21",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+          "cvssV3BaseScore": 10,
+          "modificationTime": "2022-01-03T18:07:55.443023Z"
+        }
+      ],
+      "description": "## Overview\n[ssh2](https://www.npmjs.com/package/ssh2) is a SSH2 client and server modules written in pure JavaScript for node.js.\n\nAffected versions of this package are vulnerable to Command Injection. The issue only exists on Windows. This issue may lead to remote code execution if a client of the library calls the vulnerable method with untrusted input.\n## Remediation\nUpgrade `ssh2` to version 1.0.0 or higher.\n## References\n- [GitHub Commit](https://github.com/mscdex/ssh2/commit/f763271f41320e71d5cbee02ea5bc6a2ded3ca21)\n",
+      "epssDetails": {
+        "percentile": "0.87519",
+        "probability": "0.02089",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-26301"
+        ],
+        "CWE": [
+          "CWE-78"
+        ]
+      },
+      "packageName": "ssh2",
+      "proprietary": false,
+      "creationTime": "2021-09-21T12:34:13.358403Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-09-21T12:30:03Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-09-21T15:24:51.322412Z",
+      "modificationTime": "2022-06-23T10:54:23.005060Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-mysql-client2@cweijan/vscode-database-client#770fc48dd59cca02b532026a9f7a44d8150b6834",
+        "ssh2@0.5.4"
+      ],
+      "upgradePath": [
+        false,
+        "ssh2@1.0.0"
+      ],
+      "version": "0.5.4",
+      "name": "ssh2",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 176,
+  "severityMap": {
+    "critical": 0,
+    "high": 1,
+    "medium": 2,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "3 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 2,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/cweijan/vscode-database-client.git"
+}

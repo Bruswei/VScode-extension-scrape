@@ -1,0 +1,257 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-QS-3153490",
+      "title": "Prototype Poisoning",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:P",
+      "credit": [
+        "BRAUN Nathanael",
+        "BRISSAUD Johan"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<6.2.4",
+          ">=6.3.0 <6.3.3",
+          ">=6.4.0 <6.4.1",
+          ">=6.5.0 <6.5.3",
+          ">=6.6.0 <6.6.1",
+          ">=6.7.0 <6.7.3",
+          ">=6.8.0 <6.8.3",
+          ">=6.9.0 <6.9.7",
+          ">=6.10.0 <6.10.3"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "6.2.4",
+        "6.3.3",
+        "6.4.1",
+        "6.5.3",
+        "6.6.1",
+        "6.7.3",
+        "6.8.3",
+        "6.9.7",
+        "6.10.3"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "qs",
+      "references": [
+        {
+          "url": "https://github.com/ljharb/qs/pull/428",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2150323",
+          "title": "RedHat Bugzilla Bug"
+        },
+        {
+          "url": "https://github.com/n8tz/CVE-2022-24999",
+          "title": "Researcher Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-11-29T01:11:13.913238Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-12-03T13:46:25.900727Z"
+        }
+      ],
+      "description": "## Overview\n[qs](https://www.npmjs.com/package/qs) is a querystring parser that supports nesting and arrays, with a depth limit.\n\nAffected versions of this package are vulnerable to Prototype Poisoning which allows attackers to cause a Node process to hang, processing an Array object whose prototype has been replaced by one with an excessive length value.\r\n\r\n**Note:** In many typical Express use cases, an unauthenticated remote attacker can place the attack payload in the query string of the URL that is used to visit the application, such as `a[__proto__]=b&a[__proto__]&a[length]=100000000`.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `qs` to version 6.2.4, 6.3.3, 6.4.1, 6.5.3, 6.6.1, 6.7.3, 6.8.3, 6.9.7, 6.10.3 or higher.\n## References\n- [GitHub PR](https://github.com/ljharb/qs/pull/428)\n- [RedHat Bugzilla Bug](https://bugzilla.redhat.com/show_bug.cgi?id=2150323)\n- [Researcher Advisory](https://github.com/n8tz/CVE-2022-24999)\n",
+      "epssDetails": {
+        "percentile": "0.58377",
+        "probability": "0.00215",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-24999"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ]
+      },
+      "packageName": "qs",
+      "proprietary": false,
+      "creationTime": "2022-12-04T11:01:47.782869Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-11-26T00:00:00Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-12-04T12:24:32.307833Z",
+      "modificationTime": "2022-12-06T09:33:17.364321Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-reveal@evilz/vscode-reveal",
+        "express@5.0.0-beta.1",
+        "qs@6.9.6"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "qs@6.9.7"
+      ],
+      "version": "6.9.6",
+      "name": "qs",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-QS-3153490",
+      "title": "Prototype Poisoning",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:P",
+      "credit": [
+        "BRAUN Nathanael",
+        "BRISSAUD Johan"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<6.2.4",
+          ">=6.3.0 <6.3.3",
+          ">=6.4.0 <6.4.1",
+          ">=6.5.0 <6.5.3",
+          ">=6.6.0 <6.6.1",
+          ">=6.7.0 <6.7.3",
+          ">=6.8.0 <6.8.3",
+          ">=6.9.0 <6.9.7",
+          ">=6.10.0 <6.10.3"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "6.2.4",
+        "6.3.3",
+        "6.4.1",
+        "6.5.3",
+        "6.6.1",
+        "6.7.3",
+        "6.8.3",
+        "6.9.7",
+        "6.10.3"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "qs",
+      "references": [
+        {
+          "url": "https://github.com/ljharb/qs/pull/428",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://bugzilla.redhat.com/show_bug.cgi?id=2150323",
+          "title": "RedHat Bugzilla Bug"
+        },
+        {
+          "url": "https://github.com/n8tz/CVE-2022-24999",
+          "title": "Researcher Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-11-29T01:11:13.913238Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-12-03T13:46:25.900727Z"
+        }
+      ],
+      "description": "## Overview\n[qs](https://www.npmjs.com/package/qs) is a querystring parser that supports nesting and arrays, with a depth limit.\n\nAffected versions of this package are vulnerable to Prototype Poisoning which allows attackers to cause a Node process to hang, processing an Array object whose prototype has been replaced by one with an excessive length value.\r\n\r\n**Note:** In many typical Express use cases, an unauthenticated remote attacker can place the attack payload in the query string of the URL that is used to visit the application, such as `a[__proto__]=b&a[__proto__]&a[length]=100000000`.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `qs` to version 6.2.4, 6.3.3, 6.4.1, 6.5.3, 6.6.1, 6.7.3, 6.8.3, 6.9.7, 6.10.3 or higher.\n## References\n- [GitHub PR](https://github.com/ljharb/qs/pull/428)\n- [RedHat Bugzilla Bug](https://bugzilla.redhat.com/show_bug.cgi?id=2150323)\n- [Researcher Advisory](https://github.com/n8tz/CVE-2022-24999)\n",
+      "epssDetails": {
+        "percentile": "0.58377",
+        "probability": "0.00215",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-24999"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ]
+      },
+      "packageName": "qs",
+      "proprietary": false,
+      "creationTime": "2022-12-04T11:01:47.782869Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-11-26T00:00:00Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-12-04T12:24:32.307833Z",
+      "modificationTime": "2022-12-06T09:33:17.364321Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "vscode-reveal@evilz/vscode-reveal",
+        "express@5.0.0-beta.1",
+        "body-parser@2.0.0-beta.1",
+        "qs@6.9.6"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "qs@6.9.7"
+      ],
+      "version": "6.9.6",
+      "name": "qs",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 117,
+  "severityMap": {
+    "critical": 0,
+    "high": 2,
+    "medium": 0,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "2 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/evilz/vscode-reveal.git"
+}

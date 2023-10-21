@@ -1,0 +1,177 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-NODEADDONAPI-571001",
+      "title": "Remote Memory Exposure",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">=0.0.0 <1.7.2",
+          ">=2.0.0 <2.0.1"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.7.2",
+        "2.0.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.6,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "node-addon-api",
+      "references": [
+        {
+          "url": "https://github.com/nodejs/node-addon-api/commit/265fea9edd5f2ae9fc5be020ea72b6a117accdba",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/nodejs/node-addon-api/releases",
+          "title": "Release Notes"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[node-addon-api](https://www.npmjs.com/package/node-addon-api) is a This module contains header-only C++ wrapper classes which simplify the use of the C based N-API provided by Node.js when using C++. It provides a C++ object model and exception handling semantics with low overhead.\n\nAffected versions of this package are vulnerable to Remote Memory Exposure via the `napi_get_value_string_utf8`, `napi_get_value_string_latin1` and `napi_get_value_string_utf16` functions.\n## Remediation\nUpgrade `node-addon-api` to version 1.7.2, 2.0.1 or higher.\n## References\n- [GitHub Commit](https://github.com/nodejs/node-addon-api/commit/265fea9edd5f2ae9fc5be020ea72b6a117accdba)\n- [Release Notes](https://github.com/nodejs/node-addon-api/releases)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-201"
+        ]
+      },
+      "packageName": "node-addon-api",
+      "proprietary": false,
+      "creationTime": "2020-06-03T11:22:30.352779Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2020-06-03T10:25:52Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-06-03T13:44:50Z",
+      "modificationTime": "2021-09-26T14:32:41.054610Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "AndroidLauncher@Dannark/Android-Launcher-for-VSCode#7b3d53d207fc064b4705cebc3dd18369be7a5569",
+        "node-window-manager@2.2.4",
+        "extract-file-icon@0.3.2",
+        "node-addon-api@1.7.1"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "node-addon-api@1.7.2"
+      ],
+      "version": "1.7.1",
+      "name": "node-addon-api",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-NODEADDONAPI-571001",
+      "title": "Remote Memory Exposure",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">=0.0.0 <1.7.2",
+          ">=2.0.0 <2.0.1"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.7.2",
+        "2.0.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.6,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "node-addon-api",
+      "references": [
+        {
+          "url": "https://github.com/nodejs/node-addon-api/commit/265fea9edd5f2ae9fc5be020ea72b6a117accdba",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/nodejs/node-addon-api/releases",
+          "title": "Release Notes"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[node-addon-api](https://www.npmjs.com/package/node-addon-api) is a This module contains header-only C++ wrapper classes which simplify the use of the C based N-API provided by Node.js when using C++. It provides a C++ object model and exception handling semantics with low overhead.\n\nAffected versions of this package are vulnerable to Remote Memory Exposure via the `napi_get_value_string_utf8`, `napi_get_value_string_latin1` and `napi_get_value_string_utf16` functions.\n## Remediation\nUpgrade `node-addon-api` to version 1.7.2, 2.0.1 or higher.\n## References\n- [GitHub Commit](https://github.com/nodejs/node-addon-api/commit/265fea9edd5f2ae9fc5be020ea72b6a117accdba)\n- [Release Notes](https://github.com/nodejs/node-addon-api/releases)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-201"
+        ]
+      },
+      "packageName": "node-addon-api",
+      "proprietary": false,
+      "creationTime": "2020-06-03T11:22:30.352779Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2020-06-03T10:25:52Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-06-03T13:44:50Z",
+      "modificationTime": "2021-09-26T14:32:41.054610Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "AndroidLauncher@Dannark/Android-Launcher-for-VSCode#7b3d53d207fc064b4705cebc3dd18369be7a5569",
+        "node-window-manager@2.2.4",
+        "node-addon-api@2.0.0"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "node-addon-api@2.0.1"
+      ],
+      "version": "2.0.0",
+      "name": "node-addon-api",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 5,
+  "severityMap": {
+    "critical": 0,
+    "high": 0,
+    "medium": 2,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "2 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/Dannark/Android-Launcher-for-VSCode.git"
+}

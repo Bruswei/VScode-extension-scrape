@@ -1,0 +1,100 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-VALIDATECOLOR-2935878",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "validate-color",
+      "references": [
+        {
+          "url": "https://github.com/yetingli/SaveResults/blob/main/js/validate-color.js",
+          "title": "PoC"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-07-02T01:11:18.922305Z"
+        }
+      ],
+      "description": "## Overview\n[validate-color](https://www.npmjs.com/package/validate-color) is a Validates HTML colors by 'name', 'special name', 'hex', 'rgb', 'rgba', 'hsl', 'hsla', 'hwb' or 'lab' values\n\nAffected versions of this package are vulnerable to Denial of Service (DoS) when processing invalid `rgb(a)` strings.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nThere is no fixed version for `validate-color`.\n## References\n- [PoC](https://github.com/yetingli/SaveResults/blob/main/js/validate-color.js)\n",
+      "epssDetails": {
+        "percentile": "0.18924",
+        "probability": "0.00053",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-40892"
+        ],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "validate-color",
+      "proprietary": false,
+      "creationTime": "2022-06-26T06:05:20.858397Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-06-26T05:55:00Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-06-26T12:05:48.455273Z",
+      "modificationTime": "2022-07-02T01:11:18.922305Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 92,
+      "from": [
+        "ppm-pgm-viewer-for-vscode@nagata-yoshiteru/pbm-ppm-pgm-viewer-for-vscode#89e6a01c2ccff2bbf0d59b2d673813837bfd8031",
+        "validate-color@2.2.4"
+      ],
+      "upgradePath": [],
+      "version": "2.2.4",
+      "name": "validate-color",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 113,
+  "severityMap": {
+    "critical": 0,
+    "high": 1,
+    "medium": 0,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "1 vulnerable dependency path",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/nagata-yoshiteru/pbm-ppm-pgm-viewer-for-vscode.git"
+}

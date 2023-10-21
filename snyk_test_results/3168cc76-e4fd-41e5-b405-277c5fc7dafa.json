@@ -1,0 +1,178 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-ADMZIP-1065796",
+      "title": "Directory Traversal",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N",
+      "credit": [
+        "cthackers"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<0.5.2"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "0.5.2"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.4,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "adm-zip",
+      "references": [
+        {
+          "url": "https://github.com/cthackers/adm-zip/commit/119dcad6599adccc77982feb14a0c7440fa63013",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[adm-zip](https://www.npmjs.com/package/adm-zip) is a JavaScript implementation for zip data compression for NodeJS.\n\nAffected versions of this package are vulnerable to Directory Traversal. It could extract files outside the target folder.\n\n## Details\n\nA Directory Traversal attack (also known as path traversal) aims to access files and directories that are stored outside the intended folder. By manipulating files with \"dot-dot-slash (../)\" sequences and its variations, or by using absolute file paths, it may be possible to access arbitrary files and directories stored on file system, including application source code, configuration, and other critical system files.\n\nDirectory Traversal vulnerabilities can be generally divided into two types:\n\n- **Information Disclosure**: Allows the attacker to gain information about the folder structure or read the contents of sensitive files on the system.\n\n`st` is a module for serving static files on web pages, and contains a [vulnerability of this type](https://snyk.io/vuln/npm:st:20140206). In our example, we will serve files from the `public` route.\n\nIf an attacker requests the following URL from our server, it will in turn leak the sensitive private key of the root user.\n\n```\ncurl http://localhost:8080/public/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/root/.ssh/id_rsa\n```\n**Note** `%2e` is the URL encoded version of `.` (dot).\n\n- **Writing arbitrary files**: Allows the attacker to create or replace existing files. This type of vulnerability is also known as `Zip-Slip`. \n\nOne way to achieve this is by using a malicious `zip` archive that holds path traversal filenames. When each filename in the zip archive gets concatenated to the target extraction folder, without validation, the final path ends up outside of the target folder. If an executable or a configuration file is overwritten with a file containing malicious code, the problem can turn into an arbitrary code execution issue quite easily.\n\nThe following is an example of a `zip` archive with one benign file and one malicious file. Extracting the malicious file will result in traversing out of the target folder, ending up in `/root/.ssh/` overwriting the `authorized_keys` file:\n\n```\n2018-04-15 22:04:29 .....           19           19  good.txt\n2018-04-15 22:04:42 .....           20           20  ../../../../../../root/.ssh/authorized_keys\n```\n\n## Remediation\nUpgrade `adm-zip` to version 0.5.2 or higher.\n## References\n- [GitHub Commit](https://github.com/cthackers/adm-zip/commit/119dcad6599adccc77982feb14a0c7440fa63013)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-22"
+        ]
+      },
+      "packageName": "adm-zip",
+      "proprietary": false,
+      "creationTime": "2021-01-28T07:59:50.454879Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-01-28T07:59:22Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-02-15T17:04:18.109270Z",
+      "modificationTime": "2021-02-15T17:04:18.111270Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "adb-interface-vscode@vinicioslc/adb-interface-vscode#3ce81ed900781e5156dedea65bd01be9d34b0539",
+        "adm-zip@0.4.16"
+      ],
+      "upgradePath": [
+        false,
+        "adm-zip@0.5.2"
+      ],
+      "version": "0.4.16",
+      "name": "adm-zip",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-GETIPRANGE-1073612",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.0.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "4.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "get-ip-range",
+      "references": [
+        {
+          "url": "https://github.com/JoeScho/get-ip-range/commit/98ca22b815c77273cbab259811ab0976118e13b6",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-04-30T01:10:35.999457Z"
+        }
+      ],
+      "description": "## Overview\n[get-ip-range](https://www.npmjs.org/package/get-ip-range) is a Simple utility to convert either CIDR notation or two IP addresses to an array of the range of IP addresses\n\nAffected versions of this package are vulnerable to Denial of Service (DoS). If the range is coming from untrusted input, an attacker could send a large range (such as 128.0.0.0/1) that causes resource exhaustion.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `get-ip-range` to version 4.0.0 or higher.\n## References\n- [GitHub Commit](https://github.com/JoeScho/get-ip-range/commit/98ca22b815c77273cbab259811ab0976118e13b6)\n",
+      "epssDetails": {
+        "percentile": "0.61006",
+        "probability": "0.00243",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-27191"
+        ],
+        "CWE": [
+          "CWE-400"
+        ],
+        "GHSA": [
+          "GHSA-6q4w-3wp4-q5wf"
+        ]
+      },
+      "packageName": "get-ip-range",
+      "proprietary": false,
+      "creationTime": "2021-02-12T15:10:08.447460Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-12T15:09:01Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-02-12T16:10:50Z",
+      "modificationTime": "2022-04-30T01:10:35.999457Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 87,
+      "from": [
+        "adb-interface-vscode@vinicioslc/adb-interface-vscode#3ce81ed900781e5156dedea65bd01be9d34b0539",
+        "local-devices@3.2.0",
+        "get-ip-range@2.1.1"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "get-ip-range@4.0.0"
+      ],
+      "version": "2.1.1",
+      "name": "get-ip-range",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 19,
+  "severityMap": {
+    "critical": 0,
+    "high": 2,
+    "medium": 0,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "2 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 2,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/vinicioslc/adb-interface-vscode.git"
+}
