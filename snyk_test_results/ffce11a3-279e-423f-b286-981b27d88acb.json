@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "http://github.com/wspl/vscode-sync.git"
+}

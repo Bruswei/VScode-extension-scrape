@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://gitlab.bj.sensetime.com/kestrel/kestrel-VSCode.git"
+}

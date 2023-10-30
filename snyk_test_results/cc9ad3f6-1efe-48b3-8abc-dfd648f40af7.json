@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/rafaelstz/magento2-snippets-visualstudio.git"
+}

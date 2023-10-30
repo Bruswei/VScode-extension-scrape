@@ -1,0 +1,556 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-NODEFORGE-2330875",
+      "title": "Open Redirect",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N/E:P",
+      "credit": [
+        "ready-research"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<1.0.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "1.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "node-forge",
+      "references": [
+        {
+          "url": "https://github.com/digitalbazaar/forge/commit/db8016c805371e72b06d8e2edfe0ace0df934a5e",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://snyk.io/blog/url-confusion-vulnerabilities/",
+          "title": "URL Confusion Explained - Snyk Blog"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2022-01-13T04:10:19.854833Z"
+        }
+      ],
+      "description": "## Overview\n[node-forge](https://github.com/digitalbazaar/forge) is a JavaScript implementations of network transports, cryptography, ciphers, PKI, message digests, and various utilities.\n\nAffected versions of this package are vulnerable to Open Redirect via `parseUrl` function when it mishandles certain uses of backslash such as `https:/\\/\\/\\` and interprets the URI as a relative path.\r\n\r\n### PoC:\r\n```js\r\n\r\n// poc.js\r\nvar forge = require(\"node-forge\");\r\nvar url = forge.util.parseUrl(\"https:/\\/\\/\\www.github.com/foo/bar\");\r\nconsole.log(url);\r\n\r\n// Output of node poc.js:\r\n\r\n{\r\n  full: 'https://',\r\n  scheme: 'https',\r\n  host: '',\r\n  port: 443,\r\n  path: '/www.github.com/foo/bar',                        <<<---- path  should be \"/foo/bar\"\r\n  fullHost: ''\r\n}\r\n\r\n```\n## Remediation\nUpgrade `node-forge` to version 1.0.0 or higher.\n## References\n- [GitHub Commit](https://github.com/digitalbazaar/forge/commit/db8016c805371e72b06d8e2edfe0ace0df934a5e)\n- [URL Confusion Explained - Snyk Blog](https://snyk.io/blog/url-confusion-vulnerabilities/)\n",
+      "epssDetails": {
+        "percentile": "0.27067",
+        "probability": "0.00066",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-0122"
+        ],
+        "CWE": [
+          "CWE-601"
+        ],
+        "GHSA": [
+          "GHSA-gf8q-jrpm-jvxq"
+        ]
+      },
+      "packageName": "node-forge",
+      "proprietary": false,
+      "creationTime": "2022-01-06T11:16:25.853884Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-01-06T11:09:34Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-01-06T17:17:25Z",
+      "modificationTime": "2022-01-13T04:10:19.854833Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "adb-filesystem@mhama/vscode-adb-filesystem#0dfeebdd2637a45bc3f1defaadc57c6b87a35de0",
+        "adbkit@github:mhama/adbkit",
+        "node-forge@0.7.6"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "node-forge@1.0.0"
+      ],
+      "version": "0.7.6",
+      "name": "node-forge",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-NODEFORGE-2331908",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<1.0.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "node-forge",
+      "references": [
+        {
+          "url": "https://github.com/digitalbazaar/forge/commit/51228083550dde97701ac8e06c629a5184117562",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[node-forge](https://github.com/digitalbazaar/forge) is a JavaScript implementations of network transports, cryptography, ciphers, PKI, message digests, and various utilities.\n\nAffected versions of this package are vulnerable to Prototype Pollution via the `forge.debug` API if called with untrusted input.\n\n## Details\n\nPrototype Pollution is a vulnerability affecting JavaScript. Prototype Pollution refers to the ability to inject properties into existing JavaScript language construct prototypes, such as objects. JavaScript allows all Object attributes to be altered, including their magical attributes such as `__proto__`, `constructor` and `prototype`. An attacker manipulates these attributes to overwrite, or pollute, a JavaScript application object prototype of the base object by injecting other values.  Properties on the `Object.prototype` are then inherited by all the JavaScript objects through the prototype chain. When that happens, this leads to either denial of service by triggering JavaScript exceptions, or it tampers with the application source code to force the code path that the attacker injects, thereby leading to remote code execution.\n\nThere are two main ways in which the pollution of prototypes occurs:\n\n-   Unsafe `Object` recursive merge\n    \n-   Property definition by path\n    \n\n### Unsafe Object recursive merge\n\nThe logic of a vulnerable recursive merge function follows the following high-level model:\n```\nmerge (target, source)\n\n  foreach property of source\n\n    if property exists and is an object on both the target and the source\n\n      merge(target[property], source[property])\n\n    else\n\n      target[property] = source[property]\n```\n<br>  \n\nWhen the source object contains a property named `__proto__` defined with `Object.defineProperty()` , the condition that checks if the property exists and is an object on both the target and the source passes and the merge recurses with the target, being the prototype of `Object` and the source of `Object` as defined by the attacker. Properties are then copied on the `Object` prototype.\n\nClone operations are a special sub-class of unsafe recursive merges, which occur when a recursive merge is conducted on an empty object: `merge({},source)`.\n\n`lodash` and `Hoek` are examples of libraries susceptible to recursive merge attacks.\n\n### Property definition by path\n\nThere are a few JavaScript libraries that use an API to define property values on an object based on a given path. The function that is generally affected contains this signature: `theFunction(object, path, value)`\n\nIf the attacker can control the value of “path”, they can set this value to `__proto__.myValue`. `myValue` is then assigned to the prototype of the class of the object.\n\n## Types of attacks\n\nThere are a few methods by which Prototype Pollution can be manipulated:\n\n| Type |Origin  |Short description |\n|--|--|--|\n| **Denial of service (DoS)**|Client  |This is the most likely attack. <br>DoS occurs when `Object` holds generic functions that are implicitly called for various operations (for example, `toString` and `valueOf`). <br> The attacker pollutes `Object.prototype.someattr` and alters its state to an unexpected value such as `Int` or `Object`. In this case, the code fails and is likely to cause a denial of service.  <br>**For example:** if an attacker pollutes `Object.prototype.toString` by defining it as an integer, if the codebase at any point was reliant on `someobject.toString()` it would fail. |\n |**Remote Code Execution**|Client|Remote code execution is generally only possible in cases where the codebase evaluates a specific attribute of an object, and then executes that evaluation.<br>**For example:** `eval(someobject.someattr)`. In this case, if the attacker pollutes `Object.prototype.someattr` they are likely to be able to leverage this in order to execute code.|\n|**Property Injection**|Client|The attacker pollutes properties that the codebase relies on for their informative value, including security properties such as cookies or tokens.<br>  **For example:** if a codebase checks privileges for `someuser.isAdmin`, then when the attacker pollutes `Object.prototype.isAdmin` and sets it to equal `true`, they can then achieve admin privileges.|\n\n## Affected environments\n\nThe following environments are susceptible to a Prototype Pollution attack:\n\n-   Application server\n    \n-   Web server\n\n-   Web browser\n    \n\n## How to prevent\n\n1.  Freeze the prototype— use `Object.freeze (Object.prototype)`.\n    \n2.  Require schema validation of JSON input.\n    \n3.  Avoid using unsafe recursive merge functions.\n    \n4.  Consider using objects without prototypes (for example, `Object.create(null)`), breaking the prototype chain and preventing pollution.\n    \n5.  As a best practice use `Map` instead of `Object`.\n\n### For more information on this vulnerability type:\n\n[Arteau, Oliver. “JavaScript prototype pollution attack in NodeJS application.” GitHub, 26 May 2018](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)\n\n## Remediation\nUpgrade `node-forge` to version 1.0.0 or higher.\n## References\n- [GitHub Commit](https://github.com/digitalbazaar/forge/commit/51228083550dde97701ac8e06c629a5184117562)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-1321"
+        ],
+        "GHSA": [
+          "GHSA-5rrq-pxf6-6jx5"
+        ]
+      },
+      "packageName": "node-forge",
+      "proprietary": false,
+      "creationTime": "2022-01-09T10:11:24.467022Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-01-08T00:22:42Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-01-09T15:54:48.988558Z",
+      "modificationTime": "2022-01-09T15:54:48.990788Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "adb-filesystem@mhama/vscode-adb-filesystem#0dfeebdd2637a45bc3f1defaadc57c6b87a35de0",
+        "adbkit@github:mhama/adbkit",
+        "node-forge@0.7.6"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "node-forge@1.0.0"
+      ],
+      "version": "0.7.6",
+      "name": "node-forge",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-NODEFORGE-2430337",
+      "title": "Improper Verification of Cryptographic Signature",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L",
+      "credit": [
+        "Moosa Yahyazadeh"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<1.3.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.3.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.6,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "node-forge",
+      "references": [
+        {
+          "url": "https://github.com/digitalbazaar/forge/commit/3f0b49a0573ef1bb7af7f5673c0cfebf00424df1",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-10-25T17:28:34.013188Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-03-29T01:10:39.752274Z"
+        }
+      ],
+      "description": "## Overview\n[node-forge](https://github.com/digitalbazaar/forge) is a JavaScript implementations of network transports, cryptography, ciphers, PKI, message digests, and various utilities.\n\nAffected versions of this package are vulnerable to Improper Verification of Cryptographic Signature due to RSA's `PKCS#1 v1.5` signature verification code which does not properly check `DigestInfo` for a proper `ASN.1` structure. This can lead to successful verification with signatures that contain invalid structures but a valid digest.\n## Remediation\nUpgrade `node-forge` to version 1.3.0 or higher.\n## References\n- [GitHub Commit](https://github.com/digitalbazaar/forge/commit/3f0b49a0573ef1bb7af7f5673c0cfebf00424df1)\n",
+      "epssDetails": {
+        "percentile": "0.25076",
+        "probability": "0.00063",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-24773"
+        ],
+        "CWE": [
+          "CWE-347"
+        ],
+        "GHSA": [
+          "GHSA-2r2c-g63r-vccr"
+        ]
+      },
+      "packageName": "node-forge",
+      "proprietary": false,
+      "creationTime": "2022-03-20T08:56:55.258238Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-03-20T08:47:53Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-03-20T16:39:53.330824Z",
+      "modificationTime": "2022-10-25T17:28:34.013188Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "adb-filesystem@mhama/vscode-adb-filesystem#0dfeebdd2637a45bc3f1defaadc57c6b87a35de0",
+        "adbkit@github:mhama/adbkit",
+        "node-forge@0.7.6"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "node-forge@1.3.0"
+      ],
+      "version": "0.7.6",
+      "name": "node-forge",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-NODEFORGE-2430339",
+      "title": "Improper Verification of Cryptographic Signature",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+      "credit": [
+        "Moosa Yahyazadeh"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<1.3.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.3.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "node-forge",
+      "references": [
+        {
+          "url": "https://github.com/digitalbazaar/forge/commit/3f0b49a0573ef1bb7af7f5673c0cfebf00424df1",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T17:28:19.009783Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-03-29T01:10:39.494698Z"
+        }
+      ],
+      "description": "## Overview\n[node-forge](https://github.com/digitalbazaar/forge) is a JavaScript implementations of network transports, cryptography, ciphers, PKI, message digests, and various utilities.\n\nAffected versions of this package are vulnerable to Improper Verification of Cryptographic Signature due to RSA's `PKCS#1` v1.5 signature verification code which does not check for tailing garbage bytes after decoding a `DigestInfo` ASN.1 structure. This can allow padding bytes to be removed and garbage data added to forge a signature when a low public exponent is being used.\n## Remediation\nUpgrade `node-forge` to version 1.3.0 or higher.\n## References\n- [GitHub Commit](https://github.com/digitalbazaar/forge/commit/3f0b49a0573ef1bb7af7f5673c0cfebf00424df1)\n",
+      "epssDetails": {
+        "percentile": "0.26244",
+        "probability": "0.00064",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-24772"
+        ],
+        "CWE": [
+          "CWE-347"
+        ],
+        "GHSA": [
+          "GHSA-x4jg-mjrx-434g"
+        ]
+      },
+      "packageName": "node-forge",
+      "proprietary": false,
+      "creationTime": "2022-03-20T09:05:59.631233Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-03-20T08:57:14Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-03-20T16:39:52.700898Z",
+      "modificationTime": "2022-10-25T17:28:19.009783Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "adb-filesystem@mhama/vscode-adb-filesystem#0dfeebdd2637a45bc3f1defaadc57c6b87a35de0",
+        "adbkit@github:mhama/adbkit",
+        "node-forge@0.7.6"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "node-forge@1.3.0"
+      ],
+      "version": "0.7.6",
+      "name": "node-forge",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-NODEFORGE-2430341",
+      "title": "Improper Verification of Cryptographic Signature",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L",
+      "credit": [
+        "Moosa Yahyazadeh"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<1.3.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.3.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.6,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "node-forge",
+      "references": [
+        {
+          "url": "https://github.com/digitalbazaar/forge/commit/3f0b49a0573ef1bb7af7f5673c0cfebf00424df1",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T17:28:20.267081Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-03-29T01:10:38.348896Z"
+        }
+      ],
+      "description": "## Overview\n[node-forge](https://github.com/digitalbazaar/forge) is a JavaScript implementations of network transports, cryptography, ciphers, PKI, message digests, and various utilities.\n\nAffected versions of this package are vulnerable to Improper Verification of Cryptographic Signature due to RSA`s `PKCS#1` v1.5 signature verification code which is lenient in checking the digest algorithm structure. This can allow a crafted structure that steals padding bytes and uses unchecked portion of the PKCS#1 encoded message to forge a signature when a low public exponent is being used.\n## Remediation\nUpgrade `node-forge` to version 1.3.0 or higher.\n## References\n- [GitHub Commit](https://github.com/digitalbazaar/forge/commit/3f0b49a0573ef1bb7af7f5673c0cfebf00424df1)\n",
+      "epssDetails": {
+        "percentile": "0.20571",
+        "probability": "0.00054",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-24771"
+        ],
+        "CWE": [
+          "CWE-347"
+        ],
+        "GHSA": [
+          "GHSA-cfm4-qjh2-4765"
+        ]
+      },
+      "packageName": "node-forge",
+      "proprietary": false,
+      "creationTime": "2022-03-20T09:20:18.671201Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-03-20T09:07:01Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-03-20T16:39:53.005772Z",
+      "modificationTime": "2022-10-25T17:28:20.267081Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "adb-filesystem@mhama/vscode-adb-filesystem#0dfeebdd2637a45bc3f1defaadc57c6b87a35de0",
+        "adbkit@github:mhama/adbkit",
+        "node-forge@0.7.6"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "node-forge@1.3.0"
+      ],
+      "version": "0.7.6",
+      "name": "node-forge",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-NODEFORGE-598677",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L/E:P/RL:O/RC:C",
+      "credit": [
+        "NerdJS"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<0.10.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "0.10.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "node-forge",
+      "references": [
+        {
+          "url": "https://github.com/digitalbazaar/forge/blob/master/CHANGELOG.md",
+          "title": "GitHub Changelog"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+          "cvssV3BaseScore": 7.3,
+          "modificationTime": "2022-01-13T04:10:20.724881Z"
+        }
+      ],
+      "description": "## Overview\n[node-forge](https://github.com/digitalbazaar/forge) is a JavaScript implementations of network transports, cryptography, ciphers, PKI, message digests, and various utilities.\n\nAffected versions of this package are vulnerable to Prototype Pollution via the `util.setPath` function.\r\n\r\n**Note: version 0.10.0 is a breaking change removing the vulnerable functions.**\r\n\r\n### POC:\r\n```\r\nconst nodeforge = require('node-forge');\r\nvar obj = {};\r\nnodeforge.util.setPath(obj, ['__proto__', 'polluted'], true);\r\nconsole.log(polluted);\r\n```\n\n## Details\n\nPrototype Pollution is a vulnerability affecting JavaScript. Prototype Pollution refers to the ability to inject properties into existing JavaScript language construct prototypes, such as objects. JavaScript allows all Object attributes to be altered, including their magical attributes such as `__proto__`, `constructor` and `prototype`. An attacker manipulates these attributes to overwrite, or pollute, a JavaScript application object prototype of the base object by injecting other values.  Properties on the `Object.prototype` are then inherited by all the JavaScript objects through the prototype chain. When that happens, this leads to either denial of service by triggering JavaScript exceptions, or it tampers with the application source code to force the code path that the attacker injects, thereby leading to remote code execution.\n\nThere are two main ways in which the pollution of prototypes occurs:\n\n-   Unsafe `Object` recursive merge\n    \n-   Property definition by path\n    \n\n### Unsafe Object recursive merge\n\nThe logic of a vulnerable recursive merge function follows the following high-level model:\n```\nmerge (target, source)\n\n  foreach property of source\n\n    if property exists and is an object on both the target and the source\n\n      merge(target[property], source[property])\n\n    else\n\n      target[property] = source[property]\n```\n<br>  \n\nWhen the source object contains a property named `__proto__` defined with `Object.defineProperty()` , the condition that checks if the property exists and is an object on both the target and the source passes and the merge recurses with the target, being the prototype of `Object` and the source of `Object` as defined by the attacker. Properties are then copied on the `Object` prototype.\n\nClone operations are a special sub-class of unsafe recursive merges, which occur when a recursive merge is conducted on an empty object: `merge({},source)`.\n\n`lodash` and `Hoek` are examples of libraries susceptible to recursive merge attacks.\n\n### Property definition by path\n\nThere are a few JavaScript libraries that use an API to define property values on an object based on a given path. The function that is generally affected contains this signature: `theFunction(object, path, value)`\n\nIf the attacker can control the value of “path”, they can set this value to `__proto__.myValue`. `myValue` is then assigned to the prototype of the class of the object.\n\n## Types of attacks\n\nThere are a few methods by which Prototype Pollution can be manipulated:\n\n| Type |Origin  |Short description |\n|--|--|--|\n| **Denial of service (DoS)**|Client  |This is the most likely attack. <br>DoS occurs when `Object` holds generic functions that are implicitly called for various operations (for example, `toString` and `valueOf`). <br> The attacker pollutes `Object.prototype.someattr` and alters its state to an unexpected value such as `Int` or `Object`. In this case, the code fails and is likely to cause a denial of service.  <br>**For example:** if an attacker pollutes `Object.prototype.toString` by defining it as an integer, if the codebase at any point was reliant on `someobject.toString()` it would fail. |\n |**Remote Code Execution**|Client|Remote code execution is generally only possible in cases where the codebase evaluates a specific attribute of an object, and then executes that evaluation.<br>**For example:** `eval(someobject.someattr)`. In this case, if the attacker pollutes `Object.prototype.someattr` they are likely to be able to leverage this in order to execute code.|\n|**Property Injection**|Client|The attacker pollutes properties that the codebase relies on for their informative value, including security properties such as cookies or tokens.<br>  **For example:** if a codebase checks privileges for `someuser.isAdmin`, then when the attacker pollutes `Object.prototype.isAdmin` and sets it to equal `true`, they can then achieve admin privileges.|\n\n## Affected environments\n\nThe following environments are susceptible to a Prototype Pollution attack:\n\n-   Application server\n    \n-   Web server\n\n-   Web browser\n    \n\n## How to prevent\n\n1.  Freeze the prototype— use `Object.freeze (Object.prototype)`.\n    \n2.  Require schema validation of JSON input.\n    \n3.  Avoid using unsafe recursive merge functions.\n    \n4.  Consider using objects without prototypes (for example, `Object.create(null)`), breaking the prototype chain and preventing pollution.\n    \n5.  As a best practice use `Map` instead of `Object`.\n\n### For more information on this vulnerability type:\n\n[Arteau, Oliver. “JavaScript prototype pollution attack in NodeJS application.” GitHub, 26 May 2018](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)\n\n## Remediation\nUpgrade `node-forge` to version 0.10.0 or higher.\n## References\n- [GitHub Changelog](https://github.com/digitalbazaar/forge/blob/master/CHANGELOG.md)\n",
+      "epssDetails": {
+        "percentile": "0.50330",
+        "probability": "0.00152",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-7720"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ],
+        "GHSA": [
+          "GHSA-92xj-mqp7-vmcj"
+        ]
+      },
+      "packageName": "node-forge",
+      "proprietary": true,
+      "creationTime": "2020-08-14T10:25:34.893654Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2020-08-14T10:24:52Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-09-01T10:44:20Z",
+      "modificationTime": "2022-08-25T12:14:41.256621Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "adb-filesystem@mhama/vscode-adb-filesystem#0dfeebdd2637a45bc3f1defaadc57c6b87a35de0",
+        "adbkit@github:mhama/adbkit",
+        "node-forge@0.7.6"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "node-forge@0.10.0"
+      ],
+      "version": "0.7.6",
+      "name": "node-forge",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 21,
+  "severityMap": {
+    "critical": 0,
+    "high": 2,
+    "medium": 4,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "6 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 6,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/mhama/vscode-adb-filesystem.git"
+}

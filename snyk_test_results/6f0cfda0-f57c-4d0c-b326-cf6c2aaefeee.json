@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "git+ssh://git@github.com:WenHaoHuang/code-counter.git"
+}

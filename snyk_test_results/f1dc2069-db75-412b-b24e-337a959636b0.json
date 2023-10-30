@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/Ironcutter24/cs-curly-formatter.git"
+}

@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/git@github.com:elppac/vscode-git-difftool.git.git"
+}

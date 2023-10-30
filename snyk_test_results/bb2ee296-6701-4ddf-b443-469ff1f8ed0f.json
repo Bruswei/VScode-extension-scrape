@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/zsakowitz/p5-resources.git"
+}

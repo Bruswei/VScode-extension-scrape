@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/git@github.com:minhnhatspk/go-method.git.git"
+}

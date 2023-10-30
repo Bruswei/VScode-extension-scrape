@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Couldn't find the requested package or version",
+  "path": "git+https://github.com/chimon2000/vscode-polymer-snippets.git"
+}

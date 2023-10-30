@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/1nVitr0/plugin-vscode-valgrind-task-integration.git"
+}

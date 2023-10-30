@@ -1,0 +1,731 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-UGLIFYJS-1727251",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+      "credit": [
+        "ready-research"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.14.3"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "3.14.3"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "uglify-js",
+      "references": [
+        {
+          "url": "https://github.com/mishoo/UglifyJS/commit/157521066fc43cff2feab7ffc1ecea603617606b",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/mishoo/UglifyJS/issues/5133",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/mishoo/UglifyJS/pull/5134",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/mishoo/UglifyJS/pull/5135",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[uglify-js](http://npmjs.com/package/uglify-js) is a JavaScript parser, minifier, compressor and beautifier toolkit.\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `string_template` and the `decode_template` functions.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `uglify-js` to version 3.14.3 or higher.\n## References\n- [GitHub Commit](https://github.com/mishoo/UglifyJS/commit/157521066fc43cff2feab7ffc1ecea603617606b)\n- [GitHub Issue](https://github.com/mishoo/UglifyJS/issues/5133)\n- [GitHub PR](https://github.com/mishoo/UglifyJS/pull/5134)\n- [GitHub PR](https://github.com/mishoo/UglifyJS/pull/5135)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-1333"
+        ]
+      },
+      "packageName": "uglify-js",
+      "proprietary": false,
+      "creationTime": "2021-09-30T14:25:50.130236Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-09-30T14:22:21Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-11-09T18:42:15.313328Z",
+      "modificationTime": "2021-11-09T18:42:15.332622Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "html2jade@wmaurer/vscode-html2jade#f724b54a67bf98b7ef979ef4e35bc369042ade32",
+        "jade@1.11.0",
+        "transformers@2.1.0",
+        "uglify-js@2.2.5"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "uglify-js@3.14.3"
+      ],
+      "version": "2.2.5",
+      "name": "uglify-js",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-UGLIFYJS-1727251",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+      "credit": [
+        "ready-research"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.14.3"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "3.14.3"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "uglify-js",
+      "references": [
+        {
+          "url": "https://github.com/mishoo/UglifyJS/commit/157521066fc43cff2feab7ffc1ecea603617606b",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/mishoo/UglifyJS/issues/5133",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/mishoo/UglifyJS/pull/5134",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/mishoo/UglifyJS/pull/5135",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[uglify-js](http://npmjs.com/package/uglify-js) is a JavaScript parser, minifier, compressor and beautifier toolkit.\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `string_template` and the `decode_template` functions.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `uglify-js` to version 3.14.3 or higher.\n## References\n- [GitHub Commit](https://github.com/mishoo/UglifyJS/commit/157521066fc43cff2feab7ffc1ecea603617606b)\n- [GitHub Issue](https://github.com/mishoo/UglifyJS/issues/5133)\n- [GitHub PR](https://github.com/mishoo/UglifyJS/pull/5134)\n- [GitHub PR](https://github.com/mishoo/UglifyJS/pull/5135)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-1333"
+        ]
+      },
+      "packageName": "uglify-js",
+      "proprietary": false,
+      "creationTime": "2021-09-30T14:25:50.130236Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-09-30T14:22:21Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-11-09T18:42:15.313328Z",
+      "modificationTime": "2021-11-09T18:42:15.332622Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "html2jade@wmaurer/vscode-html2jade#f724b54a67bf98b7ef979ef4e35bc369042ade32",
+        "jade@1.11.0",
+        "uglify-js@2.8.29"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "uglify-js@3.14.3"
+      ],
+      "version": "2.8.29",
+      "name": "uglify-js",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:clean-css:20180306",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P/RL:O/RC:C",
+      "credit": [
+        "Jamie Davis"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.1.11"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.1.11"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [
+        {
+          "version": [
+            "<4.1.11"
+          ],
+          "functionId": {
+            "filePath": "lib/optimizer/validator.js",
+            "className": null,
+            "functionName": "validator"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "clean-css",
+      "references": [
+        {
+          "url": "https://github.com/jakubpawlowicz/clean-css/commit/2929bafbf8cdf7dccb24e0949c70833764fa87e3",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n\n[clean-css](https://www.npmjs.com/package/clean-css) is a fast and efficient CSS optimizer for Node.js platform and any modern browser.\n\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS).\nattacks. This can cause an impact of about 10 seconds matching time for data 70k characters long.\n\n## Disclosure Timeline\n* Feb 15th, 2018 - Initial Disclosure to package owner\n* Feb 20th, 2018 - Initial Response from package owner\n* Mar 6th, 2018 - Fix issued\n* Mar 7th, 2018 - Vulnerability published\n\n## Details\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\r\n\r\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\r\n\r\nLet’s take the following regular expression as an example:\r\n```js\r\nregex = /A(B|C+)+D/\r\n```\r\n\r\nThis regular expression accomplishes the following:\r\n- `A` The string must start with the letter 'A'\r\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\r\n- `D` Finally, we ensure this section of the string ends with a 'D'\r\n\r\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\r\n\r\nIt most cases, it doesn't take very long for a regex engine to find a match:\r\n\r\n```bash\r\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\r\n0.04s user 0.01s system 95% cpu 0.052 total\r\n\r\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\r\n1.79s user 0.02s system 99% cpu 1.812 total\r\n```\r\n\r\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\r\n\r\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\r\n\r\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\r\n1. CCC\r\n2. CC+C\r\n3. C+CC\r\n4. C+C+C.\r\n\r\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\r\n\r\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\r\n\r\n| String | Number of C's | Number of steps |\r\n| -------|-------------:| -----:|\r\n| ACCCX | 3 | 38\r\n| ACCCCX | 4 | 71\r\n| ACCCCCX | 5 | 136\r\n| ACCCCCCCCCCCCCCX | 14 | 65,553\r\n\r\n\r\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\n\nUpgrade `clean-css` to version 4.1.11 or higher.\n\n\n## References\n\n- [GitHub Advisory](https://github.com/advisories/GHSA-wxhq-pm8v-cw75)\n\n- [GitHub Commit](https://github.com/jakubpawlowicz/clean-css/commit/2929bafbf8cdf7dccb24e0949c70833764fa87e3)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400",
+          "CWE-185"
+        ],
+        "NSP": [
+          "785"
+        ],
+        "GHSA": [
+          "GHSA-wxhq-pm8v-cw75"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-CLEANCSS-11052"
+        ]
+      },
+      "packageName": "clean-css",
+      "proprietary": true,
+      "creationTime": "2018-03-07T11:56:23.869000Z",
+      "functions_new": [
+        {
+          "version": [
+            "<4.1.11"
+          ],
+          "functionId": {
+            "filePath": "lib/optimizer/validator.js",
+            "functionName": "validator"
+          }
+        }
+      ],
+      "alternativeIds": [
+        "SNYK-JS-CLEANCSS-11052"
+      ],
+      "disclosureTime": "2018-03-06T11:56:23Z",
+      "packageManager": "npm",
+      "publicationTime": "2018-03-07T11:51:05Z",
+      "modificationTime": "2022-03-09T10:46:33.100563Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "html2jade@wmaurer/vscode-html2jade#f724b54a67bf98b7ef979ef4e35bc369042ade32",
+        "jade@1.11.0",
+        "clean-css@3.4.28"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "clean-css@4.1.11"
+      ],
+      "version": "3.4.28",
+      "name": "clean-css",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:constantinople:20180421",
+      "title": "Sandbox Bypass",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:N",
+      "credit": [
+        "Mike Samuel"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.1"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "3.1.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "critical",
+      "cvssScore": 10,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "constantinople",
+      "references": [
+        {
+          "url": "https://github.com/pugjs/constantinople/commit/01d409c0d081dfd65223e6b7767c244156d35f7f",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[constantinople](https://github.com/ForbesLindesay/constantinople) is a Determine whether a JavaScript expression evaluates to a constant (using acorn)\n\nAffected versions of this package are vulnerable to Sandbox Bypass which can lead to arbitrary code execution.\n## Remediation\nUpgrade `constantinople` to version 3.1.1 or higher.\n## References\n- [GitHub Commit](https://github.com/pugjs/constantinople/commit/01d409c0d081dfd65223e6b7767c244156d35f7f)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-264"
+        ],
+        "NSP": [
+          "568"
+        ],
+        "GHSA": [
+          "GHSA-4vmm-mhcq-4x9j"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-CONSTANTINOPLE-12136"
+        ]
+      },
+      "packageName": "constantinople",
+      "proprietary": false,
+      "creationTime": "2018-03-02T16:46:56.854000Z",
+      "functions_new": [],
+      "alternativeIds": [
+        "SNYK-JS-CONSTANTINOPLE-12136"
+      ],
+      "disclosureTime": "2018-04-21T04:33:52Z",
+      "packageManager": "npm",
+      "publicationTime": "2018-05-09T16:11:26Z",
+      "modificationTime": "2021-08-17T13:38:09.956106Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "critical",
+      "packagePopularityRank": 99,
+      "from": [
+        "html2jade@wmaurer/vscode-html2jade#f724b54a67bf98b7ef979ef4e35bc369042ade32",
+        "jade@1.11.0",
+        "constantinople@3.0.2"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "constantinople@3.1.1"
+      ],
+      "version": "3.0.2",
+      "name": "constantinople",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:nwmatcher:20180305",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P/RL:O/RC:C",
+      "credit": [
+        "Jamie Davis"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<1.4.4"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "1.4.4"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "nwmatcher",
+      "references": [
+        {
+          "url": "https://github.com/dperini/nwmatcher/commit/9dcc2b039beeabd18327a5ebaa537625872e16f0",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[nwmatcher](https://www.npmjs.com/package/nwmatcher) is a fast CSS selector engine and matcher.\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS). This can cause an impact of about 10 seconds matching time for data 2k characters long.\r\n\r\n## Disclosure Timeline\r\n* Feb 15th, 2018 - Initial Disclosure to package owner\r\n* Feb 16th, 2018 - Initial Response from package owner\r\n* Mar 5th, 2018 - Vulnerability published\r\n* Mar 5th, 2018 - Vulnerability fixed\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `nwmatcher` to version 1.4.4 or higher.\n## References\n- [GitHub Commit](https://github.com/dperini/nwmatcher/commit/9dcc2b039beeabd18327a5ebaa537625872e16f0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400",
+          "CWE-185"
+        ],
+        "GHSA": [
+          "GHSA-6394-6h9h-cfjg"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-NWMATCHER-11022"
+        ]
+      },
+      "packageName": "nwmatcher",
+      "proprietary": true,
+      "creationTime": "2018-03-05T16:44:48.604000Z",
+      "functions_new": [],
+      "alternativeIds": [
+        "SNYK-JS-NWMATCHER-11022"
+      ],
+      "disclosureTime": "2018-03-05T16:44:48Z",
+      "packageManager": "npm",
+      "publicationTime": "2018-03-05T17:32:59Z",
+      "modificationTime": "2020-12-14T14:41:19.805987Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 98,
+      "from": [
+        "html2jade@wmaurer/vscode-html2jade#f724b54a67bf98b7ef979ef4e35bc369042ade32",
+        "html2jade@0.8.6",
+        "jsdom-little@0.10.6",
+        "nwmatcher@1.3.9"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "nwmatcher@1.4.4"
+      ],
+      "version": "1.3.9",
+      "name": "nwmatcher",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:uglify-js:20150824",
+      "title": "Improper minification of non-boolean comparisons",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:L/I:L/A:L",
+      "credit": [
+        "Tom MacWright"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">=2.2.0 <2.4.24"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "2.4.24"
+      ],
+      "patches": [
+        {
+          "id": "patch:npm:uglify-js:20150824:0",
+          "urls": [
+            "https://snyk-patches.s3.amazonaws.com/npm/uglify-js/20150824/uglify-js_20150824_0_0_905b6011784ca60d41919ac1a499962b7c1d4b02_snyk.patch"
+          ],
+          "version": "<= 2.4.23 >2.0.0",
+          "comments": [],
+          "modificationTime": "2019-12-03T11:40:45.756528Z"
+        }
+      ],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 8.3,
+      "functions": [
+        {
+          "version": [
+            ">=2.2.0 <2.4.24"
+          ],
+          "functionId": {
+            "filePath": "lib/compress.js",
+            "className": null,
+            "functionName": "Compressor"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "uglify-js",
+      "references": [
+        {
+          "url": "https://zyan.scripts.mit.edu/blog/backdooring-js/",
+          "title": "Blog Post"
+        },
+        {
+          "url": "https://github.com/mishoo/UglifyJS2/issues/751",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2022-01-03T17:48:01.009006Z"
+        }
+      ],
+      "description": "## Overview\r\n[`uglify-js`](http://npmjs.com/package/uglify-js) is a JavaScript parser, minifier, compressor and beautifier toolkit.\r\n\r\n[Tom MacWright](https://github.com/mishoo/UglifyJS2/issues/751) discovered that UglifyJS versions 2.4.23 and earlier are affected by a vulnerability which allows a specially crafted Javascript file to have altered functionality after minification. This bug was [demonstrated](https://zyan.scripts.mit.edu/blog/backdooring-js/) by [Yan](https://twitter.com/bcrypt) to allow potentially malicious code to be hidden within secure code, activated by minification.\r\n\r\n### Details\r\nIn Boolean algebra, DeMorgan's laws describe the relationships between conjunctions (`&&`), disjunctions (`||`) and negations (`!`).\r\nIn Javascript form, they state that:\r\n```savascript\r\n !(a && b) === (!a) || (!b)\r\n !(a || b) === (!a) && (!b)\r\n```\r\n\r\nThe law does not hold true when one of the values is not a boolean however.\r\n\r\nVulnerable versions of UglifyJS do not account for this restriction, and erroneously apply the laws to a statement if it can be reduced in length by it.\r\n\r\nConsider this authentication function:\r\n\r\n```javascript\r\nfunction isTokenValid(user) {\r\n    var timeLeft =\r\n        !!config && // config object exists\r\n        !!user.token && // user object has a token\r\n        !user.token.invalidated && // token is not explicitly invalidated\r\n        !config.uninitialized && // config is initialized\r\n        !config.ignoreTimestamps && // don't ignore timestamps\r\n        getTimeLeft(user.token.expiry); // > 0 if expiration is in the future\r\n\r\n    // The token must not be expired\r\n    return timeLeft > 0;\r\n}\r\n\r\nfunction getTimeLeft(expiry) {\r\n  return expiry - getSystemTime();\r\n}\r\n```\r\nWhen minified with a vulnerable version of UglifyJS, it will produce the following insecure output, where a token will never expire:\r\n\r\n( Formatted for readability )\r\n\r\n```javascript\r\nfunction isTokenValid(user) {\r\n    var timeLeft = !(                       // negation\r\n        !config                             // config object does not exist\r\n        || !user.token                      // user object does not have a token\r\n        || user.token.invalidated           // token is explicitly invalidated\r\n        || config.uninitialized             // config isn't initialized\r\n        || config.ignoreTimestamps          // ignore timestamps\r\n        || !getTimeLeft(user.token.expiry)  // > 0 if expiration is in the future\r\n    );\r\n    return timeLeft > 0\r\n}\r\n\r\nfunction getTimeLeft(expiry) {\r\n    return expiry - getSystemTime()\r\n}\r\n```\r\n\r\n## Remediation\r\nUpgrade UglifyJS to version `2.4.24` or higher.\r\n\r\n## References\r\n- [Blog Post](https://zyan.scripts.mit.edu/blog/backdooring-js/)\r\n- [GitHub Issue](https://github.com/mishoo/UglifyJS2/issues/751)",
+      "epssDetails": {
+        "percentile": "0.79197",
+        "probability": "0.00794",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2015-8857"
+        ],
+        "CWE": [
+          "CWE-95"
+        ],
+        "NSP": [
+          "39"
+        ],
+        "GHSA": [
+          "GHSA-34r7-q49f-h37c"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-UGLIFYJS-10041"
+        ]
+      },
+      "packageName": "uglify-js",
+      "proprietary": false,
+      "creationTime": "2015-08-24T09:29:10Z",
+      "functions_new": [
+        {
+          "version": [
+            ">=2.2.0 <2.4.24"
+          ],
+          "functionId": {
+            "filePath": "lib/compress.js",
+            "functionName": "Compressor"
+          }
+        }
+      ],
+      "alternativeIds": [
+        "SNYK-JS-UGLIFYJS-10041"
+      ],
+      "disclosureTime": "2015-08-24T09:29:10Z",
+      "packageManager": "npm",
+      "publicationTime": "2015-08-24T09:29:10Z",
+      "modificationTime": "2022-01-03T17:48:01.009006Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "html2jade@wmaurer/vscode-html2jade#f724b54a67bf98b7ef979ef4e35bc369042ade32",
+        "jade@1.11.0",
+        "transformers@2.1.0",
+        "uglify-js@2.2.5"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "transformers@3.1.0",
+        "uglify-js@2.4.24"
+      ],
+      "version": "2.2.5",
+      "name": "uglify-js",
+      "isUpgradable": false,
+      "isPatchable": true,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:uglify-js:20151024",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+      "credit": [
+        "Adam Baldwin"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<2.6.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "2.6.0"
+      ],
+      "patches": [
+        {
+          "id": "patch:npm:uglify-js:20151024:0",
+          "urls": [
+            "https://snyk-patches.s3.amazonaws.com/npm/uglify-js/20151024/uglify-js_20151024_0_0_63d35f8_snyk_inc.patch"
+          ],
+          "version": "<= 2.4.23 >=2.2.0",
+          "comments": [
+            "https://github.com/mishoo/UglifyJS2/commit/63d35f8.patch"
+          ],
+          "modificationTime": "2019-12-03T11:40:45.767604Z"
+        },
+        {
+          "id": "patch:npm:uglify-js:20151024:1",
+          "urls": [
+            "https://snyk-patches.s3.amazonaws.com/npm/uglify-js/20151024/uglify-js_20151024_0_0_63d35f8_snyk.patch"
+          ],
+          "version": "<2.6.0 >2.4.23",
+          "comments": [
+            "https://github.com/mishoo/UglifyJS2/commit/63d35f8.patch"
+          ],
+          "modificationTime": "2019-12-03T11:40:45.768705Z"
+        }
+      ],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [
+        {
+          "version": [
+            ">1.3.5 <2.6.0"
+          ],
+          "functionId": {
+            "filePath": "lib/parse.js",
+            "className": null,
+            "functionName": "parse_js_number"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "uglify-js",
+      "references": [
+        {
+          "url": "https://github.com/mishoo/UglifyJS2/commit/63d35f8f6db6d90d6142132d2d5f0bd5d3d698aa",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://www.owasp.org/index.php/Regular_expression_Denial_of_Service_-_ReDoS",
+          "title": "OWASP - ReDoS"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-01-03T17:48:00.481391Z"
+        }
+      ],
+      "description": "## Overview\r\nThe `parse()` function in the [`uglify-js`](https://www.npmjs.com/package/uglify-js) package prior to version 2.6.0 is vulnerable to regular expression denial of service (ReDoS) attacks when long inputs of certain patterns are processed.\r\n\r\n## Details\r\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\r\n\r\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\r\n\r\nLet’s take the following regular expression as an example:\r\n```js\r\nregex = /A(B|C+)+D/\r\n```\r\n\r\nThis regular expression accomplishes the following:\r\n- `A` The string must start with the letter 'A'\r\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\r\n- `D` Finally, we ensure this section of the string ends with a 'D'\r\n\r\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\r\n\r\nIt most cases, it doesn't take very long for a regex engine to find a match:\r\n\r\n```bash\r\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\r\n0.04s user 0.01s system 95% cpu 0.052 total\r\n\r\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\r\n1.79s user 0.02s system 99% cpu 1.812 total\r\n```\r\n\r\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\r\n\r\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\r\n\r\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\r\n1. CCC\r\n2. CC+C\r\n3. C+CC\r\n4. C+C+C.\r\n\r\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\r\n\r\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\r\n\r\n| String | Number of C's | Number of steps |\r\n| -------|-------------:| -----:|\r\n| ACCCX | 3 | 38\r\n| ACCCCX | 4 | 71\r\n| ACCCCCX | 5 | 136\r\n| ACCCCCCCCCCCCCCX | 14 | 65,553\r\n\r\n\r\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\r\n\r\n## Remediation\r\nUpgrade to version `2.6.0` or greater.\r\nIf a direct dependency update is not possible, use `snyk wizard` to patch this vulnerability.\r\n\r\n## References\r\n- [OWASP - ReDoS](https://www.owasp.org/index.php/Regular_expression_Denial_of_Service_-_ReDoS)",
+      "epssDetails": {
+        "percentile": "0.62742",
+        "probability": "0.00264",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2015-8858"
+        ],
+        "CWE": [
+          "CWE-400"
+        ],
+        "NSP": [
+          "48"
+        ],
+        "GHSA": [
+          "GHSA-c9f4-xj24-8jqx"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-UGLIFYJS-10059"
+        ]
+      },
+      "packageName": "uglify-js",
+      "proprietary": false,
+      "creationTime": "2015-11-06T02:09:36.186000Z",
+      "functions_new": [
+        {
+          "version": [
+            ">1.3.5 <2.6.0"
+          ],
+          "functionId": {
+            "filePath": "lib/parse.js",
+            "functionName": "parse_js_number"
+          }
+        }
+      ],
+      "alternativeIds": [
+        "SNYK-JS-UGLIFYJS-10059"
+      ],
+      "disclosureTime": "2015-10-24T21:01:32Z",
+      "packageManager": "npm",
+      "publicationTime": "2015-11-06T02:09:36Z",
+      "modificationTime": "2022-01-03T17:48:00.481391Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "html2jade@wmaurer/vscode-html2jade#f724b54a67bf98b7ef979ef4e35bc369042ade32",
+        "jade@1.11.0",
+        "transformers@2.1.0",
+        "uglify-js@2.2.5"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "uglify-js@2.6.0"
+      ],
+      "version": "2.2.5",
+      "name": "uglify-js",
+      "isUpgradable": false,
+      "isPatchable": true,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 69,
+  "severityMap": {
+    "critical": 1,
+    "high": 1,
+    "medium": 3,
+    "low": 2
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "7 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 6,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/wmaurer/vscode-html2jade.git"
+}

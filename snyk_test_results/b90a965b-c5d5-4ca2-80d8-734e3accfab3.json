@@ -1,0 +1,1877 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-ANSIREGEX-1583908",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:P/RL:O/RC:C",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">=2.1.1 <3.0.1",
+          ">=4.0.0 <4.1.1",
+          ">=5.0.0 <5.0.1",
+          ">=6.0.0 <6.0.1"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.0.1",
+        "4.1.1",
+        "5.0.1",
+        "6.0.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "ansi-regex",
+      "references": [
+        {
+          "url": "https://github.com/chalk/ansi-regex/commit/419250fa510bf31b4cc672e76537a64f9332e1f1",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/chalk/ansi-regex/commit/75a657da7af875b2e2724fd6331bf0a4b23d3c9a",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/chalk/ansi-regex/commit/8d1d7cdb586269882c4bdc1b7325d0c58c8f76f9",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/chalk/ansi-regex/pull/37",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "SUSE",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-05-18T11:04:40.935720Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T16:45:11.225574Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-11-08T01:10:38.334810Z"
+        }
+      ],
+      "description": "## Overview\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) due to the sub-patterns` [[\\\\]()#;?]*` and `(?:;[-a-zA-Z\\\\d\\\\/#&.:=?%@~_]*)*`.\r\n\r\n\r\n### PoC\r\n```js\r\nimport ansiRegex from 'ansi-regex';\r\n\r\nfor(var i = 1; i <= 50000; i++) {\r\n    var time = Date.now();\r\n    var attack_str = \"\\u001B[\"+\";\".repeat(i*10000);\r\n    ansiRegex().test(attack_str)\r\n    var time_cost = Date.now() - time;\r\n    console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `ansi-regex` to version 3.0.1, 4.1.1, 5.0.1, 6.0.1 or higher.\n## References\n- [GitHub Commit](https://github.com/chalk/ansi-regex/commit/419250fa510bf31b4cc672e76537a64f9332e1f1)\n- [GitHub Commit](https://github.com/chalk/ansi-regex/commit/75a657da7af875b2e2724fd6331bf0a4b23d3c9a)\n- [GitHub Commit](https://github.com/chalk/ansi-regex/commit/8d1d7cdb586269882c4bdc1b7325d0c58c8f76f9)\n- [GitHub PR](https://github.com/chalk/ansi-regex/pull/37)\n",
+      "epssDetails": {
+        "percentile": "0.65091",
+        "probability": "0.00299",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-3807"
+        ],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "ansi-regex",
+      "proprietary": false,
+      "creationTime": "2021-09-09T14:28:31.617043Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-09-09T14:27:43Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-09-12T12:52:37Z",
+      "modificationTime": "2022-11-08T01:10:38.334810Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "testing-api@just4developments/vscode-testing-api#e13ab941dc2d6317a510ba3a79e22d31c2478db8",
+        "unirest@0.5.1",
+        "request@2.74.0",
+        "har-validator@2.0.6",
+        "chalk@1.1.3",
+        "has-ansi@2.0.0",
+        "ansi-regex@2.1.1"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "har-validator@3.4.0"
+      ],
+      "version": "2.1.1",
+      "name": "ansi-regex",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-ANSIREGEX-1583908",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:P/RL:O/RC:C",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">=2.1.1 <3.0.1",
+          ">=4.0.0 <4.1.1",
+          ">=5.0.0 <5.0.1",
+          ">=6.0.0 <6.0.1"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.0.1",
+        "4.1.1",
+        "5.0.1",
+        "6.0.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "ansi-regex",
+      "references": [
+        {
+          "url": "https://github.com/chalk/ansi-regex/commit/419250fa510bf31b4cc672e76537a64f9332e1f1",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/chalk/ansi-regex/commit/75a657da7af875b2e2724fd6331bf0a4b23d3c9a",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/chalk/ansi-regex/commit/8d1d7cdb586269882c4bdc1b7325d0c58c8f76f9",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/chalk/ansi-regex/pull/37",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "SUSE",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-05-18T11:04:40.935720Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T16:45:11.225574Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-11-08T01:10:38.334810Z"
+        }
+      ],
+      "description": "## Overview\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) due to the sub-patterns` [[\\\\]()#;?]*` and `(?:;[-a-zA-Z\\\\d\\\\/#&.:=?%@~_]*)*`.\r\n\r\n\r\n### PoC\r\n```js\r\nimport ansiRegex from 'ansi-regex';\r\n\r\nfor(var i = 1; i <= 50000; i++) {\r\n    var time = Date.now();\r\n    var attack_str = \"\\u001B[\"+\";\".repeat(i*10000);\r\n    ansiRegex().test(attack_str)\r\n    var time_cost = Date.now() - time;\r\n    console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `ansi-regex` to version 3.0.1, 4.1.1, 5.0.1, 6.0.1 or higher.\n## References\n- [GitHub Commit](https://github.com/chalk/ansi-regex/commit/419250fa510bf31b4cc672e76537a64f9332e1f1)\n- [GitHub Commit](https://github.com/chalk/ansi-regex/commit/75a657da7af875b2e2724fd6331bf0a4b23d3c9a)\n- [GitHub Commit](https://github.com/chalk/ansi-regex/commit/8d1d7cdb586269882c4bdc1b7325d0c58c8f76f9)\n- [GitHub PR](https://github.com/chalk/ansi-regex/pull/37)\n",
+      "epssDetails": {
+        "percentile": "0.65091",
+        "probability": "0.00299",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-3807"
+        ],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "ansi-regex",
+      "proprietary": false,
+      "creationTime": "2021-09-09T14:28:31.617043Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-09-09T14:27:43Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-09-12T12:52:37Z",
+      "modificationTime": "2022-11-08T01:10:38.334810Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "testing-api@just4developments/vscode-testing-api#e13ab941dc2d6317a510ba3a79e22d31c2478db8",
+        "unirest@0.5.1",
+        "request@2.74.0",
+        "har-validator@2.0.6",
+        "chalk@1.1.3",
+        "strip-ansi@3.0.1",
+        "ansi-regex@2.1.1"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "har-validator@3.4.0"
+      ],
+      "version": "2.1.1",
+      "name": "ansi-regex",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-BL-608877",
+      "title": "Remote Memory Exposure",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:L/A:L/E:P",
+      "credit": [
+        "chalker"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">=2.2.0 <2.2.1",
+          ">=3.0.0 <3.0.1",
+          ">=4.0.0 <4.0.3",
+          "<1.2.3"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "2.2.1",
+        "3.0.1",
+        "4.0.3",
+        "1.2.3"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.7,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "bl",
+      "references": [
+        {
+          "url": "https://github.com/rvagg/bl/commit/8a8c13c880e2bef519133ea43e0e9b78b5d0c91e",
+          "title": "Github Commit"
+        },
+        {
+          "url": "https://github.com/rvagg/bl/commit/d3e240e3b8ba4048d3c76ef5fb9dd1f8872d3190",
+          "title": "Github Commit"
+        },
+        {
+          "url": "https://github.com/rvagg/bl/commit/dacc4ac7d5fcd6201bcf26fbd886951be9537466",
+          "title": "Github Commit"
+        },
+        {
+          "url": "https://github.com/rvagg/bl/commit/0bd87ec97be399b129fc62feff2943ffa21bcc00",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://hackerone.com/reports/966347",
+          "title": "HackerOne Report"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:L",
+          "cvssV3BaseScore": 6.5,
+          "modificationTime": "2023-03-26T15:10:10.492171Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:L",
+          "cvssV3BaseScore": 6.5,
+          "modificationTime": "2022-05-25T01:10:57.219008Z"
+        }
+      ],
+      "description": "## Overview\n[bl](https://github.com/rvagg/bl) is a library that allows you to collect buffers and access with a standard readable buffer interface.\n\nAffected versions of this package are vulnerable to Remote Memory Exposure. If user input ends up in `consume()` argument and can become negative, BufferList state can be corrupted, tricking it into exposing uninitialized memory via regular `.slice()` calls.\r\n\r\n### PoC by chalker\r\n```\r\nconst { BufferList } = require('bl')\r\nconst secret = require('crypto').randomBytes(256)\r\nfor (let i = 0; i < 1e6; i++) {\r\n  const clone = Buffer.from(secret)\r\n  const bl = new BufferList()\r\n  bl.append(Buffer.from('a'))\r\n  bl.consume(-1024)\r\n  const buf = bl.slice(1)\r\n  if (buf.indexOf(clone) !== -1) {\r\n    console.error(`Match (at ${i})`, buf)\r\n  }\r\n}\r\n```\n## Remediation\nUpgrade `bl` to version 2.2.1, 3.0.1, 4.0.3, 1.2.3 or higher.\n## References\n- [Github Commit](https://github.com/rvagg/bl/commit/8a8c13c880e2bef519133ea43e0e9b78b5d0c91e)\n- [Github Commit](https://github.com/rvagg/bl/commit/d3e240e3b8ba4048d3c76ef5fb9dd1f8872d3190)\n- [Github Commit](https://github.com/rvagg/bl/commit/dacc4ac7d5fcd6201bcf26fbd886951be9537466)\n- [GitHub Commit](https://github.com/rvagg/bl/commit/0bd87ec97be399b129fc62feff2943ffa21bcc00)\n- [HackerOne Report](https://hackerone.com/reports/966347)\n",
+      "epssDetails": {
+        "percentile": "0.49662",
+        "probability": "0.00147",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-8244"
+        ],
+        "CWE": [
+          "CWE-9"
+        ],
+        "NSP": [
+          "1555"
+        ],
+        "GHSA": [
+          "GHSA-pp7h-53gx-mx7r"
+        ]
+      },
+      "packageName": "bl",
+      "proprietary": false,
+      "creationTime": "2020-08-28T12:18:44.906258Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2020-08-27T15:16:42Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-08-28T12:18:48Z",
+      "modificationTime": "2023-03-26T15:10:10.492171Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "testing-api@just4developments/vscode-testing-api#e13ab941dc2d6317a510ba3a79e22d31c2478db8",
+        "unirest@0.5.1",
+        "request@2.74.0",
+        "bl@1.1.2"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "request@2.76.0"
+      ],
+      "version": "1.1.2",
+      "name": "bl",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-HAWK-2808852",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:N/I:N/A:H",
+      "credit": [
+        "JFrog"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<9.0.1"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "9.0.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.4,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "hawk",
+      "references": [
+        {
+          "url": "https://github.com/mozilla/hawk/pull/286/commits/ade134119bf1fdc4909d00f5a952c966f0075ad3",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/mozilla/hawk/pull/286",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-05-17T01:11:11.251089Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-27T05:00:53.712336Z"
+        }
+      ],
+      "description": "## Overview\n[hawk](https://github.com/hueniverse/hawk) is a library for the HTTP Hawk Authentication Scheme.\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) in header parsing where each added character in the attacker's input increases the computation time exponentially.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `hawk` to version 9.0.1 or higher.\n## References\n- [GitHub Commit](https://github.com/mozilla/hawk/pull/286/commits/ade134119bf1fdc4909d00f5a952c966f0075ad3)\n- [GitHub PR](https://github.com/mozilla/hawk/pull/286)\n",
+      "epssDetails": {
+        "percentile": "0.29856",
+        "probability": "0.00073",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-29167"
+        ],
+        "CWE": [
+          "CWE-1333"
+        ],
+        "GHSA": [
+          "GHSA-44pw-h2cw-w3vq"
+        ]
+      },
+      "packageName": "hawk",
+      "proprietary": false,
+      "creationTime": "2022-05-06T06:28:14.300336Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-05-06T06:18:15Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-05-06T14:22:54Z",
+      "modificationTime": "2022-10-27T05:00:53.712336Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "testing-api@just4developments/vscode-testing-api#e13ab941dc2d6317a510ba3a79e22d31c2478db8",
+        "unirest@0.5.1",
+        "request@2.74.0",
+        "hawk@3.1.3"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "request@2.87.0"
+      ],
+      "version": "3.1.3",
+      "name": "hawk",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-HIGHLIGHTJS-1048676",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">=9.0.0 <10.4.1"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "10.4.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "highlight.js",
+      "references": [
+        {
+          "url": "https://github.com/highlightjs/highlight.js/commit/373b9d862401162e832ce77305e49b859e110f9c",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[highlight.js](https://www.npmjs.com/package/highlight.js) is a syntax highlighter written in JavaScript. It works in the browser as well as on the server. It works with pretty much any markup, doesn’t depend on any framework, and has automatic language detection.\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via Exponential and Polynomial catastrophic backtracking in multiple language highlighting.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `highlight.js` to version 10.4.1 or higher.\n## References\n- [GitHub Commit](https://github.com/highlightjs/highlight.js/commit/373b9d862401162e832ce77305e49b859e110f9c)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ],
+        "GHSA": [
+          "GHSA-7wwv-vh3v-89cq"
+        ]
+      },
+      "packageName": "highlight.js",
+      "proprietary": false,
+      "creationTime": "2020-12-06T09:34:39.383236Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2020-12-04T16:47:20Z",
+      "packageManager": "npm",
+      "publicationTime": "2020-12-06T16:34:07.195287Z",
+      "modificationTime": "2020-12-06T16:34:07.402949Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "testing-api@just4developments/vscode-testing-api#e13ab941dc2d6317a510ba3a79e22d31c2478db8",
+        "highlight.js@9.18.5"
+      ],
+      "upgradePath": [
+        false,
+        "highlight.js@10.4.1"
+      ],
+      "version": "9.18.5",
+      "name": "highlight.js",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-REQUEST-3361831",
+      "title": "Server-side Request Forgery (SSRF)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N/E:P",
+      "credit": [
+        "SzymonDrosdzol"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "request",
+      "references": [
+        {
+          "url": "https://github.com/request/request/commit/d42332182512e56ba68446f49c3e3711e04301a2",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/request/request/issues/3442",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/request/request/pull/3444",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2023-03-23T01:10:17.579856Z"
+        }
+      ],
+      "description": "## Overview\n[request](https://www.npmjs.com/package/request) is a simplified http request client.\n\nAffected versions of this package are vulnerable to Server-side Request Forgery (SSRF) due to insufficient checks in the `lib/redirect.js` file by allowing insecure redirects in the default configuration, via an attacker-controller server that does a cross-protocol redirect (HTTP to HTTPS, or HTTPS to HTTP).\r\n\r\n**NOTE:** `request` package has been deprecated, so a fix is not expected. See https://github.com/request/request/issues/3142.\n## Remediation\nA fix was pushed into the `master` branch but not yet published.\n## References\n- [GitHub Commit](https://github.com/request/request/commit/d42332182512e56ba68446f49c3e3711e04301a2)\n- [GitHub Issue](https://github.com/request/request/issues/3442)\n- [GitHub PR](https://github.com/request/request/pull/3444)\n",
+      "epssDetails": {
+        "percentile": "0.24986",
+        "probability": "0.00063",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-28155"
+        ],
+        "CWE": [
+          "CWE-918"
+        ]
+      },
+      "packageName": "request",
+      "proprietary": false,
+      "creationTime": "2023-03-16T13:58:23.124636Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-03-16T13:49:16Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-03-17T07:46:44.219769Z",
+      "modificationTime": "2023-08-30T13:20:36.826459Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "testing-api@just4developments/vscode-testing-api#e13ab941dc2d6317a510ba3a79e22d31c2478db8",
+        "unirest@0.5.1",
+        "request@2.74.0"
+      ],
+      "upgradePath": [],
+      "version": "2.74.0",
+      "name": "request",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-TOUGHCOOKIE-5672873",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N/E:P",
+      "credit": [
+        "Kokorin Vsevolod"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.1.3"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.1.3"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "tough-cookie",
+      "references": [
+        {
+          "url": "https://github.com/salesforce/tough-cookie/commit/12d474791bb856004e858fdb1c47b7608d09cf6e",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/salesforce/tough-cookie/issues/282",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/salesforce/tough-cookie/releases/tag/v4.1.3",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.5,
+          "modificationTime": "2023-07-06T13:31:55.808983Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2023-07-08T01:12:36.395017Z"
+        }
+      ],
+      "description": "## Overview\n[tough-cookie](https://www.npmjs.com/package/tough-cookie) is a RFC6265 Cookies and CookieJar module for Node.js.\n\nAffected versions of this package are vulnerable to Prototype Pollution due to improper handling of Cookies when using CookieJar in `rejectPublicSuffixes=false` mode. Due to an issue with the manner in which the objects are initialized, an attacker can expose or modify a limited amount of property information on those objects. There is no impact to availability.\n## PoC\n```\r\n// PoC.js\r\nasync function main(){\r\nvar tough = require(\"tough-cookie\");\r\nvar cookiejar = new tough.CookieJar(undefined,{rejectPublicSuffixes:false});\r\n// Exploit cookie\r\nawait cookiejar.setCookie(\r\n  \"Slonser=polluted; Domain=__proto__; Path=/notauth\",\r\n  \"https://__proto__/admin\"\r\n);\r\n// normal cookie\r\nvar cookie = await cookiejar.setCookie(\r\n  \"Auth=Lol; Domain=google.com; Path=/notauth\",\r\n  \"https://google.com/\"\r\n);\r\n\r\n//Exploit cookie\r\nvar a = {};\r\nconsole.log(a[\"/notauth\"][\"Slonser\"])\r\n}\r\nmain();\r\n```\n\n## Details\n\nPrototype Pollution is a vulnerability affecting JavaScript. Prototype Pollution refers to the ability to inject properties into existing JavaScript language construct prototypes, such as objects. JavaScript allows all Object attributes to be altered, including their magical attributes such as `__proto__`, `constructor` and `prototype`. An attacker manipulates these attributes to overwrite, or pollute, a JavaScript application object prototype of the base object by injecting other values.  Properties on the `Object.prototype` are then inherited by all the JavaScript objects through the prototype chain. When that happens, this leads to either denial of service by triggering JavaScript exceptions, or it tampers with the application source code to force the code path that the attacker injects, thereby leading to remote code execution.\n\nThere are two main ways in which the pollution of prototypes occurs:\n\n-   Unsafe `Object` recursive merge\n    \n-   Property definition by path\n    \n\n### Unsafe Object recursive merge\n\nThe logic of a vulnerable recursive merge function follows the following high-level model:\n```\nmerge (target, source)\n\n  foreach property of source\n\n    if property exists and is an object on both the target and the source\n\n      merge(target[property], source[property])\n\n    else\n\n      target[property] = source[property]\n```\n<br>  \n\nWhen the source object contains a property named `__proto__` defined with `Object.defineProperty()` , the condition that checks if the property exists and is an object on both the target and the source passes and the merge recurses with the target, being the prototype of `Object` and the source of `Object` as defined by the attacker. Properties are then copied on the `Object` prototype.\n\nClone operations are a special sub-class of unsafe recursive merges, which occur when a recursive merge is conducted on an empty object: `merge({},source)`.\n\n`lodash` and `Hoek` are examples of libraries susceptible to recursive merge attacks.\n\n### Property definition by path\n\nThere are a few JavaScript libraries that use an API to define property values on an object based on a given path. The function that is generally affected contains this signature: `theFunction(object, path, value)`\n\nIf the attacker can control the value of “path”, they can set this value to `__proto__.myValue`. `myValue` is then assigned to the prototype of the class of the object.\n\n## Types of attacks\n\nThere are a few methods by which Prototype Pollution can be manipulated:\n\n| Type |Origin  |Short description |\n|--|--|--|\n| **Denial of service (DoS)**|Client  |This is the most likely attack. <br>DoS occurs when `Object` holds generic functions that are implicitly called for various operations (for example, `toString` and `valueOf`). <br> The attacker pollutes `Object.prototype.someattr` and alters its state to an unexpected value such as `Int` or `Object`. In this case, the code fails and is likely to cause a denial of service.  <br>**For example:** if an attacker pollutes `Object.prototype.toString` by defining it as an integer, if the codebase at any point was reliant on `someobject.toString()` it would fail. |\n |**Remote Code Execution**|Client|Remote code execution is generally only possible in cases where the codebase evaluates a specific attribute of an object, and then executes that evaluation.<br>**For example:** `eval(someobject.someattr)`. In this case, if the attacker pollutes `Object.prototype.someattr` they are likely to be able to leverage this in order to execute code.|\n|**Property Injection**|Client|The attacker pollutes properties that the codebase relies on for their informative value, including security properties such as cookies or tokens.<br>  **For example:** if a codebase checks privileges for `someuser.isAdmin`, then when the attacker pollutes `Object.prototype.isAdmin` and sets it to equal `true`, they can then achieve admin privileges.|\n\n## Affected environments\n\nThe following environments are susceptible to a Prototype Pollution attack:\n\n-   Application server\n    \n-   Web server\n\n-   Web browser\n    \n\n## How to prevent\n\n1.  Freeze the prototype— use `Object.freeze (Object.prototype)`.\n    \n2.  Require schema validation of JSON input.\n    \n3.  Avoid using unsafe recursive merge functions.\n    \n4.  Consider using objects without prototypes (for example, `Object.create(null)`), breaking the prototype chain and preventing pollution.\n    \n5.  As a best practice use `Map` instead of `Object`.\n\n### For more information on this vulnerability type:\n\n[Arteau, Oliver. “JavaScript prototype pollution attack in NodeJS application.” GitHub, 26 May 2018](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)\n\n## Remediation\nUpgrade `tough-cookie` to version 4.1.3 or higher.\n## References\n- [GitHub Commit](https://github.com/salesforce/tough-cookie/commit/12d474791bb856004e858fdb1c47b7608d09cf6e)\n- [GitHub Issue](https://github.com/salesforce/tough-cookie/issues/282)\n- [GitHub Release](https://github.com/salesforce/tough-cookie/releases/tag/v4.1.3)\n",
+      "epssDetails": {
+        "percentile": "0.53347",
+        "probability": "0.00173",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-26136"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ]
+      },
+      "packageName": "tough-cookie",
+      "proprietary": true,
+      "creationTime": "2023-06-08T15:08:51.664280Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-06-08T14:45:59Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-06-30T11:54:16.657348Z",
+      "modificationTime": "2023-07-09T13:39:02.212708Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "testing-api@just4developments/vscode-testing-api#e13ab941dc2d6317a510ba3a79e22d31c2478db8",
+        "unirest@0.5.1",
+        "request@2.74.0",
+        "tough-cookie@2.3.4"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        false,
+        "tough-cookie@4.1.3"
+      ],
+      "version": "2.3.4",
+      "name": "tough-cookie",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:hoek:20180212",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L/E:P",
+      "credit": [
+        "Olivier Arteau (HoLyVieR)"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.2.1",
+          ">=5.0.0 <5.0.3"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.2.1",
+        "5.0.3"
+      ],
+      "patches": [
+        {
+          "id": "patch:npm:hoek:20180212:0",
+          "urls": [
+            "https://snyk-patches.s3.amazonaws.com/npm/hoek/20180212/20180212_0_0_hoek_5aed1a8c4a3d55722d1c799f2368857bf418d6df.patch"
+          ],
+          "version": "<4.2.1 >=4.1.0 || <3.0.4 >=3.0.0",
+          "comments": [],
+          "modificationTime": "2019-12-03T11:40:45.879582Z"
+        },
+        {
+          "id": "patch:npm:hoek:20180212:1",
+          "urls": [
+            "https://snyk-patches.s3.amazonaws.com/npm/hoek/20180212/20180212_0_1_hoek_32ed5c9413321fbc37da5ca81a7cbab693786dee.patch"
+          ],
+          "version": ">=2.0.0 <3.0.0",
+          "comments": [],
+          "modificationTime": "2019-12-03T11:40:45.880722Z"
+        }
+      ],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.3,
+      "functions": [
+        {
+          "version": [
+            ">=5.0.0 <5.0.3"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "className": null,
+            "functionName": "exports.merge"
+          }
+        },
+        {
+          "version": [
+            ">0.0.18 <4.2.1"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "className": null,
+            "functionName": "exports.merge"
+          }
+        },
+        {
+          "version": [
+            "<0.0.19"
+          ],
+          "functionId": {
+            "filePath": "lib/hoek.js",
+            "className": null,
+            "functionName": "exports.merge"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "hoek",
+      "references": [
+        {
+          "url": "https://github.com/hapijs/hoek/commit/32ed5c9413321fbc37da5ca81a7cbab693786dee",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/hapijs/hoek/commit/5aed1a8c4a3d55722d1c799f2368857bf418d6df",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/hapijs/hoek/issues/230",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/hapijs/hoek/pull/227",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://hackerone.com/reports/310439",
+          "title": "HackerOne Report"
+        },
+        {
+          "url": "http://npmjs.com/advisories/566",
+          "title": "NPM Security Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "low",
+          "cvssV3Vector": "CVSS:3.0/AV:L/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 2.9,
+          "modificationTime": "2023-03-26T15:11:38.028811Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 8.8,
+          "modificationTime": "2022-01-03T16:28:04.444162Z"
+        }
+      ],
+      "description": "## Overview\n[hoek](https://github.com/hapijs/hoek) is an Utility methods for the hapi ecosystem.\n\nAffected versions of this package are vulnerable to Prototype Pollution. The utilities function allow modification of the `Object` prototype. If an attacker can control part of the structure passed to this function, they could add or modify an existing property.  \r\n\r\n## PoC by Olivier Arteau (HoLyVieR)\r\n```js\r\nvar Hoek = require('hoek');\r\nvar malicious_payload = '{\"__proto__\":{\"oops\":\"It works !\"}}';\r\n\r\nvar a = {};\r\nconsole.log(\"Before : \" + a.oops);\r\nHoek.merge({}, JSON.parse(malicious_payload));\r\nconsole.log(\"After : \" + a.oops);\r\n\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `hoek` to version 4.2.1, 5.0.3 or higher.\n## References\n- [GitHub Commit](https://github.com/hapijs/hoek/commit/32ed5c9413321fbc37da5ca81a7cbab693786dee)\n- [GitHub Commit](https://github.com/hapijs/hoek/commit/5aed1a8c4a3d55722d1c799f2368857bf418d6df)\n- [GitHub Issue](https://github.com/hapijs/hoek/issues/230)\n- [GitHub PR](https://github.com/hapijs/hoek/pull/227)\n- [HackerOne Report](https://hackerone.com/reports/310439)\n- [NPM Security Advisory](http://npmjs.com/advisories/566)\n",
+      "epssDetails": {
+        "percentile": "0.78957",
+        "probability": "0.00782",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2018-3728"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ],
+        "NSP": [
+          "566"
+        ],
+        "GHSA": [
+          "GHSA-jp4x-w63m-7wgm"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-HOEK-12061"
+        ]
+      },
+      "packageName": "hoek",
+      "proprietary": false,
+      "creationTime": "2018-02-12T22:28:27.612000Z",
+      "functions_new": [
+        {
+          "version": [
+            ">=5.0.0 <5.0.3"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "functionName": "exports.merge"
+          }
+        },
+        {
+          "version": [
+            ">0.0.18 <4.2.1"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "functionName": "exports.merge"
+          }
+        },
+        {
+          "version": [
+            "<0.0.19"
+          ],
+          "functionId": {
+            "filePath": "lib/hoek.js",
+            "functionName": "exports.merge"
+          }
+        }
+      ],
+      "alternativeIds": [
+        "SNYK-JS-HOEK-12061"
+      ],
+      "disclosureTime": "2018-02-12T22:28:27Z",
+      "packageManager": "npm",
+      "publicationTime": "2018-02-14T13:22:50Z",
+      "modificationTime": "2023-03-26T15:11:38.028811Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "testing-api@just4developments/vscode-testing-api#e13ab941dc2d6317a510ba3a79e22d31c2478db8",
+        "unirest@0.5.1",
+        "request@2.74.0",
+        "hawk@3.1.3",
+        "hoek@2.16.3"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "request@2.82.0",
+        "hawk@6.0.2",
+        "hoek@4.2.1"
+      ],
+      "version": "2.16.3",
+      "name": "hoek",
+      "isUpgradable": false,
+      "isPatchable": true,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:hoek:20180212",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L/E:P",
+      "credit": [
+        "Olivier Arteau (HoLyVieR)"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.2.1",
+          ">=5.0.0 <5.0.3"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.2.1",
+        "5.0.3"
+      ],
+      "patches": [
+        {
+          "id": "patch:npm:hoek:20180212:0",
+          "urls": [
+            "https://snyk-patches.s3.amazonaws.com/npm/hoek/20180212/20180212_0_0_hoek_5aed1a8c4a3d55722d1c799f2368857bf418d6df.patch"
+          ],
+          "version": "<4.2.1 >=4.1.0 || <3.0.4 >=3.0.0",
+          "comments": [],
+          "modificationTime": "2019-12-03T11:40:45.879582Z"
+        },
+        {
+          "id": "patch:npm:hoek:20180212:1",
+          "urls": [
+            "https://snyk-patches.s3.amazonaws.com/npm/hoek/20180212/20180212_0_1_hoek_32ed5c9413321fbc37da5ca81a7cbab693786dee.patch"
+          ],
+          "version": ">=2.0.0 <3.0.0",
+          "comments": [],
+          "modificationTime": "2019-12-03T11:40:45.880722Z"
+        }
+      ],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.3,
+      "functions": [
+        {
+          "version": [
+            ">=5.0.0 <5.0.3"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "className": null,
+            "functionName": "exports.merge"
+          }
+        },
+        {
+          "version": [
+            ">0.0.18 <4.2.1"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "className": null,
+            "functionName": "exports.merge"
+          }
+        },
+        {
+          "version": [
+            "<0.0.19"
+          ],
+          "functionId": {
+            "filePath": "lib/hoek.js",
+            "className": null,
+            "functionName": "exports.merge"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "hoek",
+      "references": [
+        {
+          "url": "https://github.com/hapijs/hoek/commit/32ed5c9413321fbc37da5ca81a7cbab693786dee",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/hapijs/hoek/commit/5aed1a8c4a3d55722d1c799f2368857bf418d6df",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/hapijs/hoek/issues/230",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/hapijs/hoek/pull/227",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://hackerone.com/reports/310439",
+          "title": "HackerOne Report"
+        },
+        {
+          "url": "http://npmjs.com/advisories/566",
+          "title": "NPM Security Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "low",
+          "cvssV3Vector": "CVSS:3.0/AV:L/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 2.9,
+          "modificationTime": "2023-03-26T15:11:38.028811Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 8.8,
+          "modificationTime": "2022-01-03T16:28:04.444162Z"
+        }
+      ],
+      "description": "## Overview\n[hoek](https://github.com/hapijs/hoek) is an Utility methods for the hapi ecosystem.\n\nAffected versions of this package are vulnerable to Prototype Pollution. The utilities function allow modification of the `Object` prototype. If an attacker can control part of the structure passed to this function, they could add or modify an existing property.  \r\n\r\n## PoC by Olivier Arteau (HoLyVieR)\r\n```js\r\nvar Hoek = require('hoek');\r\nvar malicious_payload = '{\"__proto__\":{\"oops\":\"It works !\"}}';\r\n\r\nvar a = {};\r\nconsole.log(\"Before : \" + a.oops);\r\nHoek.merge({}, JSON.parse(malicious_payload));\r\nconsole.log(\"After : \" + a.oops);\r\n\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `hoek` to version 4.2.1, 5.0.3 or higher.\n## References\n- [GitHub Commit](https://github.com/hapijs/hoek/commit/32ed5c9413321fbc37da5ca81a7cbab693786dee)\n- [GitHub Commit](https://github.com/hapijs/hoek/commit/5aed1a8c4a3d55722d1c799f2368857bf418d6df)\n- [GitHub Issue](https://github.com/hapijs/hoek/issues/230)\n- [GitHub PR](https://github.com/hapijs/hoek/pull/227)\n- [HackerOne Report](https://hackerone.com/reports/310439)\n- [NPM Security Advisory](http://npmjs.com/advisories/566)\n",
+      "epssDetails": {
+        "percentile": "0.78957",
+        "probability": "0.00782",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2018-3728"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ],
+        "NSP": [
+          "566"
+        ],
+        "GHSA": [
+          "GHSA-jp4x-w63m-7wgm"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-HOEK-12061"
+        ]
+      },
+      "packageName": "hoek",
+      "proprietary": false,
+      "creationTime": "2018-02-12T22:28:27.612000Z",
+      "functions_new": [
+        {
+          "version": [
+            ">=5.0.0 <5.0.3"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "functionName": "exports.merge"
+          }
+        },
+        {
+          "version": [
+            ">0.0.18 <4.2.1"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "functionName": "exports.merge"
+          }
+        },
+        {
+          "version": [
+            "<0.0.19"
+          ],
+          "functionId": {
+            "filePath": "lib/hoek.js",
+            "functionName": "exports.merge"
+          }
+        }
+      ],
+      "alternativeIds": [
+        "SNYK-JS-HOEK-12061"
+      ],
+      "disclosureTime": "2018-02-12T22:28:27Z",
+      "packageManager": "npm",
+      "publicationTime": "2018-02-14T13:22:50Z",
+      "modificationTime": "2023-03-26T15:11:38.028811Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "testing-api@just4developments/vscode-testing-api#e13ab941dc2d6317a510ba3a79e22d31c2478db8",
+        "unirest@0.5.1",
+        "request@2.74.0",
+        "hawk@3.1.3",
+        "boom@2.10.1",
+        "hoek@2.16.3"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "request@2.82.0",
+        "hawk@6.0.2",
+        "boom@4.0.0",
+        "hoek@4.2.1"
+      ],
+      "version": "2.16.3",
+      "name": "hoek",
+      "isUpgradable": false,
+      "isPatchable": true,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:hoek:20180212",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L/E:P",
+      "credit": [
+        "Olivier Arteau (HoLyVieR)"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.2.1",
+          ">=5.0.0 <5.0.3"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.2.1",
+        "5.0.3"
+      ],
+      "patches": [
+        {
+          "id": "patch:npm:hoek:20180212:0",
+          "urls": [
+            "https://snyk-patches.s3.amazonaws.com/npm/hoek/20180212/20180212_0_0_hoek_5aed1a8c4a3d55722d1c799f2368857bf418d6df.patch"
+          ],
+          "version": "<4.2.1 >=4.1.0 || <3.0.4 >=3.0.0",
+          "comments": [],
+          "modificationTime": "2019-12-03T11:40:45.879582Z"
+        },
+        {
+          "id": "patch:npm:hoek:20180212:1",
+          "urls": [
+            "https://snyk-patches.s3.amazonaws.com/npm/hoek/20180212/20180212_0_1_hoek_32ed5c9413321fbc37da5ca81a7cbab693786dee.patch"
+          ],
+          "version": ">=2.0.0 <3.0.0",
+          "comments": [],
+          "modificationTime": "2019-12-03T11:40:45.880722Z"
+        }
+      ],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.3,
+      "functions": [
+        {
+          "version": [
+            ">=5.0.0 <5.0.3"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "className": null,
+            "functionName": "exports.merge"
+          }
+        },
+        {
+          "version": [
+            ">0.0.18 <4.2.1"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "className": null,
+            "functionName": "exports.merge"
+          }
+        },
+        {
+          "version": [
+            "<0.0.19"
+          ],
+          "functionId": {
+            "filePath": "lib/hoek.js",
+            "className": null,
+            "functionName": "exports.merge"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "hoek",
+      "references": [
+        {
+          "url": "https://github.com/hapijs/hoek/commit/32ed5c9413321fbc37da5ca81a7cbab693786dee",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/hapijs/hoek/commit/5aed1a8c4a3d55722d1c799f2368857bf418d6df",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/hapijs/hoek/issues/230",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/hapijs/hoek/pull/227",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://hackerone.com/reports/310439",
+          "title": "HackerOne Report"
+        },
+        {
+          "url": "http://npmjs.com/advisories/566",
+          "title": "NPM Security Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "low",
+          "cvssV3Vector": "CVSS:3.0/AV:L/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 2.9,
+          "modificationTime": "2023-03-26T15:11:38.028811Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 8.8,
+          "modificationTime": "2022-01-03T16:28:04.444162Z"
+        }
+      ],
+      "description": "## Overview\n[hoek](https://github.com/hapijs/hoek) is an Utility methods for the hapi ecosystem.\n\nAffected versions of this package are vulnerable to Prototype Pollution. The utilities function allow modification of the `Object` prototype. If an attacker can control part of the structure passed to this function, they could add or modify an existing property.  \r\n\r\n## PoC by Olivier Arteau (HoLyVieR)\r\n```js\r\nvar Hoek = require('hoek');\r\nvar malicious_payload = '{\"__proto__\":{\"oops\":\"It works !\"}}';\r\n\r\nvar a = {};\r\nconsole.log(\"Before : \" + a.oops);\r\nHoek.merge({}, JSON.parse(malicious_payload));\r\nconsole.log(\"After : \" + a.oops);\r\n\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `hoek` to version 4.2.1, 5.0.3 or higher.\n## References\n- [GitHub Commit](https://github.com/hapijs/hoek/commit/32ed5c9413321fbc37da5ca81a7cbab693786dee)\n- [GitHub Commit](https://github.com/hapijs/hoek/commit/5aed1a8c4a3d55722d1c799f2368857bf418d6df)\n- [GitHub Issue](https://github.com/hapijs/hoek/issues/230)\n- [GitHub PR](https://github.com/hapijs/hoek/pull/227)\n- [HackerOne Report](https://hackerone.com/reports/310439)\n- [NPM Security Advisory](http://npmjs.com/advisories/566)\n",
+      "epssDetails": {
+        "percentile": "0.78957",
+        "probability": "0.00782",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2018-3728"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ],
+        "NSP": [
+          "566"
+        ],
+        "GHSA": [
+          "GHSA-jp4x-w63m-7wgm"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-HOEK-12061"
+        ]
+      },
+      "packageName": "hoek",
+      "proprietary": false,
+      "creationTime": "2018-02-12T22:28:27.612000Z",
+      "functions_new": [
+        {
+          "version": [
+            ">=5.0.0 <5.0.3"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "functionName": "exports.merge"
+          }
+        },
+        {
+          "version": [
+            ">0.0.18 <4.2.1"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "functionName": "exports.merge"
+          }
+        },
+        {
+          "version": [
+            "<0.0.19"
+          ],
+          "functionId": {
+            "filePath": "lib/hoek.js",
+            "functionName": "exports.merge"
+          }
+        }
+      ],
+      "alternativeIds": [
+        "SNYK-JS-HOEK-12061"
+      ],
+      "disclosureTime": "2018-02-12T22:28:27Z",
+      "packageManager": "npm",
+      "publicationTime": "2018-02-14T13:22:50Z",
+      "modificationTime": "2023-03-26T15:11:38.028811Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "testing-api@just4developments/vscode-testing-api#e13ab941dc2d6317a510ba3a79e22d31c2478db8",
+        "unirest@0.5.1",
+        "request@2.74.0",
+        "hawk@3.1.3",
+        "sntp@1.0.9",
+        "hoek@2.16.3"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "request@2.82.0",
+        "hawk@6.0.2",
+        "sntp@2.0.1",
+        "hoek@4.2.1"
+      ],
+      "version": "2.16.3",
+      "name": "hoek",
+      "isUpgradable": false,
+      "isPatchable": true,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:hoek:20180212",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L/E:P",
+      "credit": [
+        "Olivier Arteau (HoLyVieR)"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.2.1",
+          ">=5.0.0 <5.0.3"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.2.1",
+        "5.0.3"
+      ],
+      "patches": [
+        {
+          "id": "patch:npm:hoek:20180212:0",
+          "urls": [
+            "https://snyk-patches.s3.amazonaws.com/npm/hoek/20180212/20180212_0_0_hoek_5aed1a8c4a3d55722d1c799f2368857bf418d6df.patch"
+          ],
+          "version": "<4.2.1 >=4.1.0 || <3.0.4 >=3.0.0",
+          "comments": [],
+          "modificationTime": "2019-12-03T11:40:45.879582Z"
+        },
+        {
+          "id": "patch:npm:hoek:20180212:1",
+          "urls": [
+            "https://snyk-patches.s3.amazonaws.com/npm/hoek/20180212/20180212_0_1_hoek_32ed5c9413321fbc37da5ca81a7cbab693786dee.patch"
+          ],
+          "version": ">=2.0.0 <3.0.0",
+          "comments": [],
+          "modificationTime": "2019-12-03T11:40:45.880722Z"
+        }
+      ],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.3,
+      "functions": [
+        {
+          "version": [
+            ">=5.0.0 <5.0.3"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "className": null,
+            "functionName": "exports.merge"
+          }
+        },
+        {
+          "version": [
+            ">0.0.18 <4.2.1"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "className": null,
+            "functionName": "exports.merge"
+          }
+        },
+        {
+          "version": [
+            "<0.0.19"
+          ],
+          "functionId": {
+            "filePath": "lib/hoek.js",
+            "className": null,
+            "functionName": "exports.merge"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "hoek",
+      "references": [
+        {
+          "url": "https://github.com/hapijs/hoek/commit/32ed5c9413321fbc37da5ca81a7cbab693786dee",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/hapijs/hoek/commit/5aed1a8c4a3d55722d1c799f2368857bf418d6df",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/hapijs/hoek/issues/230",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/hapijs/hoek/pull/227",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://hackerone.com/reports/310439",
+          "title": "HackerOne Report"
+        },
+        {
+          "url": "http://npmjs.com/advisories/566",
+          "title": "NPM Security Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "low",
+          "cvssV3Vector": "CVSS:3.0/AV:L/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 2.9,
+          "modificationTime": "2023-03-26T15:11:38.028811Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.0/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 8.8,
+          "modificationTime": "2022-01-03T16:28:04.444162Z"
+        }
+      ],
+      "description": "## Overview\n[hoek](https://github.com/hapijs/hoek) is an Utility methods for the hapi ecosystem.\n\nAffected versions of this package are vulnerable to Prototype Pollution. The utilities function allow modification of the `Object` prototype. If an attacker can control part of the structure passed to this function, they could add or modify an existing property.  \r\n\r\n## PoC by Olivier Arteau (HoLyVieR)\r\n```js\r\nvar Hoek = require('hoek');\r\nvar malicious_payload = '{\"__proto__\":{\"oops\":\"It works !\"}}';\r\n\r\nvar a = {};\r\nconsole.log(\"Before : \" + a.oops);\r\nHoek.merge({}, JSON.parse(malicious_payload));\r\nconsole.log(\"After : \" + a.oops);\r\n\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `hoek` to version 4.2.1, 5.0.3 or higher.\n## References\n- [GitHub Commit](https://github.com/hapijs/hoek/commit/32ed5c9413321fbc37da5ca81a7cbab693786dee)\n- [GitHub Commit](https://github.com/hapijs/hoek/commit/5aed1a8c4a3d55722d1c799f2368857bf418d6df)\n- [GitHub Issue](https://github.com/hapijs/hoek/issues/230)\n- [GitHub PR](https://github.com/hapijs/hoek/pull/227)\n- [HackerOne Report](https://hackerone.com/reports/310439)\n- [NPM Security Advisory](http://npmjs.com/advisories/566)\n",
+      "epssDetails": {
+        "percentile": "0.78957",
+        "probability": "0.00782",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2018-3728"
+        ],
+        "CWE": [
+          "CWE-1321"
+        ],
+        "NSP": [
+          "566"
+        ],
+        "GHSA": [
+          "GHSA-jp4x-w63m-7wgm"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-HOEK-12061"
+        ]
+      },
+      "packageName": "hoek",
+      "proprietary": false,
+      "creationTime": "2018-02-12T22:28:27.612000Z",
+      "functions_new": [
+        {
+          "version": [
+            ">=5.0.0 <5.0.3"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "functionName": "exports.merge"
+          }
+        },
+        {
+          "version": [
+            ">0.0.18 <4.2.1"
+          ],
+          "functionId": {
+            "filePath": "lib/index.js",
+            "functionName": "exports.merge"
+          }
+        },
+        {
+          "version": [
+            "<0.0.19"
+          ],
+          "functionId": {
+            "filePath": "lib/hoek.js",
+            "functionName": "exports.merge"
+          }
+        }
+      ],
+      "alternativeIds": [
+        "SNYK-JS-HOEK-12061"
+      ],
+      "disclosureTime": "2018-02-12T22:28:27Z",
+      "packageManager": "npm",
+      "publicationTime": "2018-02-14T13:22:50Z",
+      "modificationTime": "2023-03-26T15:11:38.028811Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "testing-api@just4developments/vscode-testing-api#e13ab941dc2d6317a510ba3a79e22d31c2478db8",
+        "unirest@0.5.1",
+        "request@2.74.0",
+        "hawk@3.1.3",
+        "cryptiles@2.0.5",
+        "boom@2.10.1",
+        "hoek@2.16.3"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "request@2.82.0",
+        "hawk@6.0.2",
+        "cryptiles@3.0.0",
+        "boom@3.1.3",
+        "hoek@4.2.1"
+      ],
+      "version": "2.16.3",
+      "name": "hoek",
+      "isUpgradable": false,
+      "isPatchable": true,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:mime:20170907",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L",
+      "credit": [
+        "Cristian-Alexandru Staicu"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<1.4.1",
+          ">=2.0.0 <2.0.3"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.4.1",
+        "2.0.3"
+      ],
+      "patches": [
+        {
+          "id": "patch:npm:mime:20170907:0",
+          "urls": [
+            "https://snyk-patches.s3.amazonaws.com/npm/mime/20170907/mime_20170907_0_0_855d0c4b8b22e4a80b9401a81f2872058eae274d.patch"
+          ],
+          "version": "=1.2.11 || =1.3.4",
+          "comments": [],
+          "modificationTime": "2019-12-03T11:40:45.877450Z"
+        }
+      ],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "low",
+      "cvssScore": 3.7,
+      "functions": [
+        {
+          "version": [
+            ">=2.0.0 <2.0.3"
+          ],
+          "functionId": {
+            "filePath": "Mime.js",
+            "className": null,
+            "functionName": "Mime.prototype.getType"
+          }
+        },
+        {
+          "version": [
+            ">=1.2.6 <1.4.1"
+          ],
+          "functionId": {
+            "filePath": "mime.js",
+            "className": null,
+            "functionName": "Mime.prototype.lookup"
+          }
+        },
+        {
+          "version": [
+            "<1.2.6"
+          ],
+          "functionId": {
+            "filePath": "mime.js",
+            "className": null,
+            "functionName": "mime.module.exports.lookup"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "mime",
+      "references": [
+        {
+          "url": "https://github.com/broofa/node-mime/commit/1df903fdeb9ae7eaa048795b8d580ce2c98f40b0",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/broofa/node-mime/commit/855d0c4b8b22e4a80b9401a81f2872058eae274d",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/broofa/node-mime/issues/167",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/535",
+          "title": "NPM Security Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-01-03T16:21:39.161781Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2023-03-26T15:10:21.625283Z"
+        }
+      ],
+      "description": "## Overview\n[mime](https://www.npmjs.com/package/mime) is a comprehensive, compact MIME type module.\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS). It uses regex the following regex `/.*[\\.\\/\\\\]/` in its lookup, which can cause a slowdown of 2 seconds for 50k characters.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `mime` to version 1.4.1, 2.0.3 or higher.\n## References\n- [GitHub Commit](https://github.com/broofa/node-mime/commit/1df903fdeb9ae7eaa048795b8d580ce2c98f40b0)\n- [GitHub Commit](https://github.com/broofa/node-mime/commit/855d0c4b8b22e4a80b9401a81f2872058eae274d)\n- [GitHub Issue](https://github.com/broofa/node-mime/issues/167)\n- [NPM Security Advisory](https://www.npmjs.com/advisories/535)\n",
+      "epssDetails": {
+        "percentile": "0.40460",
+        "probability": "0.00101",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2017-16138"
+        ],
+        "CWE": [
+          "CWE-400"
+        ],
+        "NSP": [
+          "535"
+        ],
+        "GHSA": [
+          "GHSA-wrvr-8mpx-r7pp"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-MIME-10788"
+        ]
+      },
+      "packageName": "mime",
+      "proprietary": false,
+      "creationTime": "2017-09-26T05:48:40.307000Z",
+      "functions_new": [
+        {
+          "version": [
+            ">=2.0.0 <2.0.3"
+          ],
+          "functionId": {
+            "filePath": "Mime.js",
+            "functionName": "Mime.prototype.getType"
+          }
+        },
+        {
+          "version": [
+            ">=1.2.6 <1.4.1"
+          ],
+          "functionId": {
+            "filePath": "mime.js",
+            "functionName": "Mime.prototype.lookup"
+          }
+        },
+        {
+          "version": [
+            "<1.2.6"
+          ],
+          "functionId": {
+            "filePath": "mime.js",
+            "functionName": "mime.module.exports.lookup"
+          }
+        }
+      ],
+      "alternativeIds": [
+        "SNYK-JS-MIME-10788"
+      ],
+      "disclosureTime": "2017-09-07T21:00:00Z",
+      "packageManager": "npm",
+      "publicationTime": "2017-09-27T05:48:40Z",
+      "modificationTime": "2023-03-26T15:10:21.625283Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "low",
+      "packagePopularityRank": 99,
+      "from": [
+        "testing-api@just4developments/vscode-testing-api#e13ab941dc2d6317a510ba3a79e22d31c2478db8",
+        "unirest@0.5.1",
+        "mime@1.3.6"
+      ],
+      "upgradePath": [
+        false,
+        "unirest@0.6.0",
+        "mime@2.4.0"
+      ],
+      "version": "1.3.6",
+      "name": "mime",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:tunnel-agent:20170305",
+      "title": "Uninitialized Memory Exposure",
+      "CVSSv3": "CVSS:3.1/AV:L/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N/E:P/RL:O/RC:C",
+      "credit": [
+        "ChALkeR"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<0.6.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "0.6.0"
+      ],
+      "patches": [
+        {
+          "id": "patch:npm:tunnel-agent:20170305:0",
+          "urls": [
+            "https://snyk-patches.s3.amazonaws.com/npm/tunnel-agent/20170305/tunnel-agent_20170305_0_0_9ca95ec7219daface8a6fc2674000653de0922c0.patch"
+          ],
+          "version": "=0.4.3 || =0.5.0",
+          "comments": [],
+          "modificationTime": "2019-12-03T11:40:45.868281Z"
+        }
+      ],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.1,
+      "functions": [
+        {
+          "version": [
+            "<0.6.0"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "className": null,
+            "functionName": "TunnelingAgent.prototype.createSocket"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "tunnel-agent",
+      "references": [
+        {
+          "url": "https://github.com/request/tunnel-agent/commit/9ca95ec7219daface8a6fc2674000653de0922c0",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://gist.github.com/ChALkeR/fd6b2c445834244e7d440a043f9d2ff4",
+          "title": "PoC by ChALkeR"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\r\n[`tunnel-agent`](https://www.npmjs.com/package/tunnel-agent) is HTTP proxy tunneling agent. Affected versions of the package are vulnerable to Uninitialized Memory Exposure. \r\n\r\nA possible memory disclosure vulnerability exists when a value of type `number` is used to set the _proxy.auth_ option of a request `request` and results in a possible uninitialized memory exposures in the request body.\r\n\r\nThis is a result of unobstructed use of the `Buffer` constructor, whose [insecure default constructor increases the odds of memory leakage](https://snyk.io/blog/exploiting-buffer/).\r\n\r\n## Details\r\nConstructing a `Buffer` class with integer `N` creates a `Buffer` of length `N` with raw (not \"zero-ed\") memory.\r\n\r\nIn the following example, the first call would allocate 100 bytes of memory, while the second example will allocate the memory needed for the string \"100\":\r\n```js\r\n// uninitialized Buffer of length 100\r\nx = new Buffer(100);\r\n// initialized Buffer with value of '100'\r\nx = new Buffer('100');\r\n```\r\n\r\n`tunnel-agent`'s `request` construction uses the default `Buffer` constructor as-is, making it easy to append uninitialized memory to an existing list. If the value of the buffer list is exposed to users, it may expose raw server side memory, potentially holding secrets, private data and code. This is a similar vulnerability to the infamous [`Heartbleed`](http://heartbleed.com/) flaw in OpenSSL.\r\n\r\n#### Proof of concept by ChALkeR\r\n```js\r\nrequire('request')({\r\n  method: 'GET',\r\n  uri: 'http://www.example.com',\r\n  tunnel: true,\r\n  proxy:{\r\n      protocol: 'http:',\r\n      host:\"127.0.0.1\",\r\n      port:8080,\r\n      auth:80\r\n  }\r\n});\r\n```\r\n\r\nYou can read more about the insecure `Buffer` behavior [on our blog](https://snyk.io/blog/exploiting-buffer/).\r\n\r\nSimilar vulnerabilities were discovered in [request](https://snyk.io/vuln/npm:request:20160119), [mongoose](https://snyk.io/vuln/npm:mongoose:20160116), [ws](https://snyk.io/vuln/npm:ws:20160104) and [sequelize](https://snyk.io/vuln/npm:sequelize:20160115).\r\n\r\n## Remediation\r\nUpgrade `tunnel-agent` to version 0.6.0 or higher.\r\n**Note** This is vulnerable only for Node <=4\n\n## References\n- [GitHub Commit](https://github.com/request/tunnel-agent/commit/9ca95ec7219daface8a6fc2674000653de0922c0)\n- [PoC by ChALkeR](https://gist.github.com/ChALkeR/fd6b2c445834244e7d440a043f9d2ff4)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-201"
+        ],
+        "NSP": [
+          "598"
+        ],
+        "GHSA": [
+          "GHSA-xc7v-wxcw-j472"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-TUNNELAGENT-10672"
+        ]
+      },
+      "packageName": "tunnel-agent",
+      "proprietary": false,
+      "creationTime": "2017-07-05T07:23:57.738000Z",
+      "functions_new": [
+        {
+          "version": [
+            "<0.6.0"
+          ],
+          "functionId": {
+            "filePath": "index.js",
+            "functionName": "TunnelingAgent.prototype.createSocket"
+          }
+        }
+      ],
+      "alternativeIds": [
+        "SNYK-JS-TUNNELAGENT-10672"
+      ],
+      "disclosureTime": "2017-03-04T22:00:00Z",
+      "packageManager": "npm",
+      "publicationTime": "2017-07-05T14:05:50Z",
+      "modificationTime": "2020-12-14T14:41:09.129940Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "testing-api@just4developments/vscode-testing-api#e13ab941dc2d6317a510ba3a79e22d31c2478db8",
+        "unirest@0.5.1",
+        "request@2.74.0",
+        "tunnel-agent@0.4.3"
+      ],
+      "upgradePath": [
+        false,
+        "unirest@0.6.0",
+        "request@2.88.0",
+        "tunnel-agent@0.6.0"
+      ],
+      "version": "0.4.3",
+      "name": "tunnel-agent",
+      "isUpgradable": true,
+      "isPatchable": true,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 84,
+  "severityMap": {
+    "critical": 0,
+    "high": 4,
+    "medium": 8,
+    "low": 1
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "13 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 9,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/just4developments/vscode-testing-api.git"
+}

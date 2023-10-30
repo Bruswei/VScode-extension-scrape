@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://gitlab.com/pinage404/pinage404-vscode-extension-packs.git"
+}

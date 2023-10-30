@@ -1,0 +1,179 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-VM2-5772823",
+      "title": "Remote Code Execution (RCE)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P",
+      "credit": [
+        "SeungHyun Lee"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "critical",
+      "cvssScore": 9.8,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "vm2",
+      "references": [
+        {
+          "url": "https://github.com/patriksimek/vm2/issues/533",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+          "cvssV3BaseScore": 10,
+          "modificationTime": "2023-08-01T13:10:44.538273Z"
+        }
+      ],
+      "description": "## Overview\n[vm2](https://github.com/patriksimek/vm2#readme) is a sandbox that can run untrusted code with whitelisted Node's built-in modules.\n\nAffected versions of this package are vulnerable to Remote Code Execution (RCE) due to insufficient checks which allow an attacker to escape the sandbox.\r\n\r\n**Note:**\r\n\r\nAccording to the maintainer, the security issue cannot be properly addressed and the library will be discontinued.\n## Remediation\nThere is no fixed version for `vm2`.\n## References\n- [GitHub Issue](https://github.com/patriksimek/vm2/issues/533)\n",
+      "epssDetails": {
+        "percentile": "0.62148",
+        "probability": "0.00248",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-37903"
+        ],
+        "CWE": [
+          "CWE-94"
+        ]
+      },
+      "packageName": "vm2",
+      "proprietary": false,
+      "creationTime": "2023-07-12T14:23:22.486382Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-07-12T14:10:56Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-07-12T14:50:43.988574Z",
+      "modificationTime": "2023-09-21T15:25:11.297774Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "critical",
+      "packagePopularityRank": 99,
+      "from": [
+        "instant-mongo@hansvn/vscode-instant-mongo#742ae13129e1ca3f9691137c4d90475e3756316a",
+        "mongodb-topology@0.0.23",
+        "vm2@3.9.19"
+      ],
+      "upgradePath": [],
+      "version": "3.9.19",
+      "name": "vm2",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-VM2-5772825",
+      "title": "Remote Code Execution (RCE)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H/E:P",
+      "credit": [
+        "SeungHyun Lee"
+      ],
+      "semver": {
+        "vulnerable": [
+          "*"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "critical",
+      "cvssScore": 9.8,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "vm2",
+      "references": [
+        {
+          "url": "https://github.com/patriksimek/vm2/issues/533",
+          "title": "GitHub Issue"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2023-07-27T13:11:18.322297Z"
+        }
+      ],
+      "description": "## Overview\n[vm2](https://github.com/patriksimek/vm2#readme) is a sandbox that can run untrusted code with whitelisted Node's built-in modules.\n\nAffected versions of this package are vulnerable to Remote Code Execution (RCE) such that the `Promise` handler sanitization can be bypassed, allowing attackers to escape the sandbox. \r\n\r\n**Note:**\r\n\r\nAccording to the maintainer, the security issue cannot be properly addressed and the library will be discontinued.\n## Remediation\nThere is no fixed version for `vm2`.\n## References\n- [GitHub Issue](https://github.com/patriksimek/vm2/issues/533)\n",
+      "epssDetails": {
+        "percentile": "0.12376",
+        "probability": "0.00045",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-37466"
+        ],
+        "CWE": [
+          "CWE-94"
+        ]
+      },
+      "packageName": "vm2",
+      "proprietary": false,
+      "creationTime": "2023-07-12T14:23:33.336819Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-07-12T14:20:17Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-07-12T14:50:28.303109Z",
+      "modificationTime": "2023-07-27T13:11:18.322297Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "critical",
+      "packagePopularityRank": 99,
+      "from": [
+        "instant-mongo@hansvn/vscode-instant-mongo#742ae13129e1ca3f9691137c4d90475e3756316a",
+        "mongodb-topology@0.0.23",
+        "vm2@3.9.19"
+      ],
+      "upgradePath": [],
+      "version": "3.9.19",
+      "name": "vm2",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 98,
+  "severityMap": {
+    "critical": 2,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "2 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 2,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/hansvn/vscode-instant-mongo.git"
+}

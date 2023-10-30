@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/ericsia/vscode-python-snippet-pack-2.0.git"
+}

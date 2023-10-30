@@ -1,0 +1,113 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-ENGINEIO-1056749",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:P/RL:O/RC:R",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<4.0.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "4.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "engine.io",
+      "references": [
+        {
+          "url": "https://github.com/socketio/engine.io/commit/734f9d1268840722c41219e69eb58318e0b2ac6b",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/bcaller/kill-engine-io",
+          "title": "PoC"
+        },
+        {
+          "url": "https://blog.caller.xyz/socketio-engineio-dos/",
+          "title": "Research Blogpost"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-01-03T18:09:21.542175Z"
+        }
+      ],
+      "description": "## Overview\n[engine.io](https://github.com/socketio/engine.io) is a realtime engine behind Socket.IO. It provides the foundation of a bidirectional connection between client and server\n\nAffected versions of this package are vulnerable to Denial of Service (DoS) via a POST request to the long polling transport.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `engine.io` to version 4.0.0 or higher.\n## References\n- [GitHub Commit](https://github.com/socketio/engine.io/commit/734f9d1268840722c41219e69eb58318e0b2ac6b)\n- [PoC](https://github.com/bcaller/kill-engine-io)\n- [Research Blogpost](https://blog.caller.xyz/socketio-engineio-dos/)\n",
+      "epssDetails": {
+        "percentile": "0.54367",
+        "probability": "0.00182",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2020-36048"
+        ],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "engine.io",
+      "proprietary": false,
+      "creationTime": "2021-01-08T10:58:56.558133Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-01-08T10:54:39Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-01-08T16:03:18.114498Z",
+      "modificationTime": "2022-01-03T18:09:21.542175Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "po-manager@zzhengjian/PO-Manager#d21922760a1aa6be54b03a0a2271570ccd09bacb",
+        "engine.io@3.6.1"
+      ],
+      "upgradePath": [
+        false,
+        "engine.io@4.0.0"
+      ],
+      "version": "3.6.1",
+      "name": "engine.io",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 71,
+  "severityMap": {
+    "critical": 0,
+    "high": 1,
+    "medium": 0,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "1 vulnerable dependency path",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/zzhengjian/PO-Manager.git"
+}

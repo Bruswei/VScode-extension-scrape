@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/Marus/cortex-debug-db-stm32l4.git"
+}

@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://gitlab.com/daLuiz/vscode-apdl-snippets.git"
+}

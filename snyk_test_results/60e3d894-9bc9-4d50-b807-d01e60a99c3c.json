@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://gitlab.com/SNDST00M/vscode-native-svg-preview.git"
+}

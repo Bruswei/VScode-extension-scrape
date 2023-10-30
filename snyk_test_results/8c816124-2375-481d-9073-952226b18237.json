@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://gitlab.com/vscode-extension-packs/node.js-backend-extension-pack.git"
+}

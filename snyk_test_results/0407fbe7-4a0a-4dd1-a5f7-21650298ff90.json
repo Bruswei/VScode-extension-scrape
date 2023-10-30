@@ -1,0 +1,120 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-SHELLJS-2332187",
+      "title": "Improper Privilege Management",
+      "CVSSv3": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:H/E:P",
+      "credit": [
+        "haxatron"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<0.8.5"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "0.8.5"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.1,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "shelljs",
+      "references": [
+        {
+          "url": "https://github.com/shelljs/shelljs/commit/d919d22dd6de385edaa9d90313075a77f74b338c",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/shelljs/shelljs/issues/1058",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/shelljs/shelljs/pull/1060",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:H",
+          "cvssV3BaseScore": 7.1,
+          "modificationTime": "2023-03-26T15:08:41.947503Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:H",
+          "cvssV3BaseScore": 7.1,
+          "modificationTime": "2022-02-09T16:10:36.984666Z"
+        }
+      ],
+      "description": "## Overview\n[shelljs](None) is a wrapper for the Unix shell commands for Node.js.\n\nAffected versions of this package are vulnerable to Improper Privilege Management. When `ShellJS` is used to create shell scripts which may be running as `root`, users with low-level privileges on the system can leak sensitive information such as passwords (depending on implementation) from the standard output of the privileged process OR shutdown privileged `ShellJS` processes via the `exec` function when triggering EACCESS errors.\r\n\r\n**Note:** Thi only impacts the synchronous version of `shell.exec()`.\n## Remediation\nUpgrade `shelljs` to version 0.8.5 or higher.\n## References\n- [GitHub Commit](https://github.com/shelljs/shelljs/commit/d919d22dd6de385edaa9d90313075a77f74b338c)\n- [GitHub Issue](https://github.com/shelljs/shelljs/issues/1058)\n- [GitHub PR](https://github.com/shelljs/shelljs/pull/1060)\n",
+      "epssDetails": {
+        "percentile": "0.07034",
+        "probability": "0.00043",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-0144"
+        ],
+        "CWE": [
+          "CWE-269"
+        ]
+      },
+      "packageName": "shelljs",
+      "proprietary": false,
+      "creationTime": "2022-01-11T12:52:23.829882Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-01-11T12:39:08Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-01-12T12:49:35.008405Z",
+      "modificationTime": "2023-03-26T15:08:41.947503Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "dotnet-cli-wrapper@JPAhnen/VsCodeNETCoreCLIWrapper#2657b4b57fde746d3d1ec58f6bb51c8fd8b77fe1",
+        "shelljs@0.7.8"
+      ],
+      "upgradePath": [
+        false,
+        "shelljs@0.8.5"
+      ],
+      "version": "0.7.8",
+      "name": "shelljs",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 20,
+  "severityMap": {
+    "critical": 0,
+    "high": 1,
+    "medium": 0,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "1 vulnerable dependency path",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/JPAhnen/VsCodeNETCoreCLIWrapper.git"
+}

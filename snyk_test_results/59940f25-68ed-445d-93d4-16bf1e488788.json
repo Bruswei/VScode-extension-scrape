@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/konapun/vscode_all-hallows-eve-plus.git"
+}

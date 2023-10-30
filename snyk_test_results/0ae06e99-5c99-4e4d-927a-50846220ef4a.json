@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/drweb86/Gherkin-Beautifier-VS-Code-Plugin.git"
+}

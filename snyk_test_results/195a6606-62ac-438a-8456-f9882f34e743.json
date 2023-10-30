@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/tomesparon/OpenVMS-DCL-VSCODE-Lang-Support.git"
+}

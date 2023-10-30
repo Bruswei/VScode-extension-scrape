@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "git+https://github.com/3axap4eHko/file-templates-manager.git"
+}

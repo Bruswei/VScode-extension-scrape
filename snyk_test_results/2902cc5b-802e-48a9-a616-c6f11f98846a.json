@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "git+https://github.com/chinchiheather/vscode-margin-colours.git"
+}

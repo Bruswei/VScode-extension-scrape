@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/pinshengjuan/vscodeExtension_edk2-uni-formatter.git"
+}

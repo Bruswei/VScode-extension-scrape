@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "vulnerabilities": [],
+  "numDependencies": 0,
+  "severityMap": {
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "No known vulnerabilities",
+  "filesystemPolicy": false,
+  "uniqueCount": 0,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/zhaouv/vscode-python-highlight-cell-splitter.git"
+}

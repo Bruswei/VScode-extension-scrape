@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/Luis-Domenech/vscode-git-push-progress.git"
+}

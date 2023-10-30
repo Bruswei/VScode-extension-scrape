@@ -1,0 +1,1135 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-D3COLOR-1076592",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "d3-color",
+      "references": [
+        {
+          "url": "https://github.com/d3/d3-color/pull/100",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/99",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/89",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/releases/tag/v3.1.0",
+          "title": "Github Releases"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[d3-color](https://www.npmjs.org/package/d3-color) is a Color spaces! RGB, HSL, Cubehelix, Lab and HCL (Lch).\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `rgb()` and `hrc()` functions. \r\n\r\nPoC by Yeting Li: \r\n```\r\nvar d3Color = require(\"d3-color\")\r\n// d3Color.rgb(\"rgb(255,255,255)\")\r\n\r\nfunction build_blank(n) {\r\n    var ret = \"rgb(\"\r\n    for (var i = 0; i < n; i++) {\r\n        ret += \"1\"\r\n    }\r\n    return ret + \"!\";\r\n}\r\n\r\nfor(var i = 1; i <= 5000000; i++) {\r\n    if (i % 1000 == 0) {\r\n        var time = Date.now();\r\n        var attack_str = build_blank(i)\r\n        d3Color.rgb(attack_str)\r\n        var time_cost = Date.now() - time;\r\n        console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n    }\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `d3-color` to version 3.1.0 or higher.\n## References\n- [Github PR](https://github.com/d3/d3-color/pull/100)\n- [Github PR](https://github.com/d3/d3-color/pull/99)\n- [GitHub PR](https://github.com/d3/d3-color/pull/89)\n- [Github Releases](https://github.com/d3/d3-color/releases/tag/v3.1.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "d3-color",
+      "proprietary": true,
+      "creationTime": "2021-02-18T13:32:47.195986Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-18T13:30:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-05T14:17:56Z",
+      "modificationTime": "2022-11-28T09:46:50.031732Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "dependencygraph@sz-p/vscode-dependencyGraph#ed6875d0245b5e92a2691ce64e47beab7e5434f0",
+        "d3@5.16.0",
+        "d3-color@1.4.1"
+      ],
+      "upgradePath": [
+        false,
+        "d3@7.0.0",
+        "d3-color@3.1.0"
+      ],
+      "version": "1.4.1",
+      "name": "d3-color",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-D3COLOR-1076592",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "d3-color",
+      "references": [
+        {
+          "url": "https://github.com/d3/d3-color/pull/100",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/99",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/89",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/releases/tag/v3.1.0",
+          "title": "Github Releases"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[d3-color](https://www.npmjs.org/package/d3-color) is a Color spaces! RGB, HSL, Cubehelix, Lab and HCL (Lch).\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `rgb()` and `hrc()` functions. \r\n\r\nPoC by Yeting Li: \r\n```\r\nvar d3Color = require(\"d3-color\")\r\n// d3Color.rgb(\"rgb(255,255,255)\")\r\n\r\nfunction build_blank(n) {\r\n    var ret = \"rgb(\"\r\n    for (var i = 0; i < n; i++) {\r\n        ret += \"1\"\r\n    }\r\n    return ret + \"!\";\r\n}\r\n\r\nfor(var i = 1; i <= 5000000; i++) {\r\n    if (i % 1000 == 0) {\r\n        var time = Date.now();\r\n        var attack_str = build_blank(i)\r\n        d3Color.rgb(attack_str)\r\n        var time_cost = Date.now() - time;\r\n        console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n    }\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `d3-color` to version 3.1.0 or higher.\n## References\n- [Github PR](https://github.com/d3/d3-color/pull/100)\n- [Github PR](https://github.com/d3/d3-color/pull/99)\n- [GitHub PR](https://github.com/d3/d3-color/pull/89)\n- [Github Releases](https://github.com/d3/d3-color/releases/tag/v3.1.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "d3-color",
+      "proprietary": true,
+      "creationTime": "2021-02-18T13:32:47.195986Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-18T13:30:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-05T14:17:56Z",
+      "modificationTime": "2022-11-28T09:46:50.031732Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "dependencygraph@sz-p/vscode-dependencyGraph#ed6875d0245b5e92a2691ce64e47beab7e5434f0",
+        "d3@5.16.0",
+        "d3-interpolate@1.4.0",
+        "d3-color@1.4.1"
+      ],
+      "upgradePath": [
+        false,
+        "d3@7.0.0",
+        "d3-interpolate@3.0.0",
+        "d3-color@3.1.0"
+      ],
+      "version": "1.4.1",
+      "name": "d3-color",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-D3COLOR-1076592",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "d3-color",
+      "references": [
+        {
+          "url": "https://github.com/d3/d3-color/pull/100",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/99",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/89",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/releases/tag/v3.1.0",
+          "title": "Github Releases"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[d3-color](https://www.npmjs.org/package/d3-color) is a Color spaces! RGB, HSL, Cubehelix, Lab and HCL (Lch).\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `rgb()` and `hrc()` functions. \r\n\r\nPoC by Yeting Li: \r\n```\r\nvar d3Color = require(\"d3-color\")\r\n// d3Color.rgb(\"rgb(255,255,255)\")\r\n\r\nfunction build_blank(n) {\r\n    var ret = \"rgb(\"\r\n    for (var i = 0; i < n; i++) {\r\n        ret += \"1\"\r\n    }\r\n    return ret + \"!\";\r\n}\r\n\r\nfor(var i = 1; i <= 5000000; i++) {\r\n    if (i % 1000 == 0) {\r\n        var time = Date.now();\r\n        var attack_str = build_blank(i)\r\n        d3Color.rgb(attack_str)\r\n        var time_cost = Date.now() - time;\r\n        console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n    }\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `d3-color` to version 3.1.0 or higher.\n## References\n- [Github PR](https://github.com/d3/d3-color/pull/100)\n- [Github PR](https://github.com/d3/d3-color/pull/99)\n- [GitHub PR](https://github.com/d3/d3-color/pull/89)\n- [Github Releases](https://github.com/d3/d3-color/releases/tag/v3.1.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "d3-color",
+      "proprietary": true,
+      "creationTime": "2021-02-18T13:32:47.195986Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-18T13:30:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-05T14:17:56Z",
+      "modificationTime": "2022-11-28T09:46:50.031732Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "dependencygraph@sz-p/vscode-dependencyGraph#ed6875d0245b5e92a2691ce64e47beab7e5434f0",
+        "d3@5.16.0",
+        "d3-transition@1.3.2",
+        "d3-color@1.4.1"
+      ],
+      "upgradePath": [
+        false,
+        "d3@7.0.0",
+        "d3-transition@3.0.0",
+        "d3-color@3.1.0"
+      ],
+      "version": "1.4.1",
+      "name": "d3-color",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-D3COLOR-1076592",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "d3-color",
+      "references": [
+        {
+          "url": "https://github.com/d3/d3-color/pull/100",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/99",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/89",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/releases/tag/v3.1.0",
+          "title": "Github Releases"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[d3-color](https://www.npmjs.org/package/d3-color) is a Color spaces! RGB, HSL, Cubehelix, Lab and HCL (Lch).\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `rgb()` and `hrc()` functions. \r\n\r\nPoC by Yeting Li: \r\n```\r\nvar d3Color = require(\"d3-color\")\r\n// d3Color.rgb(\"rgb(255,255,255)\")\r\n\r\nfunction build_blank(n) {\r\n    var ret = \"rgb(\"\r\n    for (var i = 0; i < n; i++) {\r\n        ret += \"1\"\r\n    }\r\n    return ret + \"!\";\r\n}\r\n\r\nfor(var i = 1; i <= 5000000; i++) {\r\n    if (i % 1000 == 0) {\r\n        var time = Date.now();\r\n        var attack_str = build_blank(i)\r\n        d3Color.rgb(attack_str)\r\n        var time_cost = Date.now() - time;\r\n        console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n    }\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `d3-color` to version 3.1.0 or higher.\n## References\n- [Github PR](https://github.com/d3/d3-color/pull/100)\n- [Github PR](https://github.com/d3/d3-color/pull/99)\n- [GitHub PR](https://github.com/d3/d3-color/pull/89)\n- [Github Releases](https://github.com/d3/d3-color/releases/tag/v3.1.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "d3-color",
+      "proprietary": true,
+      "creationTime": "2021-02-18T13:32:47.195986Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-18T13:30:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-05T14:17:56Z",
+      "modificationTime": "2022-11-28T09:46:50.031732Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "dependencygraph@sz-p/vscode-dependencyGraph#ed6875d0245b5e92a2691ce64e47beab7e5434f0",
+        "d3@5.16.0",
+        "d3-scale-chromatic@1.5.0",
+        "d3-color@1.4.1"
+      ],
+      "upgradePath": [
+        false,
+        "d3@7.0.0",
+        "d3-scale-chromatic@3.0.0",
+        "d3-color@3.1.0"
+      ],
+      "version": "1.4.1",
+      "name": "d3-color",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-D3COLOR-1076592",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "d3-color",
+      "references": [
+        {
+          "url": "https://github.com/d3/d3-color/pull/100",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/99",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/89",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/releases/tag/v3.1.0",
+          "title": "Github Releases"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[d3-color](https://www.npmjs.org/package/d3-color) is a Color spaces! RGB, HSL, Cubehelix, Lab and HCL (Lch).\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `rgb()` and `hrc()` functions. \r\n\r\nPoC by Yeting Li: \r\n```\r\nvar d3Color = require(\"d3-color\")\r\n// d3Color.rgb(\"rgb(255,255,255)\")\r\n\r\nfunction build_blank(n) {\r\n    var ret = \"rgb(\"\r\n    for (var i = 0; i < n; i++) {\r\n        ret += \"1\"\r\n    }\r\n    return ret + \"!\";\r\n}\r\n\r\nfor(var i = 1; i <= 5000000; i++) {\r\n    if (i % 1000 == 0) {\r\n        var time = Date.now();\r\n        var attack_str = build_blank(i)\r\n        d3Color.rgb(attack_str)\r\n        var time_cost = Date.now() - time;\r\n        console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n    }\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `d3-color` to version 3.1.0 or higher.\n## References\n- [Github PR](https://github.com/d3/d3-color/pull/100)\n- [Github PR](https://github.com/d3/d3-color/pull/99)\n- [GitHub PR](https://github.com/d3/d3-color/pull/89)\n- [Github Releases](https://github.com/d3/d3-color/releases/tag/v3.1.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "d3-color",
+      "proprietary": true,
+      "creationTime": "2021-02-18T13:32:47.195986Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-18T13:30:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-05T14:17:56Z",
+      "modificationTime": "2022-11-28T09:46:50.031732Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "dependencygraph@sz-p/vscode-dependencyGraph#ed6875d0245b5e92a2691ce64e47beab7e5434f0",
+        "d3@5.16.0",
+        "d3-transition@1.3.2",
+        "d3-interpolate@1.4.0",
+        "d3-color@1.4.1"
+      ],
+      "upgradePath": [
+        false,
+        "d3@7.0.0",
+        "d3-transition@3.0.0",
+        "d3-interpolate@3.0.0",
+        "d3-color@3.1.0"
+      ],
+      "version": "1.4.1",
+      "name": "d3-color",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-D3COLOR-1076592",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "d3-color",
+      "references": [
+        {
+          "url": "https://github.com/d3/d3-color/pull/100",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/99",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/89",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/releases/tag/v3.1.0",
+          "title": "Github Releases"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[d3-color](https://www.npmjs.org/package/d3-color) is a Color spaces! RGB, HSL, Cubehelix, Lab and HCL (Lch).\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `rgb()` and `hrc()` functions. \r\n\r\nPoC by Yeting Li: \r\n```\r\nvar d3Color = require(\"d3-color\")\r\n// d3Color.rgb(\"rgb(255,255,255)\")\r\n\r\nfunction build_blank(n) {\r\n    var ret = \"rgb(\"\r\n    for (var i = 0; i < n; i++) {\r\n        ret += \"1\"\r\n    }\r\n    return ret + \"!\";\r\n}\r\n\r\nfor(var i = 1; i <= 5000000; i++) {\r\n    if (i % 1000 == 0) {\r\n        var time = Date.now();\r\n        var attack_str = build_blank(i)\r\n        d3Color.rgb(attack_str)\r\n        var time_cost = Date.now() - time;\r\n        console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n    }\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `d3-color` to version 3.1.0 or higher.\n## References\n- [Github PR](https://github.com/d3/d3-color/pull/100)\n- [Github PR](https://github.com/d3/d3-color/pull/99)\n- [GitHub PR](https://github.com/d3/d3-color/pull/89)\n- [Github Releases](https://github.com/d3/d3-color/releases/tag/v3.1.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "d3-color",
+      "proprietary": true,
+      "creationTime": "2021-02-18T13:32:47.195986Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-18T13:30:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-05T14:17:56Z",
+      "modificationTime": "2022-11-28T09:46:50.031732Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "dependencygraph@sz-p/vscode-dependencyGraph#ed6875d0245b5e92a2691ce64e47beab7e5434f0",
+        "d3@5.16.0",
+        "d3-brush@1.1.6",
+        "d3-interpolate@1.4.0",
+        "d3-color@1.4.1"
+      ],
+      "upgradePath": [
+        false,
+        "d3@7.0.0",
+        "d3-brush@3.0.0",
+        "d3-interpolate@3.0.0",
+        "d3-color@3.1.0"
+      ],
+      "version": "1.4.1",
+      "name": "d3-color",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-D3COLOR-1076592",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "d3-color",
+      "references": [
+        {
+          "url": "https://github.com/d3/d3-color/pull/100",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/99",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/89",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/releases/tag/v3.1.0",
+          "title": "Github Releases"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[d3-color](https://www.npmjs.org/package/d3-color) is a Color spaces! RGB, HSL, Cubehelix, Lab and HCL (Lch).\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `rgb()` and `hrc()` functions. \r\n\r\nPoC by Yeting Li: \r\n```\r\nvar d3Color = require(\"d3-color\")\r\n// d3Color.rgb(\"rgb(255,255,255)\")\r\n\r\nfunction build_blank(n) {\r\n    var ret = \"rgb(\"\r\n    for (var i = 0; i < n; i++) {\r\n        ret += \"1\"\r\n    }\r\n    return ret + \"!\";\r\n}\r\n\r\nfor(var i = 1; i <= 5000000; i++) {\r\n    if (i % 1000 == 0) {\r\n        var time = Date.now();\r\n        var attack_str = build_blank(i)\r\n        d3Color.rgb(attack_str)\r\n        var time_cost = Date.now() - time;\r\n        console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n    }\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `d3-color` to version 3.1.0 or higher.\n## References\n- [Github PR](https://github.com/d3/d3-color/pull/100)\n- [Github PR](https://github.com/d3/d3-color/pull/99)\n- [GitHub PR](https://github.com/d3/d3-color/pull/89)\n- [Github Releases](https://github.com/d3/d3-color/releases/tag/v3.1.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "d3-color",
+      "proprietary": true,
+      "creationTime": "2021-02-18T13:32:47.195986Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-18T13:30:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-05T14:17:56Z",
+      "modificationTime": "2022-11-28T09:46:50.031732Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "dependencygraph@sz-p/vscode-dependencyGraph#ed6875d0245b5e92a2691ce64e47beab7e5434f0",
+        "d3@5.16.0",
+        "d3-scale@2.2.2",
+        "d3-interpolate@1.4.0",
+        "d3-color@1.4.1"
+      ],
+      "upgradePath": [
+        false,
+        "d3@7.0.0",
+        "d3-scale@4.0.0",
+        "d3-interpolate@3.0.0",
+        "d3-color@3.1.0"
+      ],
+      "version": "1.4.1",
+      "name": "d3-color",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-D3COLOR-1076592",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "d3-color",
+      "references": [
+        {
+          "url": "https://github.com/d3/d3-color/pull/100",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/99",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/89",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/releases/tag/v3.1.0",
+          "title": "Github Releases"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[d3-color](https://www.npmjs.org/package/d3-color) is a Color spaces! RGB, HSL, Cubehelix, Lab and HCL (Lch).\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `rgb()` and `hrc()` functions. \r\n\r\nPoC by Yeting Li: \r\n```\r\nvar d3Color = require(\"d3-color\")\r\n// d3Color.rgb(\"rgb(255,255,255)\")\r\n\r\nfunction build_blank(n) {\r\n    var ret = \"rgb(\"\r\n    for (var i = 0; i < n; i++) {\r\n        ret += \"1\"\r\n    }\r\n    return ret + \"!\";\r\n}\r\n\r\nfor(var i = 1; i <= 5000000; i++) {\r\n    if (i % 1000 == 0) {\r\n        var time = Date.now();\r\n        var attack_str = build_blank(i)\r\n        d3Color.rgb(attack_str)\r\n        var time_cost = Date.now() - time;\r\n        console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n    }\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `d3-color` to version 3.1.0 or higher.\n## References\n- [Github PR](https://github.com/d3/d3-color/pull/100)\n- [Github PR](https://github.com/d3/d3-color/pull/99)\n- [GitHub PR](https://github.com/d3/d3-color/pull/89)\n- [Github Releases](https://github.com/d3/d3-color/releases/tag/v3.1.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "d3-color",
+      "proprietary": true,
+      "creationTime": "2021-02-18T13:32:47.195986Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-18T13:30:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-05T14:17:56Z",
+      "modificationTime": "2022-11-28T09:46:50.031732Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "dependencygraph@sz-p/vscode-dependencyGraph#ed6875d0245b5e92a2691ce64e47beab7e5434f0",
+        "d3@5.16.0",
+        "d3-scale-chromatic@1.5.0",
+        "d3-interpolate@1.4.0",
+        "d3-color@1.4.1"
+      ],
+      "upgradePath": [
+        false,
+        "d3@7.0.0",
+        "d3-scale-chromatic@3.0.0",
+        "d3-interpolate@3.0.0",
+        "d3-color@3.1.0"
+      ],
+      "version": "1.4.1",
+      "name": "d3-color",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-D3COLOR-1076592",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "d3-color",
+      "references": [
+        {
+          "url": "https://github.com/d3/d3-color/pull/100",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/99",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/89",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/releases/tag/v3.1.0",
+          "title": "Github Releases"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[d3-color](https://www.npmjs.org/package/d3-color) is a Color spaces! RGB, HSL, Cubehelix, Lab and HCL (Lch).\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `rgb()` and `hrc()` functions. \r\n\r\nPoC by Yeting Li: \r\n```\r\nvar d3Color = require(\"d3-color\")\r\n// d3Color.rgb(\"rgb(255,255,255)\")\r\n\r\nfunction build_blank(n) {\r\n    var ret = \"rgb(\"\r\n    for (var i = 0; i < n; i++) {\r\n        ret += \"1\"\r\n    }\r\n    return ret + \"!\";\r\n}\r\n\r\nfor(var i = 1; i <= 5000000; i++) {\r\n    if (i % 1000 == 0) {\r\n        var time = Date.now();\r\n        var attack_str = build_blank(i)\r\n        d3Color.rgb(attack_str)\r\n        var time_cost = Date.now() - time;\r\n        console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n    }\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `d3-color` to version 3.1.0 or higher.\n## References\n- [Github PR](https://github.com/d3/d3-color/pull/100)\n- [Github PR](https://github.com/d3/d3-color/pull/99)\n- [GitHub PR](https://github.com/d3/d3-color/pull/89)\n- [Github Releases](https://github.com/d3/d3-color/releases/tag/v3.1.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "d3-color",
+      "proprietary": true,
+      "creationTime": "2021-02-18T13:32:47.195986Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-18T13:30:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-05T14:17:56Z",
+      "modificationTime": "2022-11-28T09:46:50.031732Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "dependencygraph@sz-p/vscode-dependencyGraph#ed6875d0245b5e92a2691ce64e47beab7e5434f0",
+        "d3@5.16.0",
+        "d3-zoom@1.8.3",
+        "d3-interpolate@1.4.0",
+        "d3-color@1.4.1"
+      ],
+      "upgradePath": [
+        false,
+        "d3@7.0.0",
+        "d3-zoom@3.0.0",
+        "d3-interpolate@3.0.0",
+        "d3-color@3.1.0"
+      ],
+      "version": "1.4.1",
+      "name": "d3-color",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-D3COLOR-1076592",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "d3-color",
+      "references": [
+        {
+          "url": "https://github.com/d3/d3-color/pull/100",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/99",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/89",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/releases/tag/v3.1.0",
+          "title": "Github Releases"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[d3-color](https://www.npmjs.org/package/d3-color) is a Color spaces! RGB, HSL, Cubehelix, Lab and HCL (Lch).\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `rgb()` and `hrc()` functions. \r\n\r\nPoC by Yeting Li: \r\n```\r\nvar d3Color = require(\"d3-color\")\r\n// d3Color.rgb(\"rgb(255,255,255)\")\r\n\r\nfunction build_blank(n) {\r\n    var ret = \"rgb(\"\r\n    for (var i = 0; i < n; i++) {\r\n        ret += \"1\"\r\n    }\r\n    return ret + \"!\";\r\n}\r\n\r\nfor(var i = 1; i <= 5000000; i++) {\r\n    if (i % 1000 == 0) {\r\n        var time = Date.now();\r\n        var attack_str = build_blank(i)\r\n        d3Color.rgb(attack_str)\r\n        var time_cost = Date.now() - time;\r\n        console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n    }\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `d3-color` to version 3.1.0 or higher.\n## References\n- [Github PR](https://github.com/d3/d3-color/pull/100)\n- [Github PR](https://github.com/d3/d3-color/pull/99)\n- [GitHub PR](https://github.com/d3/d3-color/pull/89)\n- [Github Releases](https://github.com/d3/d3-color/releases/tag/v3.1.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "d3-color",
+      "proprietary": true,
+      "creationTime": "2021-02-18T13:32:47.195986Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-18T13:30:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-05T14:17:56Z",
+      "modificationTime": "2022-11-28T09:46:50.031732Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "dependencygraph@sz-p/vscode-dependencyGraph#ed6875d0245b5e92a2691ce64e47beab7e5434f0",
+        "d3@5.16.0",
+        "d3-brush@1.1.6",
+        "d3-transition@1.3.2",
+        "d3-color@1.4.1"
+      ],
+      "upgradePath": [
+        false,
+        "d3@7.0.0",
+        "d3-brush@3.0.0",
+        "d3-transition@3.0.0",
+        "d3-color@3.1.0"
+      ],
+      "version": "1.4.1",
+      "name": "d3-color",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-D3COLOR-1076592",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "d3-color",
+      "references": [
+        {
+          "url": "https://github.com/d3/d3-color/pull/100",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/99",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/89",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/releases/tag/v3.1.0",
+          "title": "Github Releases"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[d3-color](https://www.npmjs.org/package/d3-color) is a Color spaces! RGB, HSL, Cubehelix, Lab and HCL (Lch).\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `rgb()` and `hrc()` functions. \r\n\r\nPoC by Yeting Li: \r\n```\r\nvar d3Color = require(\"d3-color\")\r\n// d3Color.rgb(\"rgb(255,255,255)\")\r\n\r\nfunction build_blank(n) {\r\n    var ret = \"rgb(\"\r\n    for (var i = 0; i < n; i++) {\r\n        ret += \"1\"\r\n    }\r\n    return ret + \"!\";\r\n}\r\n\r\nfor(var i = 1; i <= 5000000; i++) {\r\n    if (i % 1000 == 0) {\r\n        var time = Date.now();\r\n        var attack_str = build_blank(i)\r\n        d3Color.rgb(attack_str)\r\n        var time_cost = Date.now() - time;\r\n        console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n    }\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `d3-color` to version 3.1.0 or higher.\n## References\n- [Github PR](https://github.com/d3/d3-color/pull/100)\n- [Github PR](https://github.com/d3/d3-color/pull/99)\n- [GitHub PR](https://github.com/d3/d3-color/pull/89)\n- [Github Releases](https://github.com/d3/d3-color/releases/tag/v3.1.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "d3-color",
+      "proprietary": true,
+      "creationTime": "2021-02-18T13:32:47.195986Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-18T13:30:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-05T14:17:56Z",
+      "modificationTime": "2022-11-28T09:46:50.031732Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "dependencygraph@sz-p/vscode-dependencyGraph#ed6875d0245b5e92a2691ce64e47beab7e5434f0",
+        "d3@5.16.0",
+        "d3-zoom@1.8.3",
+        "d3-transition@1.3.2",
+        "d3-color@1.4.1"
+      ],
+      "upgradePath": [
+        false,
+        "d3@7.0.0",
+        "d3-zoom@3.0.0",
+        "d3-transition@3.0.0",
+        "d3-color@3.1.0"
+      ],
+      "version": "1.4.1",
+      "name": "d3-color",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-D3COLOR-1076592",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "d3-color",
+      "references": [
+        {
+          "url": "https://github.com/d3/d3-color/pull/100",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/99",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/89",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/releases/tag/v3.1.0",
+          "title": "Github Releases"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[d3-color](https://www.npmjs.org/package/d3-color) is a Color spaces! RGB, HSL, Cubehelix, Lab and HCL (Lch).\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `rgb()` and `hrc()` functions. \r\n\r\nPoC by Yeting Li: \r\n```\r\nvar d3Color = require(\"d3-color\")\r\n// d3Color.rgb(\"rgb(255,255,255)\")\r\n\r\nfunction build_blank(n) {\r\n    var ret = \"rgb(\"\r\n    for (var i = 0; i < n; i++) {\r\n        ret += \"1\"\r\n    }\r\n    return ret + \"!\";\r\n}\r\n\r\nfor(var i = 1; i <= 5000000; i++) {\r\n    if (i % 1000 == 0) {\r\n        var time = Date.now();\r\n        var attack_str = build_blank(i)\r\n        d3Color.rgb(attack_str)\r\n        var time_cost = Date.now() - time;\r\n        console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n    }\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `d3-color` to version 3.1.0 or higher.\n## References\n- [Github PR](https://github.com/d3/d3-color/pull/100)\n- [Github PR](https://github.com/d3/d3-color/pull/99)\n- [GitHub PR](https://github.com/d3/d3-color/pull/89)\n- [Github Releases](https://github.com/d3/d3-color/releases/tag/v3.1.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "d3-color",
+      "proprietary": true,
+      "creationTime": "2021-02-18T13:32:47.195986Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-18T13:30:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-05T14:17:56Z",
+      "modificationTime": "2022-11-28T09:46:50.031732Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "dependencygraph@sz-p/vscode-dependencyGraph#ed6875d0245b5e92a2691ce64e47beab7e5434f0",
+        "d3@5.16.0",
+        "d3-brush@1.1.6",
+        "d3-transition@1.3.2",
+        "d3-interpolate@1.4.0",
+        "d3-color@1.4.1"
+      ],
+      "upgradePath": [
+        false,
+        "d3@7.0.0",
+        "d3-brush@3.0.0",
+        "d3-transition@3.0.0",
+        "d3-interpolate@3.0.0",
+        "d3-color@3.1.0"
+      ],
+      "version": "1.4.1",
+      "name": "d3-color",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-D3COLOR-1076592",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Yeting Li"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.1.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "3.1.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "d3-color",
+      "references": [
+        {
+          "url": "https://github.com/d3/d3-color/pull/100",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/99",
+          "title": "Github PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/pull/89",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/d3/d3-color/releases/tag/v3.1.0",
+          "title": "Github Releases"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[d3-color](https://www.npmjs.org/package/d3-color) is a Color spaces! RGB, HSL, Cubehelix, Lab and HCL (Lch).\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS) via the `rgb()` and `hrc()` functions. \r\n\r\nPoC by Yeting Li: \r\n```\r\nvar d3Color = require(\"d3-color\")\r\n// d3Color.rgb(\"rgb(255,255,255)\")\r\n\r\nfunction build_blank(n) {\r\n    var ret = \"rgb(\"\r\n    for (var i = 0; i < n; i++) {\r\n        ret += \"1\"\r\n    }\r\n    return ret + \"!\";\r\n}\r\n\r\nfor(var i = 1; i <= 5000000; i++) {\r\n    if (i % 1000 == 0) {\r\n        var time = Date.now();\r\n        var attack_str = build_blank(i)\r\n        d3Color.rgb(attack_str)\r\n        var time_cost = Date.now() - time;\r\n        console.log(\"attack_str.length: \" + attack_str.length + \": \" + time_cost+\" ms\")\r\n    }\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `d3-color` to version 3.1.0 or higher.\n## References\n- [Github PR](https://github.com/d3/d3-color/pull/100)\n- [Github PR](https://github.com/d3/d3-color/pull/99)\n- [GitHub PR](https://github.com/d3/d3-color/pull/89)\n- [Github Releases](https://github.com/d3/d3-color/releases/tag/v3.1.0)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ]
+      },
+      "packageName": "d3-color",
+      "proprietary": true,
+      "creationTime": "2021-02-18T13:32:47.195986Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-02-18T13:30:50Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-07-05T14:17:56Z",
+      "modificationTime": "2022-11-28T09:46:50.031732Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "dependencygraph@sz-p/vscode-dependencyGraph#ed6875d0245b5e92a2691ce64e47beab7e5434f0",
+        "d3@5.16.0",
+        "d3-zoom@1.8.3",
+        "d3-transition@1.3.2",
+        "d3-interpolate@1.4.0",
+        "d3-color@1.4.1"
+      ],
+      "upgradePath": [
+        false,
+        "d3@7.0.0",
+        "d3-zoom@3.0.0",
+        "d3-transition@3.0.0",
+        "d3-interpolate@3.0.0",
+        "d3-color@3.1.0"
+      ],
+      "version": "1.4.1",
+      "name": "d3-color",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 245,
+  "severityMap": {
+    "critical": 0,
+    "high": 0,
+    "medium": 13,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "13 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/sz-p/vscode-dependencyGraph.git"
+}

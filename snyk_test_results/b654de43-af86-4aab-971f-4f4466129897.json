@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/hadi78m/mongo-php-snippets-for-vscode.git"
+}

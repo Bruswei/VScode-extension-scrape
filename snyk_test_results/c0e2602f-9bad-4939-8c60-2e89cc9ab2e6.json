@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "git+https://github.com/inu1255/vscode-easy-shell.git"
+}

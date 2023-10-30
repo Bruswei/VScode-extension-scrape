@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/sledsworth/vscode-react-redux-es6-snippets.git"
+}

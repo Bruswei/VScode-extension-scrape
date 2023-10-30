@@ -1,0 +1,220 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-ADMZIP-1065796",
+      "title": "Directory Traversal",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N",
+      "credit": [
+        "cthackers"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<0.5.2"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "0.5.2"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.4,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "adm-zip",
+      "references": [
+        {
+          "url": "https://github.com/cthackers/adm-zip/commit/119dcad6599adccc77982feb14a0c7440fa63013",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[adm-zip](https://www.npmjs.com/package/adm-zip) is a JavaScript implementation for zip data compression for NodeJS.\n\nAffected versions of this package are vulnerable to Directory Traversal. It could extract files outside the target folder.\n\n## Details\n\nA Directory Traversal attack (also known as path traversal) aims to access files and directories that are stored outside the intended folder. By manipulating files with \"dot-dot-slash (../)\" sequences and its variations, or by using absolute file paths, it may be possible to access arbitrary files and directories stored on file system, including application source code, configuration, and other critical system files.\n\nDirectory Traversal vulnerabilities can be generally divided into two types:\n\n- **Information Disclosure**: Allows the attacker to gain information about the folder structure or read the contents of sensitive files on the system.\n\n`st` is a module for serving static files on web pages, and contains a [vulnerability of this type](https://snyk.io/vuln/npm:st:20140206). In our example, we will serve files from the `public` route.\n\nIf an attacker requests the following URL from our server, it will in turn leak the sensitive private key of the root user.\n\n```\ncurl http://localhost:8080/public/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/root/.ssh/id_rsa\n```\n**Note** `%2e` is the URL encoded version of `.` (dot).\n\n- **Writing arbitrary files**: Allows the attacker to create or replace existing files. This type of vulnerability is also known as `Zip-Slip`. \n\nOne way to achieve this is by using a malicious `zip` archive that holds path traversal filenames. When each filename in the zip archive gets concatenated to the target extraction folder, without validation, the final path ends up outside of the target folder. If an executable or a configuration file is overwritten with a file containing malicious code, the problem can turn into an arbitrary code execution issue quite easily.\n\nThe following is an example of a `zip` archive with one benign file and one malicious file. Extracting the malicious file will result in traversing out of the target folder, ending up in `/root/.ssh/` overwriting the `authorized_keys` file:\n\n```\n2018-04-15 22:04:29 .....           19           19  good.txt\n2018-04-15 22:04:42 .....           20           20  ../../../../../../root/.ssh/authorized_keys\n```\n\n## Remediation\nUpgrade `adm-zip` to version 0.5.2 or higher.\n## References\n- [GitHub Commit](https://github.com/cthackers/adm-zip/commit/119dcad6599adccc77982feb14a0c7440fa63013)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-22"
+        ]
+      },
+      "packageName": "adm-zip",
+      "proprietary": false,
+      "creationTime": "2021-01-28T07:59:50.454879Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-01-28T07:59:22Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-02-15T17:04:18.109270Z",
+      "modificationTime": "2021-02-15T17:04:18.111270Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "esp-engine@UtkarshBhatthere/ESP-Engine#fb4516da9a6a022c56d7ea65e5e8dd38bc356a41",
+        "adm-zip@0.4.16"
+      ],
+      "upgradePath": [
+        false,
+        "adm-zip@0.5.2"
+      ],
+      "version": "0.4.16",
+      "name": "adm-zip",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-FSTREAM-174725",
+      "title": "Arbitrary File Overwrite",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+      "credit": [
+        "Max Justicz"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<1.0.12"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.0.12"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.3,
+      "functions": [
+        {
+          "version": [
+            ">0.0.0 <1.0.12"
+          ],
+          "functionId": {
+            "filePath": "lib/writer.js",
+            "className": null,
+            "functionName": "Writer.prototype._stat.statCb"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "fstream",
+      "references": [
+        {
+          "url": "https://github.com/npm/fstream/commit/6a77d2fa6e1462693cf8e46f930da96ec1b0bb22",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://www.npmjs.com/advisories/886",
+          "title": "NPM Security Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-01-03T17:55:07.523148Z"
+        },
+        {
+          "assigner": "SUSE",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+          "cvssV3BaseScore": 7.3,
+          "modificationTime": "2022-05-04T00:18:18.015912Z"
+        },
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+          "cvssV3BaseScore": 7.3,
+          "modificationTime": "2022-11-27T20:14:21.075658Z"
+        }
+      ],
+      "description": "## Overview\n[fstream](https://www.npmjs.com/package/fstream) is a package that supports advanced FS Streaming for Node.\n\nAffected versions of this package are vulnerable to Arbitrary File Overwrite. Extracting tarballs containing a hardlink to a file that already exists in the system and a file that matches the hardlink will overwrite the system's file with the contents of the extracted file.\n## Remediation\nUpgrade `fstream` to version 1.0.12 or higher.\n## References\n- [GitHub Commit](https://github.com/npm/fstream/commit/6a77d2fa6e1462693cf8e46f930da96ec1b0bb22)\n- [NPM Security Advisory](https://www.npmjs.com/advisories/886)\n",
+      "epssDetails": {
+        "percentile": "0.52096",
+        "probability": "0.00165",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2019-13173"
+        ],
+        "CWE": [
+          "CWE-59"
+        ],
+        "NSP": [
+          "886"
+        ],
+        "GHSA": [
+          "GHSA-xf7w-r453-m56c"
+        ]
+      },
+      "packageName": "fstream",
+      "proprietary": false,
+      "creationTime": "2019-05-15T17:00:15.452305Z",
+      "functions_new": [
+        {
+          "version": [
+            ">0.0.0 <1.0.12"
+          ],
+          "functionId": {
+            "filePath": "lib/writer.js",
+            "functionName": "Writer.prototype._stat.statCb"
+          }
+        }
+      ],
+      "alternativeIds": [],
+      "disclosureTime": "2019-05-15T14:22:26Z",
+      "packageManager": "npm",
+      "publicationTime": "2019-05-15T17:00:42Z",
+      "modificationTime": "2022-11-27T20:14:21.075658Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "esp-engine@UtkarshBhatthere/ESP-Engine#fb4516da9a6a022c56d7ea65e5e8dd38bc356a41",
+        "unzip@0.1.11",
+        "fstream@0.1.31"
+      ],
+      "upgradePath": [
+        false,
+        false,
+        "fstream@1.0.12"
+      ],
+      "version": "0.1.31",
+      "name": "fstream",
+      "isUpgradable": false,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 36,
+  "severityMap": {
+    "critical": 0,
+    "high": 2,
+    "medium": 0,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "2 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 2,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/UtkarshBhatthere/ESP-Engine.git"
+}

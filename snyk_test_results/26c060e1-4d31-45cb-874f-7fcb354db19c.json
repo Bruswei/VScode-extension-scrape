@@ -1,0 +1,850 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-NODEFORGE-2330875",
+      "title": "Open Redirect",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N/E:P",
+      "credit": [
+        "ready-research"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<1.0.0"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "1.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "node-forge",
+      "references": [
+        {
+          "url": "https://github.com/digitalbazaar/forge/commit/db8016c805371e72b06d8e2edfe0ace0df934a5e",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://snyk.io/blog/url-confusion-vulnerabilities/",
+          "title": "URL Confusion Explained - Snyk Blog"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+          "cvssV3BaseScore": 6.1,
+          "modificationTime": "2022-01-13T04:10:19.854833Z"
+        }
+      ],
+      "description": "## Overview\n[node-forge](https://github.com/digitalbazaar/forge) is a JavaScript implementations of network transports, cryptography, ciphers, PKI, message digests, and various utilities.\n\nAffected versions of this package are vulnerable to Open Redirect via `parseUrl` function when it mishandles certain uses of backslash such as `https:/\\/\\/\\` and interprets the URI as a relative path.\r\n\r\n### PoC:\r\n```js\r\n\r\n// poc.js\r\nvar forge = require(\"node-forge\");\r\nvar url = forge.util.parseUrl(\"https:/\\/\\/\\www.github.com/foo/bar\");\r\nconsole.log(url);\r\n\r\n// Output of node poc.js:\r\n\r\n{\r\n  full: 'https://',\r\n  scheme: 'https',\r\n  host: '',\r\n  port: 443,\r\n  path: '/www.github.com/foo/bar',                        <<<---- path  should be \"/foo/bar\"\r\n  fullHost: ''\r\n}\r\n\r\n```\n## Remediation\nUpgrade `node-forge` to version 1.0.0 or higher.\n## References\n- [GitHub Commit](https://github.com/digitalbazaar/forge/commit/db8016c805371e72b06d8e2edfe0ace0df934a5e)\n- [URL Confusion Explained - Snyk Blog](https://snyk.io/blog/url-confusion-vulnerabilities/)\n",
+      "epssDetails": {
+        "percentile": "0.27067",
+        "probability": "0.00066",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-0122"
+        ],
+        "CWE": [
+          "CWE-601"
+        ],
+        "GHSA": [
+          "GHSA-gf8q-jrpm-jvxq"
+        ]
+      },
+      "packageName": "node-forge",
+      "proprietary": false,
+      "creationTime": "2022-01-06T11:16:25.853884Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-01-06T11:09:34Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-01-06T17:17:25Z",
+      "modificationTime": "2022-01-13T04:10:19.854833Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "Vite@ruige24601/vscode-plugin-vite#79f5352e24b40a2e50b53a8b211fbe26d160c2c1",
+        "vite@1.0.0-rc.13",
+        "selfsigned@1.10.14",
+        "node-forge@0.10.0"
+      ],
+      "upgradePath": [
+        false,
+        "vite@2.0.0"
+      ],
+      "version": "0.10.0",
+      "name": "node-forge",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-NODEFORGE-2331908",
+      "title": "Prototype Pollution",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:L",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<1.0.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.0.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 6.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "node-forge",
+      "references": [
+        {
+          "url": "https://github.com/digitalbazaar/forge/commit/51228083550dde97701ac8e06c629a5184117562",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[node-forge](https://github.com/digitalbazaar/forge) is a JavaScript implementations of network transports, cryptography, ciphers, PKI, message digests, and various utilities.\n\nAffected versions of this package are vulnerable to Prototype Pollution via the `forge.debug` API if called with untrusted input.\n\n## Details\n\nPrototype Pollution is a vulnerability affecting JavaScript. Prototype Pollution refers to the ability to inject properties into existing JavaScript language construct prototypes, such as objects. JavaScript allows all Object attributes to be altered, including their magical attributes such as `__proto__`, `constructor` and `prototype`. An attacker manipulates these attributes to overwrite, or pollute, a JavaScript application object prototype of the base object by injecting other values.  Properties on the `Object.prototype` are then inherited by all the JavaScript objects through the prototype chain. When that happens, this leads to either denial of service by triggering JavaScript exceptions, or it tampers with the application source code to force the code path that the attacker injects, thereby leading to remote code execution.\n\nThere are two main ways in which the pollution of prototypes occurs:\n\n-   Unsafe `Object` recursive merge\n    \n-   Property definition by path\n    \n\n### Unsafe Object recursive merge\n\nThe logic of a vulnerable recursive merge function follows the following high-level model:\n```\nmerge (target, source)\n\n  foreach property of source\n\n    if property exists and is an object on both the target and the source\n\n      merge(target[property], source[property])\n\n    else\n\n      target[property] = source[property]\n```\n<br>  \n\nWhen the source object contains a property named `__proto__` defined with `Object.defineProperty()` , the condition that checks if the property exists and is an object on both the target and the source passes and the merge recurses with the target, being the prototype of `Object` and the source of `Object` as defined by the attacker. Properties are then copied on the `Object` prototype.\n\nClone operations are a special sub-class of unsafe recursive merges, which occur when a recursive merge is conducted on an empty object: `merge({},source)`.\n\n`lodash` and `Hoek` are examples of libraries susceptible to recursive merge attacks.\n\n### Property definition by path\n\nThere are a few JavaScript libraries that use an API to define property values on an object based on a given path. The function that is generally affected contains this signature: `theFunction(object, path, value)`\n\nIf the attacker can control the value of “path”, they can set this value to `__proto__.myValue`. `myValue` is then assigned to the prototype of the class of the object.\n\n## Types of attacks\n\nThere are a few methods by which Prototype Pollution can be manipulated:\n\n| Type |Origin  |Short description |\n|--|--|--|\n| **Denial of service (DoS)**|Client  |This is the most likely attack. <br>DoS occurs when `Object` holds generic functions that are implicitly called for various operations (for example, `toString` and `valueOf`). <br> The attacker pollutes `Object.prototype.someattr` and alters its state to an unexpected value such as `Int` or `Object`. In this case, the code fails and is likely to cause a denial of service.  <br>**For example:** if an attacker pollutes `Object.prototype.toString` by defining it as an integer, if the codebase at any point was reliant on `someobject.toString()` it would fail. |\n |**Remote Code Execution**|Client|Remote code execution is generally only possible in cases where the codebase evaluates a specific attribute of an object, and then executes that evaluation.<br>**For example:** `eval(someobject.someattr)`. In this case, if the attacker pollutes `Object.prototype.someattr` they are likely to be able to leverage this in order to execute code.|\n|**Property Injection**|Client|The attacker pollutes properties that the codebase relies on for their informative value, including security properties such as cookies or tokens.<br>  **For example:** if a codebase checks privileges for `someuser.isAdmin`, then when the attacker pollutes `Object.prototype.isAdmin` and sets it to equal `true`, they can then achieve admin privileges.|\n\n## Affected environments\n\nThe following environments are susceptible to a Prototype Pollution attack:\n\n-   Application server\n    \n-   Web server\n\n-   Web browser\n    \n\n## How to prevent\n\n1.  Freeze the prototype— use `Object.freeze (Object.prototype)`.\n    \n2.  Require schema validation of JSON input.\n    \n3.  Avoid using unsafe recursive merge functions.\n    \n4.  Consider using objects without prototypes (for example, `Object.create(null)`), breaking the prototype chain and preventing pollution.\n    \n5.  As a best practice use `Map` instead of `Object`.\n\n### For more information on this vulnerability type:\n\n[Arteau, Oliver. “JavaScript prototype pollution attack in NodeJS application.” GitHub, 26 May 2018](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf)\n\n## Remediation\nUpgrade `node-forge` to version 1.0.0 or higher.\n## References\n- [GitHub Commit](https://github.com/digitalbazaar/forge/commit/51228083550dde97701ac8e06c629a5184117562)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-1321"
+        ],
+        "GHSA": [
+          "GHSA-5rrq-pxf6-6jx5"
+        ]
+      },
+      "packageName": "node-forge",
+      "proprietary": false,
+      "creationTime": "2022-01-09T10:11:24.467022Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-01-08T00:22:42Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-01-09T15:54:48.988558Z",
+      "modificationTime": "2022-01-09T15:54:48.990788Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "Vite@ruige24601/vscode-plugin-vite#79f5352e24b40a2e50b53a8b211fbe26d160c2c1",
+        "vite@1.0.0-rc.13",
+        "selfsigned@1.10.14",
+        "node-forge@0.10.0"
+      ],
+      "upgradePath": [
+        false,
+        "vite@2.0.0"
+      ],
+      "version": "0.10.0",
+      "name": "node-forge",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-NODEFORGE-2430337",
+      "title": "Improper Verification of Cryptographic Signature",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L",
+      "credit": [
+        "Moosa Yahyazadeh"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<1.3.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.3.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.6,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "node-forge",
+      "references": [
+        {
+          "url": "https://github.com/digitalbazaar/forge/commit/3f0b49a0573ef1bb7af7f5673c0cfebf00424df1",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-10-25T17:28:34.013188Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-03-29T01:10:39.752274Z"
+        }
+      ],
+      "description": "## Overview\n[node-forge](https://github.com/digitalbazaar/forge) is a JavaScript implementations of network transports, cryptography, ciphers, PKI, message digests, and various utilities.\n\nAffected versions of this package are vulnerable to Improper Verification of Cryptographic Signature due to RSA's `PKCS#1 v1.5` signature verification code which does not properly check `DigestInfo` for a proper `ASN.1` structure. This can lead to successful verification with signatures that contain invalid structures but a valid digest.\n## Remediation\nUpgrade `node-forge` to version 1.3.0 or higher.\n## References\n- [GitHub Commit](https://github.com/digitalbazaar/forge/commit/3f0b49a0573ef1bb7af7f5673c0cfebf00424df1)\n",
+      "epssDetails": {
+        "percentile": "0.25076",
+        "probability": "0.00063",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-24773"
+        ],
+        "CWE": [
+          "CWE-347"
+        ],
+        "GHSA": [
+          "GHSA-2r2c-g63r-vccr"
+        ]
+      },
+      "packageName": "node-forge",
+      "proprietary": false,
+      "creationTime": "2022-03-20T08:56:55.258238Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-03-20T08:47:53Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-03-20T16:39:53.330824Z",
+      "modificationTime": "2022-10-25T17:28:34.013188Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "Vite@ruige24601/vscode-plugin-vite#79f5352e24b40a2e50b53a8b211fbe26d160c2c1",
+        "vite@1.0.0-rc.13",
+        "selfsigned@1.10.14",
+        "node-forge@0.10.0"
+      ],
+      "upgradePath": [
+        false,
+        "vite@2.0.0"
+      ],
+      "version": "0.10.0",
+      "name": "node-forge",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-NODEFORGE-2430339",
+      "title": "Improper Verification of Cryptographic Signature",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L",
+      "credit": [
+        "Moosa Yahyazadeh"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<1.3.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.3.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "node-forge",
+      "references": [
+        {
+          "url": "https://github.com/digitalbazaar/forge/commit/3f0b49a0573ef1bb7af7f5673c0cfebf00424df1",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T17:28:19.009783Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-03-29T01:10:39.494698Z"
+        }
+      ],
+      "description": "## Overview\n[node-forge](https://github.com/digitalbazaar/forge) is a JavaScript implementations of network transports, cryptography, ciphers, PKI, message digests, and various utilities.\n\nAffected versions of this package are vulnerable to Improper Verification of Cryptographic Signature due to RSA's `PKCS#1` v1.5 signature verification code which does not check for tailing garbage bytes after decoding a `DigestInfo` ASN.1 structure. This can allow padding bytes to be removed and garbage data added to forge a signature when a low public exponent is being used.\n## Remediation\nUpgrade `node-forge` to version 1.3.0 or higher.\n## References\n- [GitHub Commit](https://github.com/digitalbazaar/forge/commit/3f0b49a0573ef1bb7af7f5673c0cfebf00424df1)\n",
+      "epssDetails": {
+        "percentile": "0.26244",
+        "probability": "0.00064",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-24772"
+        ],
+        "CWE": [
+          "CWE-347"
+        ],
+        "GHSA": [
+          "GHSA-x4jg-mjrx-434g"
+        ]
+      },
+      "packageName": "node-forge",
+      "proprietary": false,
+      "creationTime": "2022-03-20T09:05:59.631233Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-03-20T08:57:14Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-03-20T16:39:52.700898Z",
+      "modificationTime": "2022-10-25T17:28:19.009783Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "Vite@ruige24601/vscode-plugin-vite#79f5352e24b40a2e50b53a8b211fbe26d160c2c1",
+        "vite@1.0.0-rc.13",
+        "selfsigned@1.10.14",
+        "node-forge@0.10.0"
+      ],
+      "upgradePath": [
+        false,
+        "vite@2.0.0"
+      ],
+      "version": "0.10.0",
+      "name": "node-forge",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-NODEFORGE-2430341",
+      "title": "Improper Verification of Cryptographic Signature",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:L",
+      "credit": [
+        "Moosa Yahyazadeh"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<1.3.0"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.3.0"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.6,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "node-forge",
+      "references": [
+        {
+          "url": "https://github.com/digitalbazaar/forge/commit/3f0b49a0573ef1bb7af7f5673c0cfebf00424df1",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-10-25T17:28:20.267081Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2022-03-29T01:10:38.348896Z"
+        }
+      ],
+      "description": "## Overview\n[node-forge](https://github.com/digitalbazaar/forge) is a JavaScript implementations of network transports, cryptography, ciphers, PKI, message digests, and various utilities.\n\nAffected versions of this package are vulnerable to Improper Verification of Cryptographic Signature due to RSA`s `PKCS#1` v1.5 signature verification code which is lenient in checking the digest algorithm structure. This can allow a crafted structure that steals padding bytes and uses unchecked portion of the PKCS#1 encoded message to forge a signature when a low public exponent is being used.\n## Remediation\nUpgrade `node-forge` to version 1.3.0 or higher.\n## References\n- [GitHub Commit](https://github.com/digitalbazaar/forge/commit/3f0b49a0573ef1bb7af7f5673c0cfebf00424df1)\n",
+      "epssDetails": {
+        "percentile": "0.20571",
+        "probability": "0.00054",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-24771"
+        ],
+        "CWE": [
+          "CWE-347"
+        ],
+        "GHSA": [
+          "GHSA-cfm4-qjh2-4765"
+        ]
+      },
+      "packageName": "node-forge",
+      "proprietary": false,
+      "creationTime": "2022-03-20T09:20:18.671201Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-03-20T09:07:01Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-03-20T16:39:53.005772Z",
+      "modificationTime": "2022-10-25T17:28:20.267081Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "Vite@ruige24601/vscode-plugin-vite#79f5352e24b40a2e50b53a8b211fbe26d160c2c1",
+        "vite@1.0.0-rc.13",
+        "selfsigned@1.10.14",
+        "node-forge@0.10.0"
+      ],
+      "upgradePath": [
+        false,
+        "vite@2.0.0"
+      ],
+      "version": "0.10.0",
+      "name": "node-forge",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-POSTCSS-5926692",
+      "title": "Improper Input Validation",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<8.4.31"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "8.4.31"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "postcss",
+      "references": [
+        {
+          "url": "https://github.com/postcss/postcss/commit/58cc860b4c1707510c9cd1bc1fa30b423a9ad6c5",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/postcss/postcss/pull/1890",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/postcss/postcss/releases/tag/8.4.31",
+          "title": "GitHub Release"
+        },
+        {
+          "url": "https://github.com/postcss/postcss/blob/main/lib/tokenize.js%23L25",
+          "title": "Vulnerable Code"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2023-10-11T01:10:59.257507Z"
+        }
+      ],
+      "description": "## Overview\n[postcss](https://www.npmjs.com/package/postcss) is a PostCSS is a tool for transforming styles with JS plugins.\n\nAffected versions of this package are vulnerable to Improper Input Validation when parsing external Cascading Style Sheets (CSS) with linters using PostCSS. An attacker can cause discrepancies by injecting malicious CSS rules, such as `@font-face{ font:(\\r/*);}`.\r\nThis vulnerability is because of an insecure regular expression usage in the `RE_BAD_BRACKET` variable.\n## Remediation\nUpgrade `postcss` to version 8.4.31 or higher.\n## References\n- [GitHub Commit](https://github.com/postcss/postcss/commit/58cc860b4c1707510c9cd1bc1fa30b423a9ad6c5)\n- [GitHub PR](https://github.com/postcss/postcss/pull/1890)\n- [GitHub Release](https://github.com/postcss/postcss/releases/tag/8.4.31)\n- [Vulnerable Code](https://github.com/postcss/postcss/blob/main/lib/tokenize.js#L25)\n",
+      "epssDetails": {
+        "percentile": "0.12509",
+        "probability": "0.00045",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-44270"
+        ],
+        "CWE": [
+          "CWE-20"
+        ]
+      },
+      "packageName": "postcss",
+      "proprietary": false,
+      "creationTime": "2023-10-01T10:42:55.486681Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-09-29T22:46:45Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-10-01T11:23:35.354495Z",
+      "modificationTime": "2023-10-11T08:35:34.664727Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "Vite@ruige24601/vscode-plugin-vite#79f5352e24b40a2e50b53a8b211fbe26d160c2c1",
+        "vite@1.0.0-rc.13",
+        "postcss-discard-comments@4.0.2",
+        "postcss@7.0.39"
+      ],
+      "upgradePath": [
+        false,
+        "vite@2.0.0"
+      ],
+      "version": "7.0.39",
+      "name": "postcss",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-POSTCSS-5926692",
+      "title": "Improper Input Validation",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<8.4.31"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "8.4.31"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "postcss",
+      "references": [
+        {
+          "url": "https://github.com/postcss/postcss/commit/58cc860b4c1707510c9cd1bc1fa30b423a9ad6c5",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/postcss/postcss/pull/1890",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/postcss/postcss/releases/tag/8.4.31",
+          "title": "GitHub Release"
+        },
+        {
+          "url": "https://github.com/postcss/postcss/blob/main/lib/tokenize.js%23L25",
+          "title": "Vulnerable Code"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2023-10-11T01:10:59.257507Z"
+        }
+      ],
+      "description": "## Overview\n[postcss](https://www.npmjs.com/package/postcss) is a PostCSS is a tool for transforming styles with JS plugins.\n\nAffected versions of this package are vulnerable to Improper Input Validation when parsing external Cascading Style Sheets (CSS) with linters using PostCSS. An attacker can cause discrepancies by injecting malicious CSS rules, such as `@font-face{ font:(\\r/*);}`.\r\nThis vulnerability is because of an insecure regular expression usage in the `RE_BAD_BRACKET` variable.\n## Remediation\nUpgrade `postcss` to version 8.4.31 or higher.\n## References\n- [GitHub Commit](https://github.com/postcss/postcss/commit/58cc860b4c1707510c9cd1bc1fa30b423a9ad6c5)\n- [GitHub PR](https://github.com/postcss/postcss/pull/1890)\n- [GitHub Release](https://github.com/postcss/postcss/releases/tag/8.4.31)\n- [Vulnerable Code](https://github.com/postcss/postcss/blob/main/lib/tokenize.js#L25)\n",
+      "epssDetails": {
+        "percentile": "0.12509",
+        "probability": "0.00045",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-44270"
+        ],
+        "CWE": [
+          "CWE-20"
+        ]
+      },
+      "packageName": "postcss",
+      "proprietary": false,
+      "creationTime": "2023-10-01T10:42:55.486681Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-09-29T22:46:45Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-10-01T11:23:35.354495Z",
+      "modificationTime": "2023-10-11T08:35:34.664727Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "Vite@ruige24601/vscode-plugin-vite#79f5352e24b40a2e50b53a8b211fbe26d160c2c1",
+        "vite@1.0.0-rc.13",
+        "postcss-import@12.0.1",
+        "postcss@7.0.39"
+      ],
+      "upgradePath": [
+        false,
+        "vite@2.0.0"
+      ],
+      "version": "7.0.39",
+      "name": "postcss",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-VITE-2987511",
+      "title": "Directory Traversal",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<2.9.13"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "2.9.13"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "vite",
+      "references": [
+        {
+          "url": "https://github.com/vitejs/vite/issues/8498",
+          "title": "GitHub Issue"
+        },
+        {
+          "url": "https://github.com/vitejs/vite/pull/8979",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://github.com/vitejs/vite/releases/tag/v2.9.13",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N",
+          "cvssV3BaseScore": 4.3,
+          "modificationTime": "2022-08-20T01:11:16.077637Z"
+        }
+      ],
+      "description": "## Overview\n[vite](https://www.npmjs.org/package/vite) is a Native-ESM powered web dev build tool\n\nAffected versions of this package are vulnerable to Directory Traversal. It allows attackers to perform a directory traversal via a crafted URL to the victim's service.\n\n## Details\n\nA Directory Traversal attack (also known as path traversal) aims to access files and directories that are stored outside the intended folder. By manipulating files with \"dot-dot-slash (../)\" sequences and its variations, or by using absolute file paths, it may be possible to access arbitrary files and directories stored on file system, including application source code, configuration, and other critical system files.\n\nDirectory Traversal vulnerabilities can be generally divided into two types:\n\n- **Information Disclosure**: Allows the attacker to gain information about the folder structure or read the contents of sensitive files on the system.\n\n`st` is a module for serving static files on web pages, and contains a [vulnerability of this type](https://snyk.io/vuln/npm:st:20140206). In our example, we will serve files from the `public` route.\n\nIf an attacker requests the following URL from our server, it will in turn leak the sensitive private key of the root user.\n\n```\ncurl http://localhost:8080/public/%2e%2e/%2e%2e/%2e%2e/%2e%2e/%2e%2e/root/.ssh/id_rsa\n```\n**Note** `%2e` is the URL encoded version of `.` (dot).\n\n- **Writing arbitrary files**: Allows the attacker to create or replace existing files. This type of vulnerability is also known as `Zip-Slip`. \n\nOne way to achieve this is by using a malicious `zip` archive that holds path traversal filenames. When each filename in the zip archive gets concatenated to the target extraction folder, without validation, the final path ends up outside of the target folder. If an executable or a configuration file is overwritten with a file containing malicious code, the problem can turn into an arbitrary code execution issue quite easily.\n\nThe following is an example of a `zip` archive with one benign file and one malicious file. Extracting the malicious file will result in traversing out of the target folder, ending up in `/root/.ssh/` overwriting the `authorized_keys` file:\n\n```\n2018-04-15 22:04:29 .....           19           19  good.txt\n2018-04-15 22:04:42 .....           20           20  ../../../../../../root/.ssh/authorized_keys\n```\n\n## Remediation\nUpgrade `vite` to version 2.9.13 or higher.\n## References\n- [GitHub Issue](https://github.com/vitejs/vite/issues/8498)\n- [GitHub PR](https://github.com/vitejs/vite/pull/8979)\n- [GitHub Release](https://github.com/vitejs/vite/releases/tag/v2.9.13)\n",
+      "epssDetails": {
+        "percentile": "0.18312",
+        "probability": "0.00052",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-35204"
+        ],
+        "CWE": [
+          "CWE-22"
+        ]
+      },
+      "packageName": "vite",
+      "proprietary": false,
+      "creationTime": "2022-08-19T08:56:44.460062Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-08-19T08:53:38Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-08-19T08:56:44Z",
+      "modificationTime": "2022-08-22T15:10:10.237638Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 98,
+      "from": [
+        "Vite@ruige24601/vscode-plugin-vite#79f5352e24b40a2e50b53a8b211fbe26d160c2c1",
+        "vite@1.0.0-rc.13"
+      ],
+      "upgradePath": [
+        false,
+        "vite@2.9.13"
+      ],
+      "version": "1.0.0-rc.13",
+      "name": "vite",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-VITE-5664718",
+      "title": "Path Equivalence",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N/E:P",
+      "credit": [
+        "agussetyar"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<2.9.16",
+          ">=3.0.0 <3.2.7",
+          ">=4.0.0 <4.0.5",
+          ">=4.1.0 <4.1.5",
+          ">=4.2.0 <4.2.3",
+          ">=4.3.0 <4.3.9"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "2.9.16",
+        "3.2.7",
+        "4.0.5",
+        "4.1.5",
+        "4.2.3",
+        "4.3.9"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "vite",
+      "references": [
+        {
+          "url": "https://github.com/vitejs/vite/commit/813ddd6155c3d54801e264ba832d8347f6f66b32",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/vitejs/vite/pull/13348",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2023-06-10T01:12:01.059800Z"
+        }
+      ],
+      "description": "## Overview\n[vite](https://www.npmjs.org/package/vite) is a Native-ESM powered web dev build tool\n\nAffected versions of this package are vulnerable to Path Equivalence such that Server Options (`server.fs.deny`) can be bypassed using double forward-slash (`//`) allowing any unauthenticated user to read files from the Vite root-path of the application including the default `fs.deny` settings (`['.env', '.env.*', '*.{crt,pem}']`). \r\n\r\n**Note:**\r\n\r\nOnly users explicitly exposing the Vite dev server to the network (using `--host` or `server.host` config option) are affected, and only files in the immediate Vite project root folder could be exposed.\n## Remediation\nUpgrade `vite` to version 2.9.16, 3.2.7, 4.0.5, 4.1.5, 4.2.3, 4.3.9 or higher.\n## References\n- [GitHub Commit](https://github.com/vitejs/vite/commit/813ddd6155c3d54801e264ba832d8347f6f66b32)\n- [GitHub PR](https://github.com/vitejs/vite/pull/13348)\n",
+      "epssDetails": {
+        "percentile": "0.49688",
+        "probability": "0.00147",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-34092"
+        ],
+        "CWE": [
+          "CWE-41"
+        ],
+        "GHSA": [
+          "GHSA-353f-5xf4-qw67"
+        ]
+      },
+      "packageName": "vite",
+      "proprietary": false,
+      "creationTime": "2023-06-02T05:57:34.210680Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-06-02T05:47:45Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-06-02T06:07:24.820552Z",
+      "modificationTime": "2023-06-10T01:12:01.059800Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 98,
+      "from": [
+        "Vite@ruige24601/vscode-plugin-vite#79f5352e24b40a2e50b53a8b211fbe26d160c2c1",
+        "vite@1.0.0-rc.13"
+      ],
+      "upgradePath": [
+        false,
+        "vite@2.9.16"
+      ],
+      "version": "1.0.0-rc.13",
+      "name": "vite",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 284,
+  "severityMap": {
+    "critical": 0,
+    "high": 3,
+    "medium": 6,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "9 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 8,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/ruige24601/vscode-plugin-vite.git"
+}

@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/balaprasanna/dockerfile-code-snip-vscode-ext.git"
+}

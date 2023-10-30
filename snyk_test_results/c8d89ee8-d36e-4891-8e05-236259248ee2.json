@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/manse/babel-plugin-react-css-modules-autocomplete.git"
+}

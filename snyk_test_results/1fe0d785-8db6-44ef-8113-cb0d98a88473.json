@@ -1,0 +1,185 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JAVA-CHQOSLOGBACK-1726923",
+      "title": "Insufficient Hostname Verification",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N",
+      "credit": [
+        "Andrei Komarov"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[,1.2.7)"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.2.7"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "java",
+      "severity": "medium",
+      "cvssScore": 4.8,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "ch.qos.logback:logback-core",
+      "references": [
+        {
+          "url": "https://github.com/qos-ch/logback/commit/626c7733c188f2ad60c1348a493761f60e2d7958",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/qos-ch/logback/pull/305",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://jira.qos.ch/browse/LOGBACK-1574",
+          "title": "Jira Issue"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[ch.qos.logback:logback-core](https://mvnrepository.com/artifact/ch.qos.logback/logback-core) is a logback-core module.\n\nAffected versions of this package are vulnerable to Insufficient Hostname Verification. `X.509` are not properly validated. By spoofing the TLS/SSL server via a certificate that appears valid, an attacker with the ability to intercept network traffic (e.g. MitM, DNS cache poisoning) can disclose and optionally manipulate transmitted data.\n## Remediation\nUpgrade `ch.qos.logback:logback-core` to version 1.2.7 or higher.\n## References\n- [GitHub Commit](https://github.com/qos-ch/logback/commit/626c7733c188f2ad60c1348a493761f60e2d7958)\n- [GitHub PR](https://github.com/qos-ch/logback/pull/305)\n- [Jira Issue](https://jira.qos.ch/browse/LOGBACK-1574)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-20"
+        ]
+      },
+      "packageName": "ch.qos.logback:logback-core",
+      "proprietary": false,
+      "creationTime": "2021-09-29T13:37:34.088850Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-09-29T13:37:31Z",
+      "packageManager": "maven",
+      "mavenModuleName": {
+        "groupId": "ch.qos.logback",
+        "artifactId": "logback-core"
+      },
+      "publicationTime": "2021-10-01T14:33:15Z",
+      "modificationTime": "2021-11-19T16:36:31.923913Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "database-client/jdbc-adapter-server@database-client/jdbc-adapter-server#5b59b88e28872a299fbfe09b2fe5ecd8b180ef3d",
+        "ch.qos.logback:logback-core@1.2.6"
+      ],
+      "upgradePath": [
+        false,
+        "ch.qos.logback:logback-core@1.2.7"
+      ],
+      "version": "1.2.6",
+      "name": "ch.qos.logback:logback-core",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JAVA-CHQOSLOGBACK-1726923",
+      "title": "Insufficient Hostname Verification",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N",
+      "credit": [
+        "Andrei Komarov"
+      ],
+      "semver": {
+        "vulnerable": [
+          "[,1.2.7)"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "1.2.7"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "java",
+      "severity": "medium",
+      "cvssScore": 4.8,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "ch.qos.logback:logback-core",
+      "references": [
+        {
+          "url": "https://github.com/qos-ch/logback/commit/626c7733c188f2ad60c1348a493761f60e2d7958",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/qos-ch/logback/pull/305",
+          "title": "GitHub PR"
+        },
+        {
+          "url": "https://jira.qos.ch/browse/LOGBACK-1574",
+          "title": "Jira Issue"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n[ch.qos.logback:logback-core](https://mvnrepository.com/artifact/ch.qos.logback/logback-core) is a logback-core module.\n\nAffected versions of this package are vulnerable to Insufficient Hostname Verification. `X.509` are not properly validated. By spoofing the TLS/SSL server via a certificate that appears valid, an attacker with the ability to intercept network traffic (e.g. MitM, DNS cache poisoning) can disclose and optionally manipulate transmitted data.\n## Remediation\nUpgrade `ch.qos.logback:logback-core` to version 1.2.7 or higher.\n## References\n- [GitHub Commit](https://github.com/qos-ch/logback/commit/626c7733c188f2ad60c1348a493761f60e2d7958)\n- [GitHub PR](https://github.com/qos-ch/logback/pull/305)\n- [Jira Issue](https://jira.qos.ch/browse/LOGBACK-1574)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-20"
+        ]
+      },
+      "packageName": "ch.qos.logback:logback-core",
+      "proprietary": false,
+      "creationTime": "2021-09-29T13:37:34.088850Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-09-29T13:37:31Z",
+      "packageManager": "maven",
+      "mavenModuleName": {
+        "groupId": "ch.qos.logback",
+        "artifactId": "logback-core"
+      },
+      "publicationTime": "2021-10-01T14:33:15Z",
+      "modificationTime": "2021-11-19T16:36:31.923913Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "database-client/jdbc-adapter-server@database-client/jdbc-adapter-server#5b59b88e28872a299fbfe09b2fe5ecd8b180ef3d",
+        "ch.qos.logback:logback-classic@1.2.6",
+        "ch.qos.logback:logback-core@1.2.6"
+      ],
+      "upgradePath": [
+        false,
+        "ch.qos.logback:logback-classic@1.2.7",
+        "ch.qos.logback:logback-core@1.2.7"
+      ],
+      "version": "1.2.6",
+      "name": "ch.qos.logback:logback-core",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 5,
+  "severityMap": {
+    "critical": 0,
+    "high": 0,
+    "medium": 2,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "gradle",
+  "summary": "2 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/database-client/jdbc-adapter-server.git"
+}

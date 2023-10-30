@@ -1,0 +1,314 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-ENGINEIO-3136336",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+      "credit": [
+        "Jonathan Neve"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<3.6.1",
+          ">=4.0.0 <6.2.1"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "3.6.1",
+        "6.2.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "engine.io",
+      "references": [
+        {
+          "url": "https://github.com/socketio/engine.io/commit/425e833ab13373edf1dd5a0706f07100db14e3c6",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/socketio/engine.io/commit/83c4071af871fc188298d7d591e95670bf9f9085",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/socketio/engine.io/pull/658",
+          "title": "GitHub PR"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 6.5,
+          "modificationTime": "2022-11-26T13:10:42.027902Z"
+        }
+      ],
+      "description": "## Overview\n[engine.io](https://github.com/socketio/engine.io) is a realtime engine behind Socket.IO. It provides the foundation of a bidirectional connection between client and server\n\nAffected versions of this package are vulnerable to Denial of Service (DoS). A malicious client could send a specially crafted HTTP request, triggering an uncaught exception and killing the `Node.js` process.\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `engine.io` to version 3.6.1, 6.2.1 or higher.\n## References\n- [GitHub Commit](https://github.com/socketio/engine.io/commit/425e833ab13373edf1dd5a0706f07100db14e3c6)\n- [GitHub Commit](https://github.com/socketio/engine.io/commit/83c4071af871fc188298d7d591e95670bf9f9085)\n- [GitHub PR](https://github.com/socketio/engine.io/pull/658)\n",
+      "epssDetails": {
+        "percentile": "0.27319",
+        "probability": "0.00066",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2022-41940"
+        ],
+        "CWE": [
+          "CWE-400"
+        ],
+        "GHSA": [
+          "GHSA-r7qp-cfhv-p84w"
+        ]
+      },
+      "packageName": "engine.io",
+      "proprietary": false,
+      "creationTime": "2022-11-21T14:00:03.277453Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2022-11-21T13:55:28Z",
+      "packageManager": "npm",
+      "publicationTime": "2022-11-21T14:00:42.363779Z",
+      "modificationTime": "2022-12-05T15:31:11.918126Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "twee3-language-tools@cyrusfirheir/twee3-language-tools#13f886943f62cd78abffacf8945618e401dee127",
+        "socket.io@3.1.2",
+        "engine.io@4.1.2"
+      ],
+      "upgradePath": [
+        false,
+        "socket.io@4.5.0",
+        "engine.io@6.2.1"
+      ],
+      "version": "4.1.2",
+      "name": "engine.io",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-SOCKETIOPARSER-5596892",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+      "credit": [
+        "rafax00"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">=3.4.0 <3.4.3",
+          ">=4.0.0 <4.2.3"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "3.4.3",
+        "4.2.3"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "socket.io-parser",
+      "references": [
+        {
+          "url": "https://github.com/socketio/socket.io-parser/commit/2dc3c92622dad113b8676be06f23b1ed46b02ced",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/socketio/socket.io-parser/commit/3b78117bf6ba7e99d7a5cfc1ba54d0477554a7f3",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/socketio/socket.io-parser/releases/tag/3.4.3",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2023-06-06T01:10:22.155441Z"
+        }
+      ],
+      "description": "## Overview\n[socket.io-parser](https://www.npmjs.org/package/socket.io-parser) is a socket.io protocol parser\n\nAffected versions of this package are vulnerable to Denial of Service (DoS) due to insufficient validation when decoding a packet. An attacker can send an event with a name like `'2[{\"toString\":\"foo\"}]'` to trigger an uncaught exception and a crash, like the below.\r\n\r\n```\r\nTypeError: Cannot convert object to primitive value\r\n       at Socket.emit (node:events:507:25)\r\n       at .../node_modules/socket.io/lib/socket.js:531:14\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `socket.io-parser` to version 3.4.3, 4.2.3 or higher.\n## References\n- [GitHub Commit](https://github.com/socketio/socket.io-parser/commit/2dc3c92622dad113b8676be06f23b1ed46b02ced)\n- [GitHub Commit](https://github.com/socketio/socket.io-parser/commit/3b78117bf6ba7e99d7a5cfc1ba54d0477554a7f3)\n- [GitHub Release](https://github.com/socketio/socket.io-parser/releases/tag/3.4.3)\n",
+      "epssDetails": {
+        "percentile": "0.42936",
+        "probability": "0.00110",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-32695"
+        ],
+        "CWE": [
+          "CWE-400"
+        ],
+        "GHSA": [
+          "GHSA-cqmj-92xf-r6r9"
+        ]
+      },
+      "packageName": "socket.io-parser",
+      "proprietary": false,
+      "creationTime": "2023-05-24T07:36:34.088298Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-05-23T19:55:13Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-05-24T07:39:19.358296Z",
+      "modificationTime": "2023-06-06T01:10:22.155441Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "twee3-language-tools@cyrusfirheir/twee3-language-tools#13f886943f62cd78abffacf8945618e401dee127",
+        "socket.io@3.1.2",
+        "socket.io-parser@4.0.5"
+      ],
+      "upgradePath": [
+        false,
+        "socket.io@4.5.2",
+        "socket.io-parser@4.2.3"
+      ],
+      "version": "4.0.5",
+      "name": "socket.io-parser",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "SNYK-JS-SOCKETIOPARSER-5596892",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+      "credit": [
+        "rafax00"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">=3.4.0 <3.4.3",
+          ">=4.0.0 <4.2.3"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "3.4.3",
+        "4.2.3"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "socket.io-parser",
+      "references": [
+        {
+          "url": "https://github.com/socketio/socket.io-parser/commit/2dc3c92622dad113b8676be06f23b1ed46b02ced",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/socketio/socket.io-parser/commit/3b78117bf6ba7e99d7a5cfc1ba54d0477554a7f3",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/socketio/socket.io-parser/releases/tag/3.4.3",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "high",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+          "cvssV3BaseScore": 7.5,
+          "modificationTime": "2023-06-06T01:10:22.155441Z"
+        }
+      ],
+      "description": "## Overview\n[socket.io-parser](https://www.npmjs.org/package/socket.io-parser) is a socket.io protocol parser\n\nAffected versions of this package are vulnerable to Denial of Service (DoS) due to insufficient validation when decoding a packet. An attacker can send an event with a name like `'2[{\"toString\":\"foo\"}]'` to trigger an uncaught exception and a crash, like the below.\r\n\r\n```\r\nTypeError: Cannot convert object to primitive value\r\n       at Socket.emit (node:events:507:25)\r\n       at .../node_modules/socket.io/lib/socket.js:531:14\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\n\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\n\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\n\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\n\nTwo common types of DoS vulnerabilities:\n\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\n\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](https://snyk.io/vuln/npm:ws:20171108)\n\n## Remediation\nUpgrade `socket.io-parser` to version 3.4.3, 4.2.3 or higher.\n## References\n- [GitHub Commit](https://github.com/socketio/socket.io-parser/commit/2dc3c92622dad113b8676be06f23b1ed46b02ced)\n- [GitHub Commit](https://github.com/socketio/socket.io-parser/commit/3b78117bf6ba7e99d7a5cfc1ba54d0477554a7f3)\n- [GitHub Release](https://github.com/socketio/socket.io-parser/releases/tag/3.4.3)\n",
+      "epssDetails": {
+        "percentile": "0.42936",
+        "probability": "0.00110",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-32695"
+        ],
+        "CWE": [
+          "CWE-400"
+        ],
+        "GHSA": [
+          "GHSA-cqmj-92xf-r6r9"
+        ]
+      },
+      "packageName": "socket.io-parser",
+      "proprietary": false,
+      "creationTime": "2023-05-24T07:36:34.088298Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-05-23T19:55:13Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-05-24T07:39:19.358296Z",
+      "modificationTime": "2023-06-06T01:10:22.155441Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "twee3-language-tools@cyrusfirheir/twee3-language-tools#13f886943f62cd78abffacf8945618e401dee127",
+        "socket.io-client@3.1.3",
+        "socket.io-parser@4.0.5"
+      ],
+      "upgradePath": [
+        false,
+        "socket.io-client@4.5.0",
+        "socket.io-parser@4.2.3"
+      ],
+      "version": "4.0.5",
+      "name": "socket.io-parser",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 105,
+  "severityMap": {
+    "critical": 0,
+    "high": 3,
+    "medium": 0,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "3 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 2,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/cyrusfirheir/twee3-language-tools.git"
+}

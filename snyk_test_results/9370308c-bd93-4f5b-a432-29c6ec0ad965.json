@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/mfarshchin/vscode-julia-light-theme.git"
+}

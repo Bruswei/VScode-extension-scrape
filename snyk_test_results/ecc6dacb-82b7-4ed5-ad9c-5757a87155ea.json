@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/frigus02/vscode-sql-tagged-template-literals.git"
+}

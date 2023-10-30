@@ -1,0 +1,232 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-WS-1296835",
+      "title": "Regular Expression Denial of Service (ReDoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L/E:P",
+      "credit": [
+        "Robert McLaughlin"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">=7.0.0 <7.4.6",
+          ">=6.0.0 <6.2.2",
+          "<5.2.3"
+        ]
+      },
+      "exploit": "Proof of Concept",
+      "fixedIn": [
+        "7.4.6",
+        "6.2.2",
+        "5.2.3"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "medium",
+      "cvssScore": 5.3,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "ws",
+      "references": [
+        {
+          "url": "https://github.com/websockets/ws/commit/00c425ec77993773d823f018f64a5c44e17023ff",
+          "title": "GitHub Commit"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "Red Hat",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2023-03-26T20:28:35.669501Z"
+        },
+        {
+          "assigner": "NVD",
+          "severity": "medium",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+          "cvssV3BaseScore": 5.3,
+          "modificationTime": "2022-06-04T13:11:32.609379Z"
+        }
+      ],
+      "description": "## Overview\n[ws](https://www.npmjs.com/package/ws) is a simple to use websocket client, server and console for node.js.\n\nAffected versions of this package are vulnerable to Regular Expression Denial of Service (ReDoS). A specially crafted value of the `Sec-Websocket-Protocol` header can be used to significantly slow down a `ws` server.\r\n\r\n##PoC\r\n```\r\nfor (const length of [1000, 2000, 4000, 8000, 16000, 32000]) {\r\n  const value = 'b' + ' '.repeat(length) + 'x';\r\n  const start = process.hrtime.bigint();\r\n\r\n  value.trim().split(/ *, */);\r\n\r\n  const end = process.hrtime.bigint();\r\n\r\n  console.log('length = %d, time = %f ns', length, end - start);\r\n}\r\n```\n\n## Details\n\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its original and legitimate users. There are many types of DoS attacks, ranging from trying to clog the network pipes to the system by generating a large volume of traffic from many machines (a Distributed Denial of Service - DDoS - attack) to sending crafted requests that cause a system to crash or take a disproportional amount of time to process.\n\nThe Regular expression Denial of Service (ReDoS) is a type of Denial of Service attack. Regular expressions are incredibly powerful, but they aren't very intuitive and can ultimately end up making it easy for attackers to take your site down.\n\nLet’s take the following regular expression as an example:\n```js\nregex = /A(B|C+)+D/\n```\n\nThis regular expression accomplishes the following:\n- `A` The string must start with the letter 'A'\n- `(B|C+)+` The string must then follow the letter A with either the letter 'B' or some number of occurrences of the letter 'C' (the `+` matches one or more times). The `+` at the end of this section states that we can look for one or more matches of this section.\n- `D` Finally, we ensure this section of the string ends with a 'D'\n\nThe expression would match inputs such as `ABBD`, `ABCCCCD`, `ABCBCCCD` and `ACCCCCD`\n\nIt most cases, it doesn't take very long for a regex engine to find a match:\n\n```bash\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCD\")'\n0.04s user 0.01s system 95% cpu 0.052 total\n\n$ time node -e '/A(B|C+)+D/.test(\"ACCCCCCCCCCCCCCCCCCCCCCCCCCCCX\")'\n1.79s user 0.02s system 99% cpu 1.812 total\n```\n\nThe entire process of testing it against a 30 characters long string takes around ~52ms. But when given an invalid string, it takes nearly two seconds to complete the test, over ten times as long as it took to test a valid string. The dramatic difference is due to the way regular expressions get evaluated.\n\nMost Regex engines will work very similarly (with minor differences). The engine will match the first possible way to accept the current character and proceed to the next one. If it then fails to match the next one, it will backtrack and see if there was another way to digest the previous character. If it goes too far down the rabbit hole only to find out the string doesn’t match in the end, and if many characters have multiple valid regex paths, the number of backtracking steps can become very large, resulting in what is known as _catastrophic backtracking_.\n\nLet's look at how our expression runs into this problem, using a shorter string: \"ACCCX\". While it seems fairly straightforward, there are still four different ways that the engine could match those three C's:\n1. CCC\n2. CC+C\n3. C+CC\n4. C+C+C.\n\nThe engine has to try each of those combinations to see if any of them potentially match against the expression. When you combine that with the other steps the engine must take, we can use [RegEx 101 debugger](https://regex101.com/debugger) to see the engine has to take a total of 38 steps before it can determine the string doesn't match.\n\nFrom there, the number of steps the engine must use to validate a string just continues to grow.\n\n| String | Number of C's | Number of steps |\n| -------|-------------:| -----:|\n| ACCCX | 3 | 38\n| ACCCCX | 4 | 71\n| ACCCCCX | 5 | 136\n| ACCCCCCCCCCCCCCX | 14 | 65,553\n\n\nBy the time the string includes 14 C's, the engine has to take over 65,000 steps just to see if the string is valid. These extreme situations can cause them to work very slowly (exponentially related to input size, as shown above), allowing an attacker to exploit this and can cause the service to excessively consume CPU, resulting in a Denial of Service.\n\n## Remediation\nUpgrade `ws` to version 7.4.6, 6.2.2, 5.2.3 or higher.\n## References\n- [GitHub Commit](https://github.com/websockets/ws/commit/00c425ec77993773d823f018f64a5c44e17023ff)\n",
+      "epssDetails": {
+        "percentile": "0.44291",
+        "probability": "0.00116",
+        "modelVersion": "v2023.03.01"
+      },
+      "identifiers": {
+        "CVE": [
+          "CVE-2021-32640"
+        ],
+        "CWE": [
+          "CWE-400"
+        ],
+        "GHSA": [
+          "GHSA-6fc8-4gx4-v693"
+        ]
+      },
+      "packageName": "ws",
+      "proprietary": false,
+      "creationTime": "2021-05-26T08:37:36.519338Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2021-05-26T08:34:58Z",
+      "packageManager": "npm",
+      "publicationTime": "2021-05-26T11:57:43Z",
+      "modificationTime": "2023-03-26T20:28:35.669501Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "medium",
+      "packagePopularityRank": 99,
+      "from": [
+        "stingray-debug@jschmidt42/stingray-vscode-debugger#0499deaeb8c48de55979cc1ac34fc6556d7914a2",
+        "ws@2.3.1"
+      ],
+      "upgradePath": [
+        false,
+        "ws@5.2.3"
+      ],
+      "version": "2.3.1",
+      "name": "ws",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    },
+    {
+      "id": "npm:ws:20171108",
+      "title": "Denial of Service (DoS)",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H/E:F/RL:O/RC:C",
+      "credit": [
+        "Nick Starke",
+        "Ryan Knell"
+      ],
+      "semver": {
+        "vulnerable": [
+          "<1.1.5",
+          ">=2.0.0 <3.3.1"
+        ]
+      },
+      "exploit": "Functional",
+      "fixedIn": [
+        "1.1.5",
+        "3.3.1"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "high",
+      "cvssScore": 7.5,
+      "functions": [
+        {
+          "version": [
+            ">=0.6.0 <1.1.5",
+            ">=2.0.0 <3.3.1"
+          ],
+          "functionId": {
+            "filePath": "lib/Extensions.js",
+            "className": null,
+            "functionName": "parse"
+          }
+        }
+      ],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "ws",
+      "references": [
+        {
+          "url": "https://github.com/websockets/ws/commit/c4fe46608acd61fbf7397eadc47378903f95b78a",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/websockets/ws/commit/f8fdcd40ac8be7318a6ee41f5ceb7e77c995b407",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://github.com/websockets/ws/releases/tag/3.3.1",
+          "title": "GitHub Release"
+        }
+      ],
+      "cvssDetails": [],
+      "description": "## Overview\n\n[ws](https://www.npmjs.com/package/ws) is a simple to use websocket client, server and console for node.js.\n\n\nAffected versions of this package are vulnerable to Denial of Service (DoS)\nattacks. A specially crafted value of the `Sec-WebSocket-Extensions` header that used `Object.prototype` property names as extension or parameter names could be used to make a ws server crash.\r\n\r\n**PoC:**\r\n\r\n```js\r\nconst WebSocket = require('ws');\r\nconst net = require('net');\r\n\r\nconst wss = new WebSocket.Server({ port: 3000 }, function () {\r\n  const payload = 'constructor';  // or ',;constructor'\r\n\r\n  const request = [\r\n    'GET / HTTP/1.1',\r\n    'Connection: Upgrade',\r\n    'Sec-WebSocket-Key: test',\r\n    'Sec-WebSocket-Version: 8',\r\n    `Sec-WebSocket-Extensions: ${payload}`,\r\n    'Upgrade: websocket',\r\n    '\\r\\n'\r\n  ].join('\\r\\n');\r\n\r\n  const socket = net.connect(3000, function () {\r\n    socket.resume();\r\n    socket.write(request);\r\n  });\r\n});\r\n```\n\n## Details\nDenial of Service (DoS) describes a family of attacks, all aimed at making a system inaccessible to its intended and legitimate users.\r\n\r\nUnlike other vulnerabilities, DoS attacks usually do not aim at breaching security. Rather, they are focused on making websites and services unavailable to genuine users resulting in downtime.\r\n\r\nOne popular Denial of Service vulnerability is DDoS (a Distributed Denial of Service), an attack that attempts to clog network pipes to the system by generating a large volume of traffic from many machines.\r\n\r\nWhen it comes to open source libraries, DoS vulnerabilities allow attackers to trigger such a crash or crippling of the service by using a flaw either in the application code or from the use of open source libraries.\r\n\r\nTwo common types of DoS vulnerabilities:\r\n\r\n* High CPU/Memory Consumption- An attacker sending crafted requests that could cause the system to take a disproportionate amount of time to process. For example, [commons-fileupload:commons-fileupload](SNYK-JAVA-COMMONSFILEUPLOAD-30082).\r\n\r\n* Crash - An attacker sending crafted requests that could cause the system to crash. For Example,  [npm `ws` package](npm:ws:20171108)\n\n## Remediation\n\nUpgrade `ws` to version 1.1.5, 3.3.1 or higher.\n\n\n## References\n\n- [GitHub Commit](https://github.com/websockets/ws/commit/c4fe46608acd61fbf7397eadc47378903f95b78a)\n\n- [GitHub Commit](https://github.com/websockets/ws/commit/f8fdcd40ac8be7318a6ee41f5ceb7e77c995b407)\n\n- [GitHub Release](https://github.com/websockets/ws/releases/tag/3.3.1)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [],
+        "CWE": [
+          "CWE-400"
+        ],
+        "NSP": [
+          "550"
+        ],
+        "GHSA": [
+          "GHSA-5v72-xg48-5rpm"
+        ],
+        "ALTERNATIVE": [
+          "SNYK-JS-WS-10839"
+        ]
+      },
+      "packageName": "ws",
+      "proprietary": false,
+      "creationTime": "2017-11-09T09:38:58.245000Z",
+      "functions_new": [
+        {
+          "version": [
+            ">=0.6.0 <1.1.5",
+            ">=2.0.0 <3.3.1"
+          ],
+          "functionId": {
+            "filePath": "lib/Extensions.js",
+            "functionName": "parse"
+          }
+        }
+      ],
+      "alternativeIds": [
+        "SNYK-JS-WS-10839"
+      ],
+      "disclosureTime": "2017-11-08T22:00:00Z",
+      "packageManager": "npm",
+      "publicationTime": "2017-11-09T09:38:58Z",
+      "modificationTime": "2020-12-14T14:41:35.415985Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "high",
+      "packagePopularityRank": 99,
+      "from": [
+        "stingray-debug@jschmidt42/stingray-vscode-debugger#0499deaeb8c48de55979cc1ac34fc6556d7914a2",
+        "ws@2.3.1"
+      ],
+      "upgradePath": [
+        false,
+        "ws@3.3.1"
+      ],
+      "version": "2.3.1",
+      "name": "ws",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 8,
+  "severityMap": {
+    "critical": 0,
+    "high": 1,
+    "medium": 1,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "2 vulnerable dependency paths",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 2,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/jschmidt42/stingray-vscode-debugger.git"
+}

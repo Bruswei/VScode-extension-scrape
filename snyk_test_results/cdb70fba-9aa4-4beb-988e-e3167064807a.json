@@ -1,0 +1,108 @@
+{
+  "ok": false,
+  "vulnerabilities": [
+    {
+      "id": "SNYK-JS-SYSTEMINFORMATION-5914637",
+      "title": "Arbitrary Command Injection",
+      "CVSSv3": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+      "credit": [
+        "Unknown"
+      ],
+      "semver": {
+        "vulnerable": [
+          ">=5.0.0 <5.21.7"
+        ]
+      },
+      "exploit": "Not Defined",
+      "fixedIn": [
+        "5.21.7"
+      ],
+      "patches": [],
+      "insights": {
+        "triageAdvice": null
+      },
+      "language": "js",
+      "severity": "critical",
+      "cvssScore": 9.8,
+      "functions": [],
+      "malicious": false,
+      "isDisputed": false,
+      "moduleName": "systeminformation",
+      "references": [
+        {
+          "url": "https://github.com/sebhildebrandt/systeminformation/commit/7972565812ccb2a610a22911c54c3446f4171392",
+          "title": "GitHub Commit"
+        },
+        {
+          "url": "https://systeminformation.io/security.html",
+          "title": "Systeminformation Advisory"
+        }
+      ],
+      "cvssDetails": [
+        {
+          "assigner": "NVD",
+          "severity": "critical",
+          "cvssV3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+          "cvssV3BaseScore": 9.8,
+          "modificationTime": "2023-09-23T13:10:42.698720Z"
+        }
+      ],
+      "description": "## Overview\n[systeminformation](https://www.npmjs.com/package/systeminformation) is a simple system and OS information library.\n\nAffected versions of this package are vulnerable to Arbitrary Command Injection via the `wifiConnections()` and `wifiNetworks()` functions. An attacker can inject malicious commands by crafting detected SSIDs.\r\n\r\n## Workaround\r\n\r\nThis vulnerability can be mitigated by ensuring to check or sanitize parameter strings that are passed to `wifiConnections()`, `wifiNetworks()` functions.\n## Remediation\nUpgrade `systeminformation` to version 5.21.7 or higher.\n## References\n- [GitHub Commit](https://github.com/sebhildebrandt/systeminformation/commit/7972565812ccb2a610a22911c54c3446f4171392)\n- [Systeminformation Advisory](https://systeminformation.io/security.html)\n",
+      "epssDetails": null,
+      "identifiers": {
+        "CVE": [
+          "CVE-2023-42810"
+        ],
+        "CWE": [
+          "CWE-77"
+        ],
+        "GHSA": [
+          "GHSA-gx6r-qc2v-3p3v"
+        ]
+      },
+      "packageName": "systeminformation",
+      "proprietary": false,
+      "creationTime": "2023-09-22T09:56:57.611654Z",
+      "functions_new": [],
+      "alternativeIds": [],
+      "disclosureTime": "2023-09-21T17:15:53Z",
+      "packageManager": "npm",
+      "publicationTime": "2023-09-22T11:26:38.758628Z",
+      "modificationTime": "2023-09-23T13:10:42.698720Z",
+      "socialTrendAlert": false,
+      "severityWithCritical": "critical",
+      "packagePopularityRank": 98,
+      "from": [
+        "stats-bar@njzydark/vscode-stats-bar#5e61feb41a3472245c50e3c029ad8ad518a26e32",
+        "systeminformation@5.12.3"
+      ],
+      "upgradePath": [
+        false,
+        "systeminformation@5.21.7"
+      ],
+      "version": "5.12.3",
+      "name": "systeminformation",
+      "isUpgradable": true,
+      "isPatchable": false,
+      "isPinnable": false
+    }
+  ],
+  "numDependencies": 1,
+  "severityMap": {
+    "critical": 1,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "org": "bruswei",
+  "packageManager": "npm",
+  "summary": "1 vulnerable dependency path",
+  "filesystemPolicy": false,
+  "filtered": {
+    "ignore": [],
+    "patch": []
+  },
+  "uniqueCount": 1,
+  "hasUnknownVersions": false,
+  "path": "https://github.com/njzydark/vscode-stats-bar.git"
+}

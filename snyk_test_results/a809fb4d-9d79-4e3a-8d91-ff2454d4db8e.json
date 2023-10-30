@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "git@gitlab.alibaba-inc.com:g11n-venus/mds-i18n-vscode.git"
+}

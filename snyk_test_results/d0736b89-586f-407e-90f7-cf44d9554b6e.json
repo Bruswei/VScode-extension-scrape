@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/ArsenAghajanyan/dynamics-365ce-javascript-snippets.git"
+}

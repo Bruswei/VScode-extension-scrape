@@ -1,0 +1,5 @@
+{
+  "ok": false,
+  "error": "Failed to get vulns",
+  "path": "https://github.com/abdullahceylan/vscode-react-native-component-generator.git"
+}
