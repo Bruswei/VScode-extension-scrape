@@ -11,7 +11,7 @@ try:
         reader = csv.DictReader(csvfile)
 
         # Open the new CSV file to write data
-        with open('new-4000-csv-for-excel.csv', mode='w', newline='', encoding='utf-8') as new_csvfile:
+        with open('updated-4000-csv-for-excel.csv', mode='w', newline='', encoding='utf-8') as new_csvfile:
             fieldnames = ['Extension Number', 'Name', 'Publisher', 'Extension ID', 'Source Code',
                           'Downloads', 'ok', 'critical', 'high', 'medium', 'low', 'total vul', 'vulnerabilities']
             writer = csv.DictWriter(new_csvfile, fieldnames=fieldnames)
@@ -29,7 +29,7 @@ try:
                     # Initialize the data to write to the CSV
                     csv_row_data = row.copy()
                     csv_row_data.update({'ok': '', 'critical': 0, 'high': 0,
-                                        'medium': 0, 'low': 0, 'total vul': 0, 'vulnerabilities': ''})
+                                         'medium': 0, 'low': 0, 'total vul': 0, 'vulnerabilities': ''})
 
                     # If the JSON file exists, process it
                     if os.path.exists(json_file_path):
@@ -45,9 +45,10 @@ try:
                                     vulnerability_titles = []
 
                                     for v in vulnerabilities:
-                                        title = v.get('title', 'Unknown')
-                                        if v.get('severity') == 'critical':
-                                            title = "CRITICAL! " + title
+                                        severity = v.get(
+                                            'severity', '').capitalize()
+                                        title = f"{severity}: {
+                                            v.get('title', 'Unknown')}"
                                         vulnerability_titles.append(title)
 
                                     severity_map = data.get('severityMap', {})
